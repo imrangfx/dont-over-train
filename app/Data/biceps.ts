@@ -4,7 +4,7 @@ export const biceps = {
 // =====================
 "incline-dumbbell-curl": {
   name: "Incline Dumbbell Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "long-head",
   fatigue: {
     biceps: 18,
@@ -14,7 +14,7 @@ export const biceps = {
 
 "bayesian-cable-curl": {
   name: "Bayesian Cable Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "long-head",
   fatigue: {
     biceps: 18,
@@ -24,7 +24,7 @@ export const biceps = {
 
 "close-grip-barbell-curl": {
   name: "Close Grip Barbell Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "long-head",
   fatigue: {
     biceps: 18,
@@ -34,7 +34,7 @@ export const biceps = {
 
 "standing-dumbbell-curl": {
   name: "Standing Dumbbell Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "long-head",
   fatigue: {
     biceps: 17,
@@ -44,7 +44,7 @@ export const biceps = {
 
 "alternating-dumbbell-curl": {
   name: "Alternating Dumbbell Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "long-head",
   fatigue: {
     biceps: 17,
@@ -54,7 +54,7 @@ export const biceps = {
 
 "cable-curl-behind-body": {
   name: "Cable Curl Behind Body",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "long-head",
   fatigue: {
     biceps: 17,
@@ -64,7 +64,7 @@ export const biceps = {
 
 "single-arm-cable-curl": {
   name: "Single Arm Cable Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "long-head",
   fatigue: {
     biceps: 17,
@@ -74,7 +74,7 @@ export const biceps = {
 
 "rope-cable-curl": {
   name: "Rope Cable Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "long-head",
   fatigue: {
     biceps: 16,
@@ -84,7 +84,7 @@ export const biceps = {
 
 "seated-incline-dumbbell-curl": {
   name: "Seated Incline Dumbbell Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "long-head",
   fatigue: {
     biceps: 18,
@@ -94,7 +94,7 @@ export const biceps = {
 
 "ez-bar-close-grip-curl": {
   name: "EZ Bar Close Grip Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "long-head",
   fatigue: {
     biceps: 17,
@@ -107,7 +107,7 @@ export const biceps = {
 
 "preacher-curl": {
   name: "Preacher Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "short-head",
   fatigue: {
     biceps: 18,
@@ -117,7 +117,7 @@ export const biceps = {
 
 "spider-curl": {
   name: "Spider Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "short-head",
   fatigue: {
     biceps: 18,
@@ -127,7 +127,7 @@ export const biceps = {
 
 "concentration-curl": {
   name: "Concentration Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "short-head",
   fatigue: {
     biceps: 18,
@@ -137,7 +137,7 @@ export const biceps = {
 
 "wide-grip-barbell-curl": {
   name: "Wide Grip Barbell Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "short-head",
   fatigue: {
     biceps: 17,
@@ -147,7 +147,7 @@ export const biceps = {
 
 "machine-biceps-curl": {
   name: "Machine Biceps Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "short-head",
   fatigue: {
     biceps: 17,
@@ -157,7 +157,7 @@ export const biceps = {
 
 "cable-preacher-curl": {
   name: "Cable Preacher Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "short-head",
   fatigue: {
     biceps: 17,
@@ -167,7 +167,7 @@ export const biceps = {
 
 "high-cable-curl": {
   name: "High Cable Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "short-head",
   fatigue: {
     biceps: 17,
@@ -177,7 +177,7 @@ export const biceps = {
 
 "dumbbell-preacher-curl": {
   name: "Dumbbell Preacher Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "short-head",
   fatigue: {
     biceps: 17,
@@ -187,7 +187,7 @@ export const biceps = {
 
 "scott-curl": {
   name: "Scott Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "short-head",
   fatigue: {
     biceps: 18,
@@ -197,7 +197,7 @@ export const biceps = {
 
 "seated-dumbbell-curl": {
   name: "Seated Dumbbell Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "short-head",
   fatigue: {
     biceps: 17,
@@ -209,7 +209,7 @@ export const biceps = {
 // =====================
 "hammer-curl": {
   name: "Hammer Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "brachialis",
   fatigue: {
     biceps: 14,
@@ -219,7 +219,7 @@ export const biceps = {
 
 "cross-body-hammer-curl": {
   name: "Cross Body Hammer Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "brachialis",
   fatigue: {
     biceps: 15,
@@ -229,7 +229,7 @@ export const biceps = {
 
 "rope-hammer-curl": {
   name: "Rope Hammer Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "brachialis",
   fatigue: {
     biceps: 14,
@@ -239,7 +239,7 @@ export const biceps = {
 
 "reverse-ez-curl": {
   name: "Reverse EZ Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "brachialis",
   fatigue: {
     biceps: 12,
@@ -249,7 +249,7 @@ export const biceps = {
 
 "reverse-barbell-curl": {
   name: "Reverse Barbell Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "brachialis",
   fatigue: {
     biceps: 12,
@@ -259,7 +259,7 @@ export const biceps = {
 
 "reverse-cable-curl": {
   name: "Reverse Cable Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "brachialis",
   fatigue: {
     biceps: 12,
@@ -269,7 +269,7 @@ export const biceps = {
 
 "dumbbell-reverse-curl": {
   name: "Dumbbell Reverse Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "brachialis",
   fatigue: {
     biceps: 12,
@@ -279,7 +279,7 @@ export const biceps = {
 
 "zottman-curl": {
   name: "Zottman Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "brachialis",
   fatigue: {
     biceps: 14,
@@ -289,7 +289,7 @@ export const biceps = {
 
 "neutral-grip-cable-curl": {
   name: "Neutral Grip Cable Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "brachialis",
   fatigue: {
     biceps: 14,
@@ -299,7 +299,7 @@ export const biceps = {
 
 "machine-hammer-curl": {
   name: "Machine Hammer Curl",
-  bodyPart: "Arms",
+  bodyPart: "Biceps",
   section: "brachialis",
   fatigue: {
     biceps: 14,
