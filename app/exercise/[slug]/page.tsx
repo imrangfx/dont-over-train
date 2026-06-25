@@ -19,8 +19,7 @@ import { forearms } from "@/app/Data/forearms";
 export default function ExercisePage() {
   const [sets, setSets] = useState(3);
   const [reps, setReps] = useState(10);
-  const [weight, setWeight] = useState(20);
-
+  const [weight, setWeight] = useState<number | "">("");
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -140,20 +139,8 @@ export default function ExercisePage() {
             </div>
 
             <div className="mt-8">
-  <p className="text-zinc-400 mb-3">
-    Weight (kg)
-  </p>
+            </div>
 
-  <input
-    type="number"
-    min="0"
-    step="0.5"
-    value={weight}
-    onChange={(e) => setWeight(Number(e.target.value))}
-    className="w-full rounded-2xl bg-[#222] px-4 py-4 text-center text-2xl outline-none"
-  />
-</div>
-            
           </div>
 
           <div>
@@ -255,6 +242,28 @@ export default function ExercisePage() {
               </div>
             </div>
           </div>
+
+          <div className="mt-8">
+            <p className="text-zinc-400 mb-3">
+              Weight (kg)
+            </p>
+
+            <input
+              type="number"
+              min="0"
+              step="0.5"
+              placeholder="e.g. 60"
+              value={weight}
+              onChange={(e) =>
+                setWeight(
+                  e.target.value === ""
+                    ? ""
+                    : Number(e.target.value)
+                )
+              }
+              className="w-full rounded-2xl border border-[#333] bg-[#1a1a1a] px-5 py-4 text-center text-2xl font-semibold text-white outline-none focus:border-lime-400"
+            />
+          </div>
         </div>
 
         <div className="mb-6 rounded-2xl border border-[#222] bg-[#111] px-4 py-4">
@@ -294,13 +303,13 @@ export default function ExercisePage() {
               : [savedWorkout];
 
             const newExercise = {
-  exercise: exerciseName,
-  slug,
-  sets,
-  reps,
-  weight,
-  bodyPart: exerciseData.bodyPart,
-  sourcePath: from,
+              exercise: exerciseName,
+              slug,
+              sets,
+              reps,
+              weight,
+              bodyPart: exerciseData.bodyPart,
+              sourcePath: from,
               fatigue: projectedFatigue,
               primaryMuscle,
               fatigueBreakdown: Object.fromEntries(
@@ -309,8 +318,8 @@ export default function ExercisePage() {
                     muscle,
                     Math.round(
                       Number(value) *
-                        ((sets * reps) /
-                          (BASELINE_SETS * BASELINE_REPS))
+                      ((sets * reps) /
+                        (BASELINE_SETS * BASELINE_REPS))
                     ),
                   ]
                 )
