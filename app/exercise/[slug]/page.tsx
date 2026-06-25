@@ -282,6 +282,7 @@ export default function ExercisePage() {
               sets,
               reps,
               bodyPart: exerciseData.bodyPart,
+              sourcePath: from,
               fatigue: projectedFatigue,
               primaryMuscle,
               fatigueBreakdown: Object.fromEntries(

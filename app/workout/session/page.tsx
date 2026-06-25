@@ -75,21 +75,21 @@ export default function SessionPage() {
   )
     .sort((a, b) => b[1] - a[1])
     .slice(0, 3);
-    if (!loaded) return null;
+  if (!loaded) return null;
 
-    if (workout.length === 0) {
-      return (
-        <main className="min-h-screen bg-black text-white flex items-center justify-center">
-          <p>No workout selected.</p>
-        </main>
-      );
-    }
-    
-    const workoutTitle = [
-      ...new Set(workout.map((exercise) => exercise.bodyPart)),
-    ].join(" + ");
-  
-    
+  if (workout.length === 0) {
+    return (
+      <main className="min-h-screen bg-black text-white flex items-center justify-center">
+        <p>No workout selected.</p>
+      </main>
+    );
+  }
+
+  const workoutTitle = [
+    ...new Set(workout.map((exercise) => exercise.bodyPart)),
+  ].join(" + ");
+
+
   return (
     <main className="min-h-screen bg-black text-white px-6 py-4">
       <div className="max-w-md mx-auto">
@@ -149,9 +149,7 @@ export default function SessionPage() {
 
                 <button
                   onClick={() => {
-                    const updated = workout.filter(
-                      (_, i) => i !== index
-                    );
+                    const updated = workout.filter((_, i) => i !== index);
 
                     setWorkout(updated);
 
@@ -159,8 +157,25 @@ export default function SessionPage() {
                       "currentWorkout",
                       JSON.stringify(updated)
                     );
+
+                    if (updated.length === 0) {
+                      router.push(workout[index].sourcePath);
+                    }
                   }}
-                  className="text-red-500 text-sm"
+                  className="
+  rounded-xl
+  px-3
+  py-2
+  text-sm
+  font-medium
+  text-red-400
+  transition-all
+  duration-150
+  hover:bg-red-500/10
+  hover:text-red-300
+  active:scale-95
+  active:bg-red-500/20
+"
                 >
                   Remove
                 </button>
@@ -238,12 +253,12 @@ export default function SessionPage() {
             </p>
             <p
               className={`mt-1 font-medium ${mostFatiguedMuscle[1] <= 30
-                  ? "text-lime-400"
-                  : mostFatiguedMuscle[1] <= 60
-                    ? "text-yellow-400"
-                    : mostFatiguedMuscle[1] <= 80
-                      ? "text-orange-400"
-                      : "text-red-500"
+                ? "text-lime-400"
+                : mostFatiguedMuscle[1] <= 60
+                  ? "text-yellow-400"
+                  : mostFatiguedMuscle[1] <= 80
+                    ? "text-orange-400"
+                    : "text-red-500"
                 }`}
             >
               {mostFatiguedMuscle[1] <= 30
@@ -329,6 +344,6 @@ export default function SessionPage() {
         </button>
 
       </div>
-    </main>
+    </main >
   );
 }
