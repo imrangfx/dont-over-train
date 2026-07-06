@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   useRouter,
   useSearchParams,
@@ -20,6 +20,9 @@ export default function ExercisePage() {
   const [sets, setSets] = useState(3);
   const [reps, setReps] = useState(10);
   const [weight, setWeight] = useState<number | "">("");
+  const [currentFatigue, setCurrentFatigue] = useState<
+    Record<string, number>
+  >({});
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -42,20 +45,24 @@ export default function ExercisePage() {
     ...forearms,
   };
 
-  const savedWorkout = JSON.parse(
-    localStorage.getItem("currentWorkout") || "[]"
-  );
-
-  const currentFatigue: Record<string, number> = {};
-
-  savedWorkout.forEach((exercise: any) => {
-    Object.entries(exercise.fatigueBreakdown).forEach(
-      ([muscle, value]) => {
-        currentFatigue[muscle] =
-          (currentFatigue[muscle] || 0) + Number(value);
-      }
+  useEffect(() => {
+    const savedWorkout = JSON.parse(
+      localStorage.getItem("currentWorkout") || "[]"
     );
-  });
+
+    const fatigue: Record<string, number> = {};
+
+    savedWorkout.forEach((exercise: { fatigueBreakdown: Record<string, number> }) => {
+      Object.entries(exercise.fatigueBreakdown).forEach(
+        ([muscle, value]) => {
+          fatigue[muscle] =
+            (fatigue[muscle] || 0) + Number(value);
+        }
+      );
+    });
+
+    setCurrentFatigue(fatigue);
+  }, []);
 
   const exerciseData =
     exercises[slug as keyof typeof exercises];
