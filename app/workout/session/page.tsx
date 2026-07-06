@@ -145,6 +145,18 @@ export default function SessionPage() {
                   <p className="text-zinc-400">
                     {exercise.sets} sets × {exercise.reps} reps
                   </p>
+                  {exercise.setWeights?.some((w: number | "") => w !== "") ? (
+                    <p className="text-sm text-zinc-500 mt-1">
+                      Weights:{" "}
+                      {exercise.setWeights
+                        .map((w: number | "") => (w === "" ? "-" : `${w}kg`))
+                        .join(" • ")}
+                    </p>
+                  ) : exercise.weight ? (
+                    <p className="text-sm text-zinc-500 mt-1">
+                      Weight: {exercise.weight}kg
+                    </p>
+                  ) : null}
                 </div>
 
                 <button
