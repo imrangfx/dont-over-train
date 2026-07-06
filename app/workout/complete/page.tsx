@@ -193,19 +193,10 @@ ${fatigueArray
 
         {/* Check Icon */}
         <div className="flex justify-center mb-6">
-          <div className="w-28 h-28 rounded-full bg-lime-400 flex items-center justify-center text-black text-6xl">
+          <div className="w-24 h-24 rounded-full bg-lime-400 flex items-center justify-center text-black text-6xl">
             ✓
           </div>
         </div>
-
-        {/* Title */}
-        <h1 className="text-5xl font-bold text-center mb-2">
-          Workout Complete!
-        </h1>
-
-        <p className="text-zinc-400 text-center mb-8 text-xl">
-          Great job staying on track
-        </p>
 
         {/* Summary */}
         <div className="bg-[#111] border border-[#222] rounded-3xl p-6 mb-6">
