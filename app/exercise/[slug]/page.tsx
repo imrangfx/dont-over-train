@@ -19,7 +19,11 @@ import { forearms } from "@/app/Data/forearms";
 export default function ExercisePage() {
   const [sets, setSets] = useState(3);
   const [reps, setReps] = useState(10);
-  const [weight, setWeight] = useState<number | "">("");
+  const [setWeights, setSetWeights] = useState<(number | "")[]>([
+    "",
+    "",
+    "",
+  ]);
   const [currentFatigue, setCurrentFatigue] = useState<
     Record<string, number>
   >({});
@@ -33,6 +37,28 @@ export default function ExercisePage() {
 
   const BASELINE_SETS = 3;
   const BASELINE_REPS = 10;
+
+  function updateSets(newSets: number) {
+    setSets(newSets);
+    setSetWeights((prev) => {
+      if (newSets > prev.length) {
+        const additions: (number | "")[] = Array.from(
+          { length: newSets - prev.length },
+          () => ""
+        );
+        return [...prev, ...additions];
+      }
+      return prev.slice(0, newSets);
+    });
+  }
+
+  function updateSetWeight(index: number, value: number | "") {
+    setSetWeights((prev) => {
+      const next = [...prev];
+      next[index] = value;
+      return next;
+    });
+  }
 
   const exercises = {
     ...chest,
@@ -202,7 +228,7 @@ export default function ExercisePage() {
               <div className="flex items-center gap-4">
                 <button
                   onClick={() =>
-                    setSets(Math.max(1, sets - 1))
+                    updateSets(Math.max(1, sets - 1))
                   }
                   className="w-12 h-12 rounded-2xl bg-[#222] text-2xl"
                 >
@@ -214,7 +240,7 @@ export default function ExercisePage() {
                 </span>
 
                 <button
-                  onClick={() => setSets(sets + 1)}
+                  onClick={() => updateSets(sets + 1)}
                   className="w-12 h-12 rounded-2xl bg-[#222] text-2xl"
                 >
                   +
@@ -252,24 +278,38 @@ export default function ExercisePage() {
 
           <div className="mt-8">
             <p className="text-zinc-400 mb-3">
-              Weight (kg)
+              Weight Per Set (kg)
             </p>
 
-            <input
-              type="number"
-              min="0"
-              step="0.5"
-              placeholder="e.g. 60"
-              value={weight}
-              onChange={(e) =>
-                setWeight(
-                  e.target.value === ""
-                    ? ""
-                    : Number(e.target.value)
-                )
-              }
-              className="w-full rounded-2xl border border-[#333] bg-[#1a1a1a] px-5 py-4 text-center text-2xl font-semibold text-white outline-none focus:border-lime-400"
-            />
+            <div className="space-y-3">
+              {setWeights.map((setWeight, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-3"
+                >
+                  <span className="w-14 shrink-0 text-sm text-zinc-400">
+                    Set {index + 1}
+                  </span>
+
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.5"
+                    placeholder="e.g. 60"
+                    value={setWeight}
+                    onChange={(e) =>
+                      updateSetWeight(
+                        index,
+                        e.target.value === ""
+                          ? ""
+                          : Number(e.target.value)
+                      )
+                    }
+                    className="w-full rounded-2xl border border-[#333] bg-[#1a1a1a] px-5 py-4 text-center text-2xl font-semibold text-white outline-none focus:border-lime-400"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -314,7 +354,7 @@ export default function ExercisePage() {
               slug,
               sets,
               reps,
-              weight,
+              setWeights,
               bodyPart: exerciseData.bodyPart,
               sourcePath: from,
               fatigue: projectedFatigue,
