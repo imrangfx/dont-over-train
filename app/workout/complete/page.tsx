@@ -18,18 +18,18 @@ export default function CompletePage() {
     const history = JSON.parse(
       localStorage.getItem("workoutHistory") || "[]"
     );
-    
+
     const totalSetsHistory = formatted.reduce(
       (acc: number, item: any) => acc + item.sets,
       0
     );
-    
+
     const totalRepsHistory = formatted.reduce(
       (acc: number, item: any) =>
         acc + item.sets * item.reps,
       0
     );
-    
+
     const score = Math.min(
       Math.round(
         totalSetsHistory * 5 +
@@ -38,7 +38,7 @@ export default function CompletePage() {
       ),
       100
     );
-    
+
     const historyEntry = {
       date: new Date().toLocaleDateString(),
       exercises: formatted.length,
@@ -46,12 +46,12 @@ export default function CompletePage() {
       reps: totalRepsHistory,
       score,
     };
-    
+
     const alreadySaved =
       history.length > 0 &&
       history[history.length - 1].date === historyEntry.date &&
       history[history.length - 1].score === historyEntry.score;
-    
+
     if (!alreadySaved) {
       localStorage.setItem(
         "workoutHistory",
@@ -295,8 +295,21 @@ ${fatigueArray
               </h3>
 
               <p className="text-zinc-400">
-                {item.sets} sets x {item.reps} reps
+                {item.sets} sets × {item.reps} reps
               </p>
+
+              {item.setWeights?.some((w: number | "") => w !== "") ? (
+                <p className="text-sm text-zinc-500 mt-1">
+                  Weights:{" "}
+                  {item.setWeights
+                    .map((w: number | "") => (w === "" ? "-" : `${w}kg`))
+                    .join(" • ")}
+                </p>
+              ) : item.weight ? (
+                <p className="text-sm text-zinc-500 mt-1">
+                  Weight: {item.weight}kg
+                </p>
+              ) : null}
             </div>
 
           ))}
@@ -379,7 +392,7 @@ ${fatigueArray
             const history = JSON.parse(
               localStorage.getItem("workoutHistory") || "[]"
             );
-          
+
             history.unshift({
               date: new Date().toLocaleDateString(),
               score: workoutScore,
@@ -389,14 +402,14 @@ ${fatigueArray
               mostFatigued:
                 mostFatiguedMuscle?.name || "N/A",
             });
-          
+
             localStorage.setItem(
               "workoutHistory",
               JSON.stringify(history.slice(0, 10))
             );
-          
+
             localStorage.removeItem("currentWorkout");
-          
+
             window.location.href = "/";
           }}
           className="w-full bg-lime-400 text-black py-5 rounded-2xl text-2xl font-semibold"
