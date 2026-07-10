@@ -34,7 +34,7 @@ export const workouts = {
         exerciseCount: Object.values(chest).filter(
           (exercise) => exercise.section === "lower-chest"
         ).length,
-        image: "/chest/lower-chest.png",
+        image: "/chest/lower-chest.webp",
       },
     ],
   },

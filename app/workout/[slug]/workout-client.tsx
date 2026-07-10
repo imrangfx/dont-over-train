@@ -493,7 +493,7 @@ export default function WorkoutClient({
     },
     {
       title: "Lower Chest",
-      image: "/chest/lower-chest.png",
+      image: "/chest/lower-chest.webp",
       slug: "lower-chest",
     },
   ];
