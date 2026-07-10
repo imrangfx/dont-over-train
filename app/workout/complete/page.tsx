@@ -189,26 +189,26 @@ ${fatigueArray
 
   return (
     <main className="min-h-screen bg-black text-white px-6 py-8">
-      <div className="max-w-md mx-auto">
+      <div className="mx-auto flex w-full max-w-[520px] flex-col items-center gap-6">
 
         {/* Check Icon */}
-        <div className="flex justify-center mb-6">
-          <div className="w-24 h-24 rounded-full bg-lime-400 flex items-center justify-center text-black text-6xl">
+        <div className="flex w-full justify-center">
+          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-lime-400 text-6xl text-black">
             ✓
           </div>
         </div>
 
         {/* Summary */}
-        <div className="bg-[#111] border border-[#222] rounded-3xl p-6 mb-6">
+        <div className="w-full rounded-3xl border border-[#222] bg-[#111] p-6">
 
-          <h2 className="text-3xl mb-6">
+          <h2 className="mb-6 text-3xl">
             Workout Summary
           </h2>
 
-          <div className="flex justify-between text-center mb-6">
+          <div className="mb-6 grid grid-cols-3 gap-4">
 
-            <div>
-              <p className="text-5xl text-lime-400 font-bold">
+            <div className="flex flex-col items-center justify-center text-center">
+              <p className="text-5xl font-bold text-lime-400">
                 {workouts.length}
               </p>
 
@@ -217,8 +217,8 @@ ${fatigueArray
               </p>
             </div>
 
-            <div>
-              <p className="text-5xl text-lime-400 font-bold">
+            <div className="flex flex-col items-center justify-center text-center">
+              <p className="text-5xl font-bold text-lime-400">
                 {totalSets}
               </p>
 
@@ -227,8 +227,8 @@ ${fatigueArray
               </p>
             </div>
 
-            <div>
-              <p className="text-5xl text-lime-400 font-bold">
+            <div className="flex flex-col items-center justify-center text-center">
+              <p className="text-5xl font-bold text-lime-400">
                 {totalReps}
               </p>
 
@@ -238,128 +238,120 @@ ${fatigueArray
             </div>
 
           </div>
+
           {isPR && (
-            <div className="bg-yellow-500/10 border border-yellow-500 rounded-2xl p-4 mb-5 text-center">
-              <p className="text-yellow-400 font-semibold">
+            <div className="mb-5 w-full rounded-2xl border border-yellow-500 bg-yellow-500/10 p-4 text-center">
+              <p className="font-semibold text-yellow-400">
                 🏆 Personal Record
               </p>
 
-              <p className="text-zinc-300 mt-1">
+              <p className="mt-1 text-zinc-300">
                 Highest Workout Score Yet
               </p>
             </div>
           )}
-          <div className="bg-[#1a1a1a] rounded-2xl p-5 mb-5">
-            <p className="text-zinc-400 text-sm mb-2">
-              Most Fatigued Muscle
-            </p>
 
-            <h3 className="text-2xl font-semibold text-lime-400">
-              {mostFatiguedMuscle?.name || "N/A"}
-            </h3>
+          <div className="flex w-full flex-col gap-3">
+            {workouts.map((item: any, index: number) => (
 
-            <p className="text-zinc-400 mt-2">
-              Highest fatigue accumulation today.
-            </p>
+              <div
+                key={index}
+                className="w-full rounded-2xl bg-[#1a1a1a] p-4"
+              >
+                <h3 className="mb-1 text-2xl">
+                  {item.exercise}
+                </h3>
+
+                <p className="text-zinc-400">
+                  {item.sets} sets × {item.reps} reps
+                </p>
+
+                {item.setWeights?.some((w: number | "") => w !== "") ? (
+                  <p className="mt-1 text-sm text-zinc-500">
+                    Weights:{" "}
+                    {item.setWeights
+                      .map((w: number | "") => (w === "" ? "-" : `${w}kg`))
+                      .join(" • ")}
+                  </p>
+                ) : item.weight ? (
+                  <p className="mt-1 text-sm text-zinc-500">
+                    Weight: {item.weight}kg
+                  </p>
+                ) : null}
+              </div>
+
+            ))}
           </div>
-
-          {workouts.map((item: any, index: number) => (
-
-            <div
-              key={index}
-              className="bg-[#1a1a1a] rounded-2xl p-4 mb-3"
-            >
-              <h3 className="text-2xl mb-1">
-                {item.exercise}
-              </h3>
-
-              <p className="text-zinc-400">
-                {item.sets} sets × {item.reps} reps
-              </p>
-
-              {item.setWeights?.some((w: number | "") => w !== "") ? (
-                <p className="text-sm text-zinc-500 mt-1">
-                  Weights:{" "}
-                  {item.setWeights
-                    .map((w: number | "") => (w === "" ? "-" : `${w}kg`))
-                    .join(" • ")}
-                </p>
-              ) : item.weight ? (
-                <p className="text-sm text-zinc-500 mt-1">
-                  Weight: {item.weight}kg
-                </p>
-              ) : null}
-            </div>
-
-          ))}
 
         </div>
 
         {/* Final Fatigue */}
-        <div className="bg-[#111] border border-[#222] rounded-3xl p-6 mb-8">
+        <div className="w-full rounded-3xl border border-[#222] bg-[#111] p-6">
 
-          <h2 className="text-3xl mb-6">
+          <h2 className="mb-6 text-3xl">
             Final Fatigue Status
           </h2>
 
-          {fatigueArray.map((muscle) => (
+          <div className="flex flex-col gap-6">
+            {fatigueArray.map((muscle) => (
 
-            <div key={muscle.name} className="mb-6">
+              <div key={muscle.name} className="w-full">
 
-              <div className="flex justify-between mb-2">
+                <div className="mb-2 flex justify-between">
 
-                <span className="text-xl">
-                  {muscle.name}
-                </span>
+                  <span className="text-xl">
+                    {muscle.name}
+                  </span>
 
-                <span
-                  className={
-                    muscle.value <= 30
-                      ? "text-lime-400"
+                  <span
+                    className={
+                      muscle.value <= 30
+                        ? "text-lime-400"
+                        : muscle.value <= 60
+                          ? "text-yellow-400"
+                          : muscle.value <= 80
+                            ? "text-orange-400"
+                            : "text-red-500"
+                    }
+                  >
+                    {muscle.value <= 30
+                      ? "Low"
                       : muscle.value <= 60
-                        ? "text-yellow-400"
+                        ? "Moderate"
                         : muscle.value <= 80
-                          ? "text-orange-400"
-                          : "text-red-500"
-                  }
-                >
-                  {muscle.value <= 30
-                    ? "Low"
-                    : muscle.value <= 60
-                      ? "Moderate"
-                      : muscle.value <= 80
-                        ? "High"
-                        : "Very High"}
-                </span>
+                          ? "High"
+                          : "Very High"}
+                  </span>
+
+                </div>
+
+                <div className="h-3 w-full overflow-hidden rounded-full bg-[#222]">
+
+                  <div
+                    className={`h-full ${muscle.value <= 30
+                      ? "bg-lime-400"
+                      : muscle.value <= 60
+                        ? "bg-yellow-400"
+                        : muscle.value <= 80
+                          ? "bg-orange-400"
+                          : "bg-red-500"
+                      }`}
+                    style={{ width: `${muscle.value}%` }}
+                  />
+
+                </div>
 
               </div>
 
-              <div className="w-full h-3 bg-[#222] rounded-full overflow-hidden">
-
-                <div
-                  className={`h-full ${muscle.value <= 30
-                    ? "bg-lime-400"
-                    : muscle.value <= 60
-                      ? "bg-yellow-400"
-                      : muscle.value <= 80
-                        ? "bg-orange-400"
-                        : "bg-red-500"
-                    }`}
-                  style={{ width: `${muscle.value}%` }}
-                />
-
-              </div>
-
-            </div>
-
-          ))}
+            ))}
+          </div>
 
         </div>
 
         {/* Download Button */}
         <button
           onClick={downloadSummary}
-          className="w-full border border-lime-400 text-lime-400 py-4 rounded-2xl text-xl mb-4"
+          className="w-full rounded-2xl border border-lime-400 py-4 text-xl text-lime-400"
         >
           Download Summary
         </button>
@@ -391,12 +383,12 @@ ${fatigueArray
 
             window.location.href = "/";
           }}
-          className="w-full bg-lime-400 text-black py-5 rounded-2xl text-2xl font-semibold"
+          className="w-full rounded-2xl bg-lime-400 py-5 text-2xl font-semibold text-black"
         >
           Start New Workout
         </button>
 
       </div>
-    </main >
+    </main>
   );
 }
