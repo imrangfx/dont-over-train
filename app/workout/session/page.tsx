@@ -89,6 +89,8 @@ export default function SessionPage() {
     ...new Set(workout.map((exercise) => exercise.bodyPart)),
   ].join(" + ");
 
+  const lastBodyPart =
+    workout[workout.length - 1]?.bodyPart || "Chest";
 
   return (
     <main className="min-h-screen bg-black text-white px-6 py-4">
@@ -333,12 +335,12 @@ export default function SessionPage() {
         <button
           onClick={() =>
             router.push(
-              `/workout/${workout[0]?.bodyPart?.toLowerCase() || "chest"}`
+              `/workout/${lastBodyPart.toLowerCase()}`
             )
           }
           className="w-full bg-lime-400 text-black font-semibold py-4 rounded-2xl text-xl mb-4 transition-all duration-150 active:scale-[0.97] active:brightness-90"
         >
-          + Add Another {workout[0]?.bodyPart || "Chest"} Exercise
+          + Add Another {lastBodyPart} Exercise
         </button>
 
         <button
