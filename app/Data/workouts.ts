@@ -18,7 +18,7 @@ export const workouts = {
         exerciseCount: Object.values(chest).filter(
           (exercise) => exercise.section === "upper-chest"
         ).length,
-        image: "/chest/upper-chest.png",
+        image: "/chest/upper-chest.webp",
       },
       {
         title: "Mid Chest",
@@ -26,7 +26,7 @@ export const workouts = {
         exerciseCount: Object.values(chest).filter(
           (exercise) => exercise.section === "mid-chest"
         ).length,
-        image: "/chest/mid-chest.png",
+        image: "/chest/mid-chest.webp",
       },
       {
         title: "Lower Chest",

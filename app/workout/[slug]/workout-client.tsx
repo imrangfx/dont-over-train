@@ -483,12 +483,12 @@ export default function WorkoutClient({
   const CHEST_SECTIONS = [
     {
       title: "Upper Chest",
-      image: "/chest/upper-chest.png",
+      image: "/chest/upper-chest.webp",
       slug: "upper-chest",
     },
     {
       title: "Mid Chest",
-      image: "/chest/mid-chest.png",
+      image: "/chest/mid-chest.webp",
       slug: "mid-chest",
     },
     {
