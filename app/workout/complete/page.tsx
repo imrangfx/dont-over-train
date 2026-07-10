@@ -201,7 +201,7 @@ ${fatigueArray
         {/* Summary */}
         <div className="w-full rounded-3xl border border-[#222] bg-[#111] p-6">
 
-          <h2 className="mb-6 text-3xl">
+          <h2 className="text-3xl font-bold text-center mb-6">
             Workout Summary
           </h2>
 
