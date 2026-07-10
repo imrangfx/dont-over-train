@@ -238,18 +238,6 @@ ${fatigueArray
             </div>
 
           </div>
-          <div className="bg-[#1a1a1a] rounded-2xl p-5 mb-5 text-center">
-            <p className="text-zinc-400 text-sm mb-2">
-              Workout Score
-            </p>
-            <h3 className="text-5xl font-bold text-lime-400">
-              {workoutScore}
-            </h3>
-
-            <p className="text-zinc-400 mt-2">
-              Based on volume, reps and exercise count
-            </p>
-          </div>
           {isPR && (
             <div className="bg-yellow-500/10 border border-yellow-500 rounded-2xl p-4 mb-5 text-center">
               <p className="text-yellow-400 font-semibold">
