@@ -132,7 +132,7 @@ export default function SectionPage() {
                     </div>
 
                     <Image
-                      src={`/exercises/${slug}.png`}
+                      src={`/exercises/${slug}.webp`}
                       alt={exercise.name}
                       width={90}
                       height={90}

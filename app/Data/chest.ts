@@ -7,7 +7,7 @@ export const chest = {
     name: "Incline Dumbbell Press",
     bodyPart: "Chest",
     section: "upper-chest",
-    image: "/exercise/chest/incline-dumbbell-press.png",
+    image: "/exercise/chest/incline-dumbbell-press.webp",
     fatigue: {
       upperChest: 15,
       midChest: 6,

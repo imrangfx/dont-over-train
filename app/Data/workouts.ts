@@ -49,7 +49,7 @@ export const workouts = {
         exerciseCount: Object.values(back).filter(
           (exercise) => exercise.section === "upper-back"
         ).length,
-        image: "/back/upper-back.png",
+        image: "/back/upper-back.webp",
       },
       {
         title: "Mid Back",
@@ -57,7 +57,7 @@ export const workouts = {
         exerciseCount: Object.values(back).filter(
           (exercise) => exercise.section === "mid-back"
         ).length,
-        image: "/back/mid-back.png",
+        image: "/back/mid-back.webp",
       },
       {
         title: "Lower Back",
@@ -65,7 +65,7 @@ export const workouts = {
         exerciseCount: Object.values(back).filter(
           (exercise) => exercise.section === "lower-back"
         ).length,
-        image: "/back/lower-back.png",
+        image: "/back/lower-back.webp",
       },
     ],
   },
@@ -79,7 +79,7 @@ export const workouts = {
         exerciseCount: Object.values(biceps).filter(
           (exercise) => exercise.section === "long-head"
         ).length,
-        image: "/biceps/long-head.png",
+        image: "/biceps/long-head.webp",
       },
       {
         title: "Short Head",
@@ -87,7 +87,7 @@ export const workouts = {
         exerciseCount: Object.values(biceps).filter(
           (exercise) => exercise.section === "short-head"
         ).length,
-        image: "/biceps/short-head.png",
+        image: "/biceps/short-head.webp",
       },
       {
         title: "Brachialis",
@@ -95,7 +95,7 @@ export const workouts = {
         exerciseCount: Object.values(biceps).filter(
           (exercise) => exercise.section === "brachialis"
         ).length,
-        image: "/biceps/brachialis.png",
+        image: "/biceps/brachialis.webp",
       },
     ],
   },
@@ -110,7 +110,7 @@ export const workouts = {
         exerciseCount: Object.values(triceps).filter(
           (exercise) => exercise.section === "long-head"
         ).length,
-        image: "/triceps/long-head.png",
+        image: "/triceps/long-head.webp",
       },
       {
         title: "Lateral Head",
@@ -118,7 +118,7 @@ export const workouts = {
         exerciseCount: Object.values(triceps).filter(
           (exercise) => exercise.section === "lateral-head"
         ).length,
-        image: "/triceps/lateral-head.png",
+        image: "/triceps/lateral-head.webp",
       },
       {
         title: "Medial Head",
@@ -126,7 +126,7 @@ export const workouts = {
         exerciseCount: Object.values(triceps).filter(
           (exercise) => exercise.section === "medial-head"
         ).length,
-        image: "/triceps/medial-head.png",
+        image: "/triceps/medial-head.webp",
       },
     ],
   },
@@ -141,7 +141,7 @@ export const workouts = {
         exerciseCount: Object.values(shoulders).filter(
           (exercise) => exercise.section === "front-delts"
         ).length,
-        image: "/shoulders/front-delts.png",
+        image: "/shoulders/front-delts.webp",
       },
       {
         title: "Side Delts",
@@ -149,7 +149,7 @@ export const workouts = {
         exerciseCount: Object.values(shoulders).filter(
           (exercise) => exercise.section === "side-delts"
         ).length,
-        image: "/shoulders/side-delts.png",
+        image: "/shoulders/side-delts.webp",
       },
       {
         title: "Rear Delts",
@@ -157,7 +157,7 @@ export const workouts = {
         exerciseCount: Object.values(shoulders).filter(
           (exercise) => exercise.section === "rear-delts"
         ).length,
-        image: "/shoulders/rear-delts.png",
+        image: "/shoulders/rear-delts.webp",
       },
     ],
   },
@@ -171,7 +171,7 @@ export const workouts = {
         exerciseCount: Object.values(legs).filter(
           (exercise) => exercise.section === "quads"
         ).length,
-        image: "/legs/quads.png",
+        image: "/legs/quads.webp",
       },
       {
         title: "Hamstrings",
@@ -179,7 +179,7 @@ export const workouts = {
         exerciseCount: Object.values(legs).filter(
           (exercise) => exercise.section === "hamstrings"
         ).length,
-        image: "/legs/hamstrings.png",
+        image: "/legs/hamstrings.webp",
       },
       {
         title: "Glutes",
@@ -187,7 +187,7 @@ export const workouts = {
         exerciseCount: Object.values(legs).filter(
           (exercise) => exercise.section === "glutes"
         ).length,
-        image: "/legs/glutes.png",
+        image: "/legs/glutes.webp",
       },
       {
         title: "Calves",
@@ -195,7 +195,7 @@ export const workouts = {
         exerciseCount: Object.values(legs).filter(
           (exercise) => exercise.section === "calves"
         ).length,
-        image: "/legs/calves.png",
+        image: "/legs/calves.webp",
       },
     ],
   },
@@ -209,7 +209,7 @@ export const workouts = {
         exerciseCount: Object.values(abs).filter(
           (exercise) => exercise.section === "upper-abs"
         ).length,
-        image: "/abs/upper-abs.png",
+        image: "/abs/upper-abs.webp",
       },
       {
         title: "Lower Abs",
@@ -217,7 +217,7 @@ export const workouts = {
         exerciseCount: Object.values(abs).filter(
           (exercise) => exercise.section === "lower-abs"
         ).length,
-        image: "/abs/lower-abs.png",
+        image: "/abs/lower-abs.webp",
       },
       {
         title: "Obliques",
@@ -225,7 +225,7 @@ export const workouts = {
         exerciseCount: Object.values(abs).filter(
           (exercise) => exercise.section === "obliques"
         ).length,
-        image: "/abs/obliques.png",
+        image: "/abs/obliques.webp",
       },
     ],
   },
@@ -238,7 +238,7 @@ export const workouts = {
         title: "All Exercises",
         slug: "forearms",
         exerciseCount: Object.values(forearms).length,
-        image: "/forearms/forearms.png",
+        image: "/forearms/forearms.webp",
       },
     ],
   },

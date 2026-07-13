@@ -9,14 +9,14 @@ type BodyPart = {
 };
 
 const BODY_PARTS: BodyPart[] = [
-  { name: "Chest", slug: "chest", image: "/body-parts/chest.png" },
-  { name: "Back", slug: "back", image: "/body-parts/back.png" },
-  { name: "Shoulders", slug: "shoulders", image: "/body-parts/shoulders.png" },
-  { name: "Biceps", slug: "biceps", image: "/body-parts/biceps.png" },
-  { name: "Triceps", slug: "triceps", image: "/body-parts/triceps.png" },
-  { name: "Legs", slug: "legs", image: "/body-parts/legs.png" },
-  { name: "Abs", slug: "abs", image: "/body-parts/abs.png" },
-  { name: "Forearms", slug: "forearms", image: "/body-parts/forearms.png" },
+  { name: "Chest", slug: "chest", image: "/body-parts/chest.webp" },
+  { name: "Back", slug: "back", image: "/body-parts/back.webp" },
+  { name: "Shoulders", slug: "shoulders", image: "/body-parts/shoulders.webp" },
+  { name: "Biceps", slug: "biceps", image: "/body-parts/biceps.webp" },
+  { name: "Triceps", slug: "triceps", image: "/body-parts/triceps.webp" },
+  { name: "Legs", slug: "legs", image: "/body-parts/legs.webp" },
+  { name: "Abs", slug: "abs", image: "/body-parts/abs.webp" },
+  { name: "Forearms", slug: "forearms", image: "/body-parts/forearms.webp" },
 ];
 
 function BodyPartCard({ name, slug, image }: BodyPart) {
