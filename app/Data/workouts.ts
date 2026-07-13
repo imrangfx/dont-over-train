@@ -52,6 +52,14 @@ export const workouts = {
         image: "/back/upper-back.webp",
       },
       {
+        title: "Lats",
+        slug: "lats",
+        exerciseCount: Object.values(back).filter(
+          (exercise) => exercise.section === "lats"
+        ).length,
+        image: "/back/lats.webp",
+      },
+      {
         title: "Mid Back",
         slug: "mid-back",
         exerciseCount: Object.values(back).filter(
