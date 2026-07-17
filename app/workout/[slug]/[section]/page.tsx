@@ -10,7 +10,7 @@ import { forearms } from "@/app/Data/forearms";
 
 import Link from "next/link";
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useParams } from "next/navigation";
 import Image from "next/image";
 
 type Exercise = {
@@ -24,10 +24,11 @@ export default function SectionPage() {
 
   const pathname = usePathname();
 
-  const slug = pathname.split("/")[2];
+  const params = useParams<{ slug: string; section: string }>();
 
-  const section =
-    pathname.split("/").pop() || "upper-chest";
+  const slug = params.slug;
+
+  const section = params.section || "upper-chest";
 
   const title = section
     .split("-")
