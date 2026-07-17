@@ -17,9 +17,6 @@ export default function CompletePage() {
       : [saved];
 
     setWorkouts(formatted);
-    const history = JSON.parse(
-      localStorage.getItem("workoutHistory") || "[]"
-    );
 
     const totalSetsHistory = formatted.reduce(
       (acc: number, item: any) => acc + item.sets,
@@ -108,7 +105,13 @@ export default function CompletePage() {
         return;
       }
 
-      // Guest mode - unchanged
+      // Guest mode - unchanged. Local workout history is only ever read
+      // here, on the guest path, so a logged-in user's save never touches
+      // guest localStorage data.
+      const history = JSON.parse(
+        localStorage.getItem("workoutHistory") || "[]"
+      );
+
       const alreadySaved =
         history.length > 0 &&
         history[history.length - 1].date === historyEntry.date &&
