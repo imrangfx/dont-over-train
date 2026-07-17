@@ -69,12 +69,47 @@ export async function getCurrentUserId(): Promise<string | null> {
   return data.session?.user?.id ?? null;
 }
 
+/**
+ * Ensures a public.profiles row exists for this user before anything that
+ * depends on the workouts.user_id -> profiles.id foreign key runs (workout
+ * inserts, guest migration). Safe to call repeatedly - it upserts by id and
+ * only touches the metadata columns that are explicitly provided, so it
+ * never clobbers an existing profile with nulls.
+ */
+export async function ensureProfileExists(
+  userId: string,
+  meta?: { full_name?: string | null; avatar_url?: string | null }
+): Promise<{ error: string | null }> {
+  try {
+    const payload: Record<string, unknown> = { id: userId };
+
+    if (meta?.full_name !== undefined) payload.full_name = meta.full_name;
+    if (meta?.avatar_url !== undefined) payload.avatar_url = meta.avatar_url;
+
+    const { error } = await supabase
+      .from("profiles")
+      .upsert(payload, { onConflict: "id" });
+
+    return { error: error?.message ?? null };
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "Failed to create profile." };
+  }
+}
+
 /** Cloud-only save. Guest/localStorage saving stays inline where it already lives. */
 export async function saveWorkoutHistoryEntry(
   entry: WorkoutHistoryEntry,
   userId: string
 ): Promise<{ error: string | null }> {
   try {
+    // The workouts.user_id -> profiles.id foreign key requires the profile
+    // row to exist first. This is normally already created at login, but we
+    // guard here too so a save never fails purely due to a missing profile.
+    const { error: profileError } = await ensureProfileExists(userId);
+    if (profileError) {
+      return { error: profileError };
+    }
+
     const { error } = await supabase.from("workouts").upsert(
       {
         id: entry.id,
@@ -123,6 +158,11 @@ export async function migrateGuestHistoryToCloud(
   localStorage.setItem(MIGRATION_LOCK_KEY, "true");
 
   try {
+    const { error: profileError } = await ensureProfileExists(userId);
+    if (profileError) {
+      return { migrated: 0, error: profileError };
+    }
+
     for (const entry of localHistory) {
       const { error } = await saveWorkoutHistoryEntry(entry, userId);
       if (error) {

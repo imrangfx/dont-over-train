@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { migrateGuestHistoryToCloud } from "@/lib/workouts";
+import { ensureProfileExists, migrateGuestHistoryToCloud } from "@/lib/workouts";
 
 export default function AuthCallback() {
   const router = useRouter();
@@ -11,11 +11,21 @@ export default function AuthCallback() {
   useEffect(() => {
     async function handleCallback() {
       const { data } = await supabase.auth.getSession();
-      const userId = data.session?.user?.id;
+      const user = data.session?.user;
 
-      if (userId) {
+      if (user) {
         try {
-          await migrateGuestHistoryToCloud(userId);
+          const { error: profileError } = await ensureProfileExists(user.id, {
+            full_name: user.user_metadata?.full_name ?? user.user_metadata?.name ?? null,
+            avatar_url:
+              user.user_metadata?.avatar_url ?? user.user_metadata?.picture ?? null,
+          });
+
+          if (profileError) {
+            console.error("Failed to create profile:", profileError);
+          } else {
+            await migrateGuestHistoryToCloud(user.id);
+          }
         } catch (err) {
           console.error("Guest history migration failed:", err);
         }

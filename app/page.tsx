@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import OnboardingPage from "./onboarding/page";
 import { supabase } from "@/lib/supabase";
-import { migrateGuestHistoryToCloud } from "@/lib/workouts";
+import { ensureProfileExists, migrateGuestHistoryToCloud } from "@/lib/workouts";
 
 export default function Page() {
   const router = useRouter();
@@ -21,7 +21,22 @@ export default function Page() {
         localStorage.setItem("hasSeenOnboarding", "true");
 
         try {
-          await migrateGuestHistoryToCloud(session.user.id);
+          const { error: profileError } = await ensureProfileExists(session.user.id, {
+            full_name:
+              session.user.user_metadata?.full_name ??
+              session.user.user_metadata?.name ??
+              null,
+            avatar_url:
+              session.user.user_metadata?.avatar_url ??
+              session.user.user_metadata?.picture ??
+              null,
+          });
+
+          if (profileError) {
+            console.error("Failed to create profile:", profileError);
+          } else {
+            await migrateGuestHistoryToCloud(session.user.id);
+          }
         } catch (err) {
           console.error("Guest history migration failed:", err);
         }
