@@ -4,22 +4,46 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { loadWorkoutHistoryById, type WorkoutHistoryEntry } from "@/lib/workouts";
 
 export default function WorkoutDetailsPage() {
   const params = useParams();
   const id = params.id as string;
 
-  const [workout, setWorkout] = useState<any>(null);
+  const [workout, setWorkout] = useState<WorkoutHistoryEntry | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const history = JSON.parse(
-      localStorage.getItem("workoutHistory") || "[]"
-    );
+    let active = true;
 
-    const found = history.find((w: any) => w.id === id);
+    loadWorkoutHistoryById(id).then((result) => {
+      if (!active) return;
+      setWorkout(result.workout);
+      setError(result.error);
+      setLoading(false);
+    });
 
-    setWorkout(found || null);
+    return () => {
+      active = false;
+    };
   }, [id]);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-black flex items-center justify-center text-white">
+        Loading workout...
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="min-h-screen bg-black flex items-center justify-center text-red-400">
+        {error}
+      </main>
+    );
+  }
 
   if (!workout) {
     return (

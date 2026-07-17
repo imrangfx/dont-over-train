@@ -3,16 +3,26 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ChevronRight } from "lucide-react";
+import { loadWorkoutHistory, type WorkoutHistoryEntry } from "@/lib/workouts";
 
 export default function HistoryPage() {
-  const [history, setHistory] = useState<any[]>([]);
+  const [history, setHistory] = useState<WorkoutHistoryEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const saved = JSON.parse(
-      localStorage.getItem("workoutHistory") || "[]"
-    );
+    let active = true;
 
-    setHistory(saved);
+    loadWorkoutHistory().then((result) => {
+      if (!active) return;
+      setHistory(result.history);
+      setError(result.error);
+      setLoading(false);
+    });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   return (
@@ -39,7 +49,22 @@ export default function HistoryPage() {
 
         </div>
 
-        {history.length === 0 ? (
+        {loading ? (
+          <div className="rounded-3xl border border-zinc-800 bg-[#111] p-10 text-center">
+            <p className="text-zinc-500">
+              Loading workouts...
+            </p>
+          </div>
+        ) : error ? (
+          <div className="rounded-3xl border border-red-500 bg-red-500/5 p-10 text-center">
+            <h2 className="text-xl font-semibold text-red-400">
+              Couldn't load workouts
+            </h2>
+            <p className="mt-3 text-zinc-500">
+              {error}
+            </p>
+          </div>
+        ) : history.length === 0 ? (
           <div className="rounded-3xl border border-zinc-800 bg-[#111] p-10 text-center">
 
             <h2 className="text-xl font-semibold">

@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getCurrentUserId, saveWorkoutHistoryEntry } from "@/lib/workouts";
 export default function CompletePage() {
   const [workouts, setWorkouts] = useState<any[]>([]);
   const [isPR, setIsPR] = useState(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
 
   useEffect(() => {
     const saved = JSON.parse(
@@ -97,20 +99,32 @@ export default function CompletePage() {
       fatigueBreakdown: fatigueTotals,
     };
 
-    const alreadySaved =
-      history.length > 0 &&
-      history[history.length - 1].date === historyEntry.date &&
-      history[history.length - 1].score === historyEntry.score;
+    (async () => {
+      const userId = await getCurrentUserId();
 
-    if (!alreadySaved) {
-      localStorage.setItem(
-        "workoutHistory",
-        JSON.stringify([
-          historyEntry,
-          ...history,
-        ])
-      );
-    }
+      if (userId) {
+        const { error } = await saveWorkoutHistoryEntry(historyEntry, userId);
+        if (error) setSyncError(error);
+        return;
+      }
+
+      // Guest mode - unchanged
+      const alreadySaved =
+        history.length > 0 &&
+        history[history.length - 1].date === historyEntry.date &&
+        history[history.length - 1].score === historyEntry.score;
+
+      if (!alreadySaved) {
+        localStorage.setItem(
+          "workoutHistory",
+          JSON.stringify([
+            historyEntry,
+            ...history,
+          ])
+        );
+      }
+    })();
+
     const previousBest = Number(
       localStorage.getItem("bestWorkoutScore") || 0
     );
@@ -294,6 +308,18 @@ ${fatigueArray
 
               <p className="mt-1 text-zinc-300">
                 Highest Workout Score Yet
+              </p>
+            </div>
+          )}
+
+          {syncError && (
+            <div className="mb-5 w-full rounded-2xl border border-red-500 bg-red-500/10 p-4 text-center">
+              <p className="font-semibold text-red-400">
+                Couldn't sync to cloud
+              </p>
+
+              <p className="mt-1 text-zinc-300">
+                {syncError}
               </p>
             </div>
           )}

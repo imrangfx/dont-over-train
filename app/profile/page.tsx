@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { loadWorkoutHistory } from "@/lib/workouts";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -41,6 +42,19 @@ export default function ProfilePage() {
     loadUser();
   }, []);
 
+  useEffect(() => {
+    let active = true;
+
+    loadWorkoutHistory().then((result) => {
+      if (!active) return;
+      setHistory(result.history);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
 const totalWorkouts = history.length;
 
 const totalExercises = history.reduce(
@@ -58,7 +72,7 @@ const remainingMinutes = trainingMinutes % 60;
 
 const lastWorkout =
   history.length > 0
-    ? history[history.length - 1]
+    ? history[0]
     : null;
 
 const currentStreak = history.length;
