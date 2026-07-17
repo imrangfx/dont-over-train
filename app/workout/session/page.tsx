@@ -66,10 +66,7 @@ export default function SessionPage() {
   const hasHighFatigue = Object.values(
     muscleFatigue
   ).some((value) => value >= 70);
-  const mostFatiguedMuscle = Object.entries(
-    muscleFatigue
-  )
-    .sort((a, b) => b[1] - a[1])[0];
+
   const recoveryRecommendations = Object.entries(
     muscleFatigue
   )
@@ -250,41 +247,7 @@ export default function SessionPage() {
               </div>
             ))}
         </div>
-        {mostFatiguedMuscle && (
-          <div className="rounded-3xl bg-[#111] border border-[#222] p-5 mb-5">
-            <p className="text-zinc-400 text-sm mb-2">
-              Most Fatigued Muscle
-            </p>
 
-            <h3 className="text-xl font-semibold text-lime-400">
-              {mostFatiguedMuscle[0]
-                .replace(/([A-Z])/g, " $1")
-                .replace(/^./, (s) => s.toUpperCase())}
-            </h3>
-
-            <p className="mt-2 text-zinc-400">
-              {mostFatiguedMuscle[1]}% fatigue
-            </p>
-            <p
-              className={`mt-1 font-medium ${mostFatiguedMuscle[1] <= 30
-                ? "text-lime-400"
-                : mostFatiguedMuscle[1] <= 60
-                  ? "text-yellow-400"
-                  : mostFatiguedMuscle[1] <= 80
-                    ? "text-orange-400"
-                    : "text-red-500"
-                }`}
-            >
-              {mostFatiguedMuscle[1] <= 30
-                ? "Low"
-                : mostFatiguedMuscle[1] <= 60
-                  ? "Moderate"
-                  : mostFatiguedMuscle[1] <= 80
-                    ? "High"
-                    : "Very High"}
-            </p>
-          </div>
-        )}
         {hasHighFatigue && (
           <div className="rounded-3xl border border-yellow-500 bg-yellow-500/10 p-4 mb-5">
             <p className="font-semibold text-yellow-400">
