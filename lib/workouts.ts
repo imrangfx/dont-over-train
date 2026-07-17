@@ -52,9 +52,11 @@ function rowToEntry(row: any): WorkoutHistoryEntry {
     reps: row.total_reps ?? 0,
     durationMinutes: row.duration_minutes ?? 0,
     score: row.workout_score ?? 0,
-    bodyParts: row.body_parts
-      ? row.body_parts.split(",").map((s: string) => s.trim()).filter(Boolean)
-      : snapshot.bodyParts || [],
+    bodyParts: Array.isArray(row.body_parts)
+      ? row.body_parts
+      : typeof row.body_parts === "string" && row.body_parts.length > 0
+        ? row.body_parts.split(",").map((s: string) => s.trim()).filter(Boolean)
+        : snapshot.bodyParts || [],
     sections: snapshot.sections || [],
     exerciseList: snapshot.exerciseList || [],
     fatigueBreakdown: snapshot.fatigueBreakdown || {},
@@ -78,7 +80,7 @@ export async function saveWorkoutHistoryEntry(
         id: entry.id,
         user_id: userId,
         workout_date: new Date(entry.timestamp || Date.now()).toISOString(),
-        body_parts: entry.bodyParts.join(", "),
+        body_parts: entry.bodyParts,
         duration_minutes: entry.durationMinutes,
         total_sets: entry.sets,
         total_reps: entry.reps,
