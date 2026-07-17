@@ -20,7 +20,7 @@ export default function ProfilePage() {
   const router = useRouter();
 
   const [history, setHistory] = useState<any[]>([]);
-  const [filter, setFilter] = useState("30d");
+  const [filter, setFilter] = useState("all");
   const [showFilter, setShowFilter] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [avatarError, setAvatarError] = useState(false);
@@ -155,7 +155,7 @@ export default function ProfilePage() {
 
         <div className="mt-8 flex items-center justify-between gap-4">
 
-        <div className="flex items-center gap-3 flex-1 min-w-0">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
 
             <div className="flex h-16 w-16 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900 overflow-hidden">
               {googleAvatarUrl && !avatarError ? (
@@ -197,12 +197,13 @@ export default function ProfilePage() {
             >
 
               {{
+                "today": "Today",
                 "7d": "7D",
                 "14d": "14D",
                 "30d": "30D",
                 "6m": "6M",
                 "1y": "1Y",
-                "all": "All",
+                "all": "All Days",
               }[filter]} ▼
 
             </button>
@@ -212,12 +213,13 @@ export default function ProfilePage() {
               <div className="absolute right-0 mt-2 w-44 rounded-xl border border-zinc-800 bg-[#111] p-2 z-50">
 
                 {[
+                  ["today", "Today"],
                   ["7d", "Last 7 Days"],
                   ["14d", "Last 14 Days"],
                   ["30d", "Last 30 Days"],
                   ["6m", "Last 6 Months"],
                   ["1y", "Last 1 Year"],
-                  ["all", "All Time"],
+                  ["all", "All Days"],
                 ].map(([id, label]) => (
 
                   <button
