@@ -55,6 +55,7 @@ function BodyPartCard({ name, slug, image }: BodyPart) {
 }
 
 export default function Home() {
+  
   return (
     <main className="min-h-screen bg-black px-6 pt-8 pb-10 text-white">
       <div className="mx-auto w-full max-w-[390px]">

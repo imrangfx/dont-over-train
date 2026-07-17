@@ -4,9 +4,24 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Info } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { FcGoogle } from "react-icons/fc";
 
 export default function OnboardingPage() {
     const router = useRouter();
+    const signInWithGoogle = async () => {
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+                redirectTo: window.location.origin,
+            },
+        });
+
+        if (error) {
+            console.error(error);
+            alert(error.message);
+        }
+    };
 
     return (
         <main className="min-h-screen bg-black text-white flex items-center justify-center px-6">
@@ -28,7 +43,7 @@ export default function OnboardingPage() {
                     onClick={() => {
                         localStorage.setItem("hasSeenOnboarding", "true");
                         router.replace("/home");
-                      }}
+                    }}
                     className="w-full h-14 rounded-3xl bg-lime-400 text-black text-lg font-semibold transition-all duration-200 hover:brightness-110 hover:shadow-[0_0_24px_rgba(57,255,20,0.25)] active:scale-95"
                 >
                     Continue as Guest
@@ -48,10 +63,13 @@ export default function OnboardingPage() {
                 </div>
 
                 {/* Create Account */}
+                
                 <button
-                    className="w-full h-14 rounded-3xl bg-yellow-400 text-black text-lg font-semibold transition-all duration-200 hover:brightness-110 hover:shadow-[0_0_24px_rgba(255,212,0,0.20)] active:scale-95"
+                    onClick={signInWithGoogle}
+                    className="w-full h-14 rounded-3xl bg-white text-black text-lg font-semibold flex items-center justify-center gap-3 transition-all duration-200 hover:brightness-95 active:scale-95"
                 >
-                    Create Account
+                    <FcGoogle size={24} />
+                    Continue with Google
                 </button>
 
                 <p className="mt-2 text-xs text-gray-400">
@@ -59,14 +77,9 @@ export default function OnboardingPage() {
                 </p>
 
                 {/* Sign In */}
-                <p className="mt-8 text-sm leading-5 text-gray-400">
-                    Already have an account?{" "}
-                    <Link
-                        href="#"
-                        className="text-lime-400 font-semibold hover:underline"
-                    >
-                        Sign In
-                    </Link>
+                <p className="mt-8 text-sm leading-5 text-gray-400 text-center">
+                    Sign in with your Google account to sync your workouts
+                    across all your devices.
                 </p>
 
                 {/* Info */}
