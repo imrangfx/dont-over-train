@@ -23,23 +23,60 @@ export default function ProfilePage() {
   const [filter, setFilter] = useState("30d");
   const [showFilter, setShowFilter] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [avatarError, setAvatarError] = useState(false);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     localStorage.removeItem("hasSeenOnboarding");
+    setUser(null);
     router.replace("/");
   };
 
+  const handleGoogleSignIn = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin,
+      },
+    });
+
+    if (error) {
+      console.error(error);
+      alert(error.message);
+    }
+  };
+
   useEffect(() => {
+    let active = true;
+
     async function loadUser() {
       const {
-        data: { user },
-      } = await supabase.auth.getUser();
+        data: { session },
+      } = await supabase.auth.getSession();
 
-      setUser(user);
+      if (!active) return;
+      setUser(session?.user ?? null);
+      setAvatarError(false);
     }
 
     loadUser();
+
+    // Keep auth state in sync with actual sign-in/sign-out events, instead
+    // of relying solely on a one-time check at mount. This ensures the
+    // guest-only "Backup your workouts" button and the logged-in header
+    // never go stale relative to the real Supabase session.
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (!active) return;
+        setUser(session?.user ?? null);
+        setAvatarError(false);
+      }
+    );
+
+    return () => {
+      active = false;
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -77,6 +114,12 @@ const lastWorkout =
 
 const currentStreak = history.length;
 
+const googleAvatarUrl =
+  user?.user_metadata?.avatar_url || user?.user_metadata?.picture || null;
+
+const googleFullName =
+  user?.user_metadata?.full_name || user?.user_metadata?.name || null;
+
 return (
   <main className="min-h-screen bg-black px-6 py-8 text-white">
 
@@ -100,11 +143,12 @@ return (
         <div className="flex items-center gap-4">
 
           <div className="flex h-20 w-20 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900 overflow-hidden">
-            {user?.user_metadata?.avatar_url ? (
+            {googleAvatarUrl && !avatarError ? (
               <img
-                src={user.user_metadata.avatar_url}
+                src={googleAvatarUrl}
                 alt="Profile"
                 className="h-full w-full object-cover"
+                onError={() => setAvatarError(true)}
               />
             ) : (
               <CircleUserRound
@@ -117,7 +161,7 @@ return (
           <div>
 
             <h1 className="text-2xl font-bold">
-              {user?.user_metadata?.full_name || "Guest User"}
+              {user ? googleFullName || "Google User" : "Guest User"}
             </h1>
 
             <span className="mt-2 inline-block rounded-full bg-lime-400/20 px-3 py-1 text-xs font-semibold text-lime-400">
@@ -277,9 +321,24 @@ return (
       {/* Upgrade */}
 
       {!user && (
-        <div className="mt-8 rounded-2xl border border-yellow-500 bg-yellow-500/5 p-5">
-          ...
-        </div>
+        <button
+          onClick={handleGoogleSignIn}
+          className="mt-8 w-full rounded-2xl border border-yellow-500 bg-yellow-500/5 p-5 text-left transition hover:bg-yellow-500/10"
+        >
+          <div className="flex items-center gap-3">
+            <UserPlus size={20} className="shrink-0 text-yellow-400" />
+
+            <div>
+              <p className="font-semibold text-yellow-400">
+                Backup your workouts
+              </p>
+
+              <p className="mt-1 text-sm text-zinc-400">
+                Sign in with Google to sync your history across devices.
+              </p>
+            </div>
+          </div>
+        </button>
       )}
 
       {user && (
