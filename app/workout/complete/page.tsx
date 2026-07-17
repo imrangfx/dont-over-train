@@ -39,12 +39,62 @@ export default function CompletePage() {
       100
     );
 
+    const fatigueTotals: Record<string, number> = {};
+
+    formatted.forEach((exercise: any) => {
+      if (!exercise.fatigueBreakdown) return;
+
+      Object.entries(exercise.fatigueBreakdown).forEach(
+        ([muscle, value]) => {
+          fatigueTotals[muscle] =
+            (fatigueTotals[muscle] || 0) +
+            Number(value);
+        }
+      );
+    });
+
     const historyEntry = {
+      id: crypto.randomUUID(),
+
       date: new Date().toLocaleDateString(),
+
+      timestamp: Date.now(),
+
       exercises: formatted.length,
+
       sets: totalSetsHistory,
+
       reps: totalRepsHistory,
+
+      durationMinutes: formatted.length * 8, // পরে dynamic করবো
+
       score,
+
+      bodyParts: Array.from(
+        new Set(
+          formatted
+            .map((item: any) => item.bodyPart)
+            .filter(Boolean)
+        )
+      ),
+      sections: Array.from(
+        new Set(
+          formatted
+            .map((item: any) => item.section)
+            .filter(Boolean)
+        )
+      ),
+
+      exerciseList: formatted.map((item: any) => ({
+        name: item.exercise,
+        bodyPart: item.bodyPart,
+        section: item.section,
+        sets: item.sets,
+        reps: item.reps,
+        weights: item.setWeights || [],
+        fatigueBreakdown: item.fatigueBreakdown || {},
+      })),
+      fatigueBreakdown: fatigueTotals,
     };
 
     const alreadySaved =
@@ -109,19 +159,20 @@ export default function CompletePage() {
     ),
     100
   );
-  const fatigueTotals: Record<string, number> = {};
 
-  workouts.forEach((exercise) => {
-    if (!exercise.fatigueBreakdown) return;
+  const fatigueTotals = workouts.reduce(
+    (acc: Record<string, number>, exercise: any) => {
+      const fatigue = exercise.fatigueBreakdown || {};
+  
+      Object.entries(fatigue).forEach(([muscle, value]) => {
+        acc[muscle] = (acc[muscle] || 0) + Number(value);
+      });
+  
+      return acc;
+    },
+    {}
+  );
 
-    Object.entries(exercise.fatigueBreakdown).forEach(
-      ([muscle, value]) => {
-        fatigueTotals[muscle] =
-          (fatigueTotals[muscle] || 0) +
-          Number(value);
-      }
-    );
-  });
 
   const fatigueArray = Object.entries(
     fatigueTotals
@@ -131,10 +182,6 @@ export default function CompletePage() {
       .replace(/^./, (s) => s.toUpperCase()),
     value: Math.min(Number(value), 100),
   }));
-  const mostFatiguedMuscle =
-    fatigueArray.sort(
-      (a, b) => b.value - a.value
-    )[0];
   const downloadSummary = () => {
 
     const summary = `
@@ -359,29 +406,8 @@ ${fatigueArray
         {/* Start New Workout */}
         <button
           onClick={() => {
-
-            const history = JSON.parse(
-              localStorage.getItem("workoutHistory") || "[]"
-            );
-
-            history.unshift({
-              date: new Date().toLocaleDateString(),
-              score: workoutScore,
-              exercises: workouts.length,
-              sets: totalSets,
-              reps: totalReps,
-              mostFatigued:
-                mostFatiguedMuscle?.name || "N/A",
-            });
-
-            localStorage.setItem(
-              "workoutHistory",
-              JSON.stringify(history.slice(0, 10))
-            );
-
             localStorage.removeItem("currentWorkout");
-
-            window.location.href = "/";
+            window.location.href = "/home";
           }}
           className="w-full rounded-2xl bg-lime-400 py-5 text-2xl font-semibold text-black"
         >
