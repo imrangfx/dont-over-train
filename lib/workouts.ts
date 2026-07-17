@@ -26,6 +26,7 @@ export type WorkoutHistoryEntry = {
 };
 
 const LOCAL_KEY = "workoutHistory";
+const MIGRATION_LOCK_KEY = "guestMigrationInProgress";
 
 function readLocalHistory(): WorkoutHistoryEntry[] {
   try {
@@ -90,6 +91,47 @@ export async function saveWorkoutHistoryEntry(
     return { error: error?.message ?? null };
   } catch (err) {
     return { error: err instanceof Error ? err.message : "Failed to sync workout." };
+  }
+}
+
+/**
+ * Uploads any locally-stored guest workouts to Supabase after a guest signs
+ * in. Safe to call on every session check - it no-ops if there is nothing
+ * local to migrate, and upserts by id so re-running never creates duplicates.
+ * Local history is only cleared once every entry has synced successfully,
+ * so a failed attempt (e.g. offline) can be retried later without data loss.
+ */
+export async function migrateGuestHistoryToCloud(
+  userId: string
+): Promise<{ migrated: number; error: string | null }> {
+  if (typeof window === "undefined") {
+    return { migrated: 0, error: null };
+  }
+
+  const localHistory = readLocalHistory();
+
+  if (localHistory.length === 0) {
+    return { migrated: 0, error: null };
+  }
+
+  if (localStorage.getItem(MIGRATION_LOCK_KEY) === "true") {
+    return { migrated: 0, error: null };
+  }
+
+  localStorage.setItem(MIGRATION_LOCK_KEY, "true");
+
+  try {
+    for (const entry of localHistory) {
+      const { error } = await saveWorkoutHistoryEntry(entry, userId);
+      if (error) {
+        return { migrated: 0, error };
+      }
+    }
+
+    localStorage.removeItem(LOCAL_KEY);
+    return { migrated: localHistory.length, error: null };
+  } finally {
+    localStorage.removeItem(MIGRATION_LOCK_KEY);
   }
 }
 

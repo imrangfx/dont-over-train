@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import OnboardingPage from "./onboarding/page";
 import { supabase } from "@/lib/supabase";
+import { migrateGuestHistoryToCloud } from "@/lib/workouts";
 
 export default function Page() {
   const router = useRouter();
@@ -18,6 +19,13 @@ export default function Page() {
       // Logged in with Google
       if (session) {
         localStorage.setItem("hasSeenOnboarding", "true");
+
+        try {
+          await migrateGuestHistoryToCloud(session.user.id);
+        } catch (err) {
+          console.error("Guest history migration failed:", err);
+        }
+
         router.replace("/home");
         return;
       }

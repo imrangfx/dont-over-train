@@ -3,13 +3,24 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { migrateGuestHistoryToCloud } from "@/lib/workouts";
 
 export default function AuthCallback() {
   const router = useRouter();
 
   useEffect(() => {
     async function handleCallback() {
-      await supabase.auth.getSession();
+      const { data } = await supabase.auth.getSession();
+      const userId = data.session?.user?.id;
+
+      if (userId) {
+        try {
+          await migrateGuestHistoryToCloud(userId);
+        } catch (err) {
+          console.error("Guest history migration failed:", err);
+        }
+      }
+
       router.replace("/home");
     }
 
