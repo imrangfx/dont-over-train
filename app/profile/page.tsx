@@ -153,11 +153,11 @@ export default function ProfilePage() {
         {/* Header */}
 
 
-        <div className="mt-8 flex items-start justify-between">
+        <div className="mt-8 flex items-center justify-between gap-4">
 
-          <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
 
-            <div className="flex h-20 w-20 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900 overflow-hidden">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900 overflow-hidden">
               {googleAvatarUrl && !avatarError ? (
                 <img
                   src={googleAvatarUrl}
@@ -173,15 +173,15 @@ export default function ProfilePage() {
               )}
             </div>
 
-            <div>
+            <div className="min-w-0 flex-1">
 
-              <h1 className="text-2xl font-bold">
+              <h1 className="text-2xl font-bold leading-tight">
                 {user ? displayName : "Guest User"}
               </h1>
 
-              <span className="mt-2 inline-block rounded-full bg-lime-400/20 px-3 py-1 text-xs font-semibold text-lime-400">
+              <p className="mt-1 text-sm text-lime-400 truncate">
                 {user?.email || "Guest"}
-              </span>
+              </p>
 
             </div>
 
@@ -193,16 +193,16 @@ export default function ProfilePage() {
 
             <button
               onClick={() => setShowFilter(!showFilter)}
-              className="rounded-xl border border-zinc-800 bg-[#111] px-4 py-2 text-sm text-zinc-300 hover:border-lime-400"
+              className="rounded-full border border-zinc-800 bg-[#111] px-3 py-1.5 text-sm text-zinc-300 hover:border-lime-400"
             >
 
               {{
-                "7d": "Last 7 Days",
-                "14d": "Last 14 Days",
-                "30d": "Last 30 Days",
-                "6m": "Last 6 Months",
-                "1y": "Last 1 Year",
-                "all": "All Time",
+                "7d": "7D",
+                "14d": "14D",
+                "30d": "30D",
+                "6m": "6M",
+                "1y": "1Y",
+                "all": "All",
               }[filter]} ▼
 
             </button>
