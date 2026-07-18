@@ -2,10 +2,31 @@
 
 import { useEffect, useState } from "react";
 import { getCurrentUserId, saveWorkoutHistoryEntry } from "@/lib/workouts";
+import { recordWorkoutPersonalRecords } from "@/lib/personalRecords";
+import { calculateOverallLevel } from "@/lib/progression";
+import { useToast } from "@/components/ui/Toast";
+import LevelUpCelebration from "@/components/LevelUpCelebration";
+
+/** Best (highest) weight lifted for a single exercise this session. */
+function maxWeightLifted(item: any): number {
+  const weights = Array.isArray(item.setWeights) ? item.setWeights : [];
+  const numeric = weights.filter(
+    (w: unknown): w is number => typeof w === "number" && w > 0
+  );
+  if (numeric.length > 0) return Math.max(...numeric);
+  return typeof item.weight === "number" ? item.weight : 0;
+}
+
 export default function CompletePage() {
+  const { toast } = useToast();
   const [workouts, setWorkouts] = useState<any[]>([]);
   const [isPR, setIsPR] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
+  const [levelUp, setLevelUp] = useState<{
+    level: number;
+    title: string;
+    color: string;
+  } | null>(null);
 
   useEffect(() => {
     const saved = JSON.parse(
@@ -124,6 +145,43 @@ export default function CompletePage() {
             historyEntry,
             ...history,
           ])
+        );
+      }
+    })();
+
+    // Progressive Overload tracking: independent of the history save above -
+    // runs for both guests (localStorage) and signed-in users (Supabase).
+    (async () => {
+      const performed = formatted.map((item: any) => ({
+        name: item.exercise,
+        bodyPart: item.bodyPart,
+        weight: maxWeightLifted(item),
+      }));
+
+      const result = await recordWorkoutPersonalRecords(performed);
+      if (result.error) return;
+
+      const previousLevel = calculateOverallLevel(result.previousRecords);
+      const newLevel = calculateOverallLevel(result.records);
+
+      result.brokenRecords.forEach(({ record, previousWeight }) => {
+        const delta =
+          previousWeight != null
+            ? ` (+${(record.weight - previousWeight).toFixed(1)} kg)`
+            : "";
+        toast(`🏆 New Personal Record! ${record.exerciseName} — ${record.weight} kg${delta}`);
+      });
+
+      if (newLevel.level > previousLevel.level) {
+        setLevelUp({ level: newLevel.level, title: newLevel.title, color: newLevel.color });
+      } else if (
+        result.brokenRecords.length > 0 &&
+        newLevel.progressPercent > previousLevel.progressPercent
+      ) {
+        toast(
+          newLevel.nextLevel
+            ? `📈 Progress increased! Getting closer to ${newLevel.nextLevel.title}.`
+            : "📈 Progress increased!"
         );
       }
     })();
@@ -444,6 +502,15 @@ ${fatigueArray
         </button>
 
       </div>
+
+      {levelUp && (
+        <LevelUpCelebration
+          level={levelUp.level}
+          title={levelUp.title}
+          color={levelUp.color}
+          onClose={() => setLevelUp(null)}
+        />
+      )}
     </main>
   );
 }

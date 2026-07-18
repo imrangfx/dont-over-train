@@ -8,6 +8,12 @@ import {
   calculateWorkoutInsights,
   loadWorkoutHistory,
 } from "@/lib/workouts";
+import { loadPersonalRecords } from "@/lib/personalRecords";
+import {
+  calculateOverallLevel,
+  getHighestPersonalRecord,
+  type PersonalRecord,
+} from "@/lib/progression";
 import {
   CircleUserRound,
   Trophy,
@@ -32,6 +38,8 @@ export default function ProfilePage() {
   const [user, setUser] = useState<any>(null);
   const [avatarError, setAvatarError] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(true);
+  const [personalRecords, setPersonalRecords] = useState<PersonalRecord[]>([]);
+  const [loadingRecords, setLoadingRecords] = useState(true);
 
   const handleGoogleSignIn = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
@@ -93,6 +101,20 @@ export default function ProfilePage() {
       active = false;
     };
   }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    loadPersonalRecords().then((result) => {
+      if (!active) return;
+      setPersonalRecords(result.records);
+      setLoadingRecords(false);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [user]);
   const filteredHistory = history.filter((workout) => {
     if (filter === "all") return true;
 
@@ -151,6 +173,9 @@ export default function ProfilePage() {
 
   const currentStreak = calculateCurrentStreak(history);
   const insights = calculateWorkoutInsights(filteredHistory);
+
+  const overallLevel = calculateOverallLevel(personalRecords);
+  const highestPR = getHighestPersonalRecord(personalRecords);
 
   const googleAvatarUrl =
     user?.user_metadata?.avatar_url || user?.user_metadata?.picture || null;
@@ -290,6 +315,59 @@ export default function ProfilePage() {
 
         </div>
 
+        {/* Progressive Overload Level */}
+
+        {loadingRecords ? (
+          <div className="mt-6" aria-busy="true">
+            <LoadingCard rows={2} />
+          </div>
+        ) : (
+          <div
+            className="card-surface mt-6 overflow-hidden p-5"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(17,17,17,1) 0%, rgba(17,17,17,1) 60%, rgba(57,255,20,0.06) 100%)",
+            }}
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-xl" aria-hidden="true">
+                  🔥
+                </span>
+                <span
+                  className="text-2xl font-bold"
+                  style={{ color: overallLevel.color }}
+                >
+                  Level {overallLevel.level}
+                </span>
+              </div>
+
+              <span className="text-sm font-semibold text-zinc-400">
+                {overallLevel.title}
+              </span>
+            </div>
+
+            <div className="mt-4 h-2.5 w-full overflow-hidden rounded-full bg-zinc-800">
+              <div
+                className="h-full rounded-full transition-all duration-500"
+                style={{
+                  width: `${overallLevel.progressPercent}%`,
+                  backgroundColor: overallLevel.color,
+                }}
+              />
+            </div>
+
+            <div className="mt-2 flex items-center justify-between text-xs text-zinc-500">
+              <span>{overallLevel.progressPercent}%</span>
+              <span>
+                {overallLevel.nextLevel
+                  ? `Next: ${overallLevel.nextLevel.title}`
+                  : "Max Level"}
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Stats */}
 
         {loadingHistory ? (
@@ -325,6 +403,14 @@ export default function ProfilePage() {
               title="Current Streak"
               value={`${currentStreak} Days`}
             />
+
+            <div className="col-span-2">
+              <StatCard
+                icon={<span aria-hidden="true">🏋</span>}
+                title={highestPR ? `Highest PR • ${highestPR.exerciseName}` : "Highest PR"}
+                value={highestPR ? `${highestPR.weight} kg` : "-"}
+              />
+            </div>
 
           </div>
         )}
