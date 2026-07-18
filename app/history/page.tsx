@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { loadWorkoutHistory, type WorkoutHistoryEntry } from "@/lib/workouts";
+import BottomNav from "@/components/BottomNav";
 
 export default function HistoryPage() {
   const [history, setHistory] = useState<WorkoutHistoryEntry[]>([]);
@@ -26,20 +27,12 @@ export default function HistoryPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-black text-white px-6 py-6">
+    <main className="min-h-screen bg-black px-6 py-6 pb-[calc(72px+env(safe-area-inset-bottom)+1.5rem)] text-white">
       <div className="max-w-md mx-auto">
 
         <div className="mb-8">
 
-          <Link
-            href="/profile"
-            className="inline-flex items-center gap-2 text-zinc-400 hover:text-white"
-          >
-            <ArrowLeft size={18} />
-            Back
-          </Link>
-
-          <h1 className="mt-6 text-4xl font-bold">
+          <h1 className="text-4xl font-bold">
             Workout History
           </h1>
 
@@ -119,6 +112,8 @@ export default function HistoryPage() {
           ))
         )}
       </div>
+
+      <BottomNav />
     </main>
   );
 }

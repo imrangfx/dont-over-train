@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ViewTransition } from "react";
-import { Clock3, CircleUserRound } from "lucide-react";
+import BottomNav from "@/components/BottomNav";
 
 type BodyPart = {
   name: string;
@@ -57,40 +57,18 @@ function BodyPartCard({ name, slug, image }: BodyPart) {
 export default function Home() {
   
   return (
-    <main className="min-h-screen bg-black px-6 pt-8 pb-10 text-white">
+    <main className="min-h-screen bg-black px-6 pt-8 pb-[calc(72px+env(safe-area-inset-bottom)+1.5rem)] text-white">
       <div className="mx-auto w-full max-w-[390px]">
         <header className="pb-5">
 
-          <div className="flex items-start justify-between">
+          <div>
+            <h1 className="heading-font text-[1.7rem] font-semibold tracking-tight text-[#39ff14]">
+              DontOverTrain
+            </h1>
 
-            <div>
-              <h1 className="heading-font text-[1.7rem] font-semibold tracking-tight text-[#39ff14]">
-                DontOverTrain
-              </h1>
-
-              <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-                Select muscle group to train
-              </p>
-            </div>
-
-            <div className="flex gap-2">
-
-              <Link
-                href="/history"
-                className="rounded-xl border border-zinc-800 bg-[#111111] p-2.5 transition-all hover:border-[#39ff14]"
-              >
-                <Clock3 size={20} className="text-zinc-300" />
-              </Link>
-
-              <Link
-                href="/profile"
-                className="rounded-xl border border-zinc-800 bg-[#111111] p-2.5 transition-all hover:border-[#39ff14]"
-              >
-                <CircleUserRound size={20} className="text-zinc-300" />
-              </Link>
-
-            </div>
-
+            <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+              Select muscle group to train
+            </p>
           </div>
 
           <div className="bg-yellow-500/5 border border-yellow-500 rounded-2xl p-4 mt-6 mb-8">
@@ -136,6 +114,8 @@ export default function Home() {
           </section>
         </ViewTransition>
       </div>
+
+      <BottomNav />
     </main>
   );
 }

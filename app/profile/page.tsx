@@ -6,15 +6,14 @@ import { supabase } from "@/lib/supabase";
 import { loadWorkoutHistory } from "@/lib/workouts";
 import { useRouter } from "next/navigation";
 import {
-  ArrowLeft,
   CircleUserRound,
-  ChevronRight,
   Trophy,
   Dumbbell,
   Flame,
   Clock3,
   UserPlus,
 } from "lucide-react";
+import BottomNav from "@/components/BottomNav";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -136,24 +135,13 @@ export default function ProfilePage() {
   const displayName = getDisplayName(googleFullName);
 
   return (
-    <main className="min-h-screen bg-black px-6 py-8 text-white">
+    <main className="min-h-screen bg-black px-6 py-8 pb-[calc(72px+env(safe-area-inset-bottom)+1.5rem)] text-white">
 
       <div className="mx-auto max-w-[390px]">
 
-        {/* Back */}
-
-        <Link
-          href="/home"
-          className="inline-flex items-center gap-2 text-zinc-400 hover:text-white"
-        >
-          <ArrowLeft size={18} />
-          Back
-        </Link>
-
         {/* Header */}
 
-
-        <div className="mt-8 flex items-center justify-between gap-4">
+        <div className="mt-2 flex items-center justify-between gap-4">
 
           <div className="flex items-center gap-3 flex-1 min-w-0">
 
@@ -193,18 +181,22 @@ export default function ProfilePage() {
 
             <button
               onClick={() => setShowFilter(!showFilter)}
-              className="rounded-full border border-zinc-800 bg-[#111] px-3 py-1.5 text-sm text-zinc-300 hover:border-lime-400"
+              className="inline-flex w-[7.5rem] shrink-0 items-center justify-between rounded-full border border-zinc-800 bg-[#111] px-3 py-1.5 text-sm text-zinc-300 hover:border-lime-400"
             >
 
-              {{
-                "today": "Today",
-                "7d": "7D",
-                "14d": "14D",
-                "30d": "30D",
-                "6m": "6M",
-                "1y": "1Y",
-                "all": "All Days",
-              }[filter]} ▼
+              <span className="truncate">
+                {{
+                  "today": "Today",
+                  "7d": "7D",
+                  "14d": "14D",
+                  "30d": "30D",
+                  "6m": "6M",
+                  "1y": "1Y",
+                  "all": "All Days",
+                }[filter]}
+              </span>
+
+              <span className="ml-1 shrink-0">▼</span>
 
             </button>
 
@@ -368,6 +360,8 @@ export default function ProfilePage() {
         )}
 
       </div>
+
+      <BottomNav />
     </main>
   );
 }
