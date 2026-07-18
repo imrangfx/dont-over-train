@@ -153,8 +153,14 @@ export type LevelProgress = {
   nextThresholdMin: number | null;
 };
 
-/** Calculates level + progress for a single weight value within a category. */
-export function calculateLevel(
+/**
+ * Calculates level + progress for a single weight value within one category,
+ * in isolation. Useful for a future per-category breakdown view. Not used
+ * for the overall level anymore - see calculateOverallStrength() below for
+ * why a single category's PR must not be able to determine the user's
+ * overall level on its own.
+ */
+export function calculateCategoryLevel(
   category: ExerciseCategory,
   weight: number
 ): LevelProgress {
@@ -203,31 +209,133 @@ export type PersonalRecord = {
   achievedAt: string;
 };
 
+const ALL_CATEGORIES = Object.keys(CATEGORY_LABELS) as ExerciseCategory[];
+
 /**
- * The user's overall level = the highest level reached by any single
- * category's PR. Because a category's level is derived purely from its
- * all-time-highest PR weight, and PRs never decrease, the overall level
- * can never regress either.
+ * Converts a single category's PR weight into a normalized 0-100 score,
+ * using the same CATEGORY_THRESHOLDS curve as before. The 8 level minimums
+ * become 8 evenly-spaced anchor points (0, 100/7, 200/7, ... 100) and the
+ * score is linearly interpolated between them, so it rises smoothly with
+ * every PR instead of jumping only when a level boundary is crossed.
  */
-export function calculateOverallLevel(records: PersonalRecord[]): LevelProgress {
-  if (!records || records.length === 0) {
-    return calculateLevel("upperBodyPush", 0);
-  }
+export function calculateCategoryScore(
+  category: ExerciseCategory,
+  weight: number
+): number {
+  const thresholds = CATEGORY_THRESHOLDS[category];
+  const safeWeight = Number.isFinite(weight) && weight > 0 ? weight : 0;
+  const maxIndex = thresholds.length - 1;
 
-  let best: LevelProgress | null = null;
+  if (maxIndex <= 0) return 0;
+  if (safeWeight <= thresholds[0].min) return 0;
+  if (safeWeight >= thresholds[maxIndex].min) return 100;
 
-  for (const record of records) {
-    const progress = calculateLevel(record.category, record.weight);
-    if (
-      !best ||
-      progress.level > best.level ||
-      (progress.level === best.level && progress.progressPercent > best.progressPercent)
-    ) {
-      best = progress;
+  const anchorScore = (index: number) => (index / maxIndex) * 100;
+
+  for (let i = 0; i < maxIndex; i++) {
+    const lower = thresholds[i];
+    const upper = thresholds[i + 1];
+
+    if (safeWeight >= lower.min && safeWeight < upper.min) {
+      const span = upper.min - lower.min;
+      const fraction = span > 0 ? (safeWeight - lower.min) / span : 0;
+      return anchorScore(i) + fraction * (anchorScore(i + 1) - anchorScore(i));
     }
   }
 
-  return best ?? calculateLevel("upperBodyPush", 0);
+  return 0;
+}
+
+/**
+ * Overall Strength Score (0-100): the average of every category's score,
+ * including categories with no PR yet (score 0). Averaging across ALL
+ * categories - not just the ones trained - is what makes the system
+ * reflect balanced, long-term strength rather than a single lift:
+ * a lifter who only trains one category can never push the average past
+ * roughly 1/6th of the way to the top, no matter how heavy that one lift is.
+ */
+export function calculateOverallStrength(records: PersonalRecord[]): {
+  score: number;
+  categoryScores: Record<ExerciseCategory, number>;
+} {
+  const bestWeightByCategory = new Map<ExerciseCategory, number>();
+
+  for (const record of records || []) {
+    const current = bestWeightByCategory.get(record.category) ?? 0;
+    if (record.weight > current) {
+      bestWeightByCategory.set(record.category, record.weight);
+    }
+  }
+
+  const categoryScores = {} as Record<ExerciseCategory, number>;
+  let total = 0;
+
+  for (const category of ALL_CATEGORIES) {
+    const score = calculateCategoryScore(category, bestWeightByCategory.get(category) ?? 0);
+    categoryScores[category] = score;
+    total += score;
+  }
+
+  return { score: total / ALL_CATEGORIES.length, categoryScores };
+}
+
+/** Each level occupies an equal-width band of the 0-100 Overall Strength Score. */
+const LEVEL_SCORE_SPAN = 100 / LEVELS.length;
+
+/**
+ * Maps an Overall Strength Score (0-100) to a level. Every level requires an
+ * equal jump in overall, balanced strength, so Legend - the top band - can
+ * only be reached with very high PRs spread across virtually every
+ * category, not a single outstanding lift.
+ */
+export function calculateLevel(score: number): LevelNumber {
+  const clamped = Math.min(100, Math.max(0, score));
+  const index = Math.min(LEVELS.length - 1, Math.floor(clamped / LEVEL_SCORE_SPAN));
+  return (index + 1) as LevelNumber;
+}
+
+/** Smooth 0-100 progress toward the next level, based on where the score sits inside the current level's band. */
+export function calculateProgress(score: number): {
+  progressPercent: number;
+  levelMin: number;
+  levelMax: number;
+} {
+  const clamped = Math.min(100, Math.max(0, score));
+  const level = calculateLevel(clamped);
+  const levelMin = (level - 1) * LEVEL_SCORE_SPAN;
+  const levelMax = level * LEVEL_SCORE_SPAN;
+  const span = levelMax - levelMin;
+
+  const progressPercent =
+    span > 0
+      ? Math.min(100, Math.max(0, Math.round(((clamped - levelMin) / span) * 100)))
+      : 100;
+
+  return { progressPercent, levelMin, levelMax };
+}
+
+/**
+ * The user's overall level, derived from the Overall Strength Score across
+ * every category (see calculateOverallStrength()) rather than any single
+ * PR. Because every input is an all-time-highest PR weight and PRs never
+ * decrease, the overall score - and therefore the level - can never regress.
+ */
+export function calculateOverallLevel(records: PersonalRecord[]): LevelProgress {
+  const { score } = calculateOverallStrength(records || []);
+  const level = calculateLevel(score);
+  const def = getLevelDefinition(level);
+  const next = getNextLevel(level);
+  const { progressPercent, levelMin, levelMax } = calculateProgress(score);
+
+  return {
+    level,
+    title: def.title,
+    color: def.color,
+    progressPercent,
+    nextLevel: next,
+    currentThresholdMin: levelMin,
+    nextThresholdMin: next ? levelMax : null,
+  };
 }
 
 /** Highest raw PR weight across every exercise, regardless of category. */
