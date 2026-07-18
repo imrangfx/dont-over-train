@@ -87,6 +87,76 @@ export function calculateCurrentStreak(
   return streak;
 }
 
+export type WorkoutInsights = {
+  mostTrainedMuscle: string;
+  bestWorkoutScore: string;
+  averageWorkoutTime: string;
+  totalReps: string;
+  totalSets: string;
+};
+
+const EMPTY_INSIGHTS: WorkoutInsights = {
+  mostTrainedMuscle: "-",
+  bestWorkoutScore: "-",
+  averageWorkoutTime: "-",
+  totalReps: "-",
+  totalSets: "-",
+};
+
+/** Aggregate insights for a (possibly filtered) workout history list. */
+export function calculateWorkoutInsights(
+  workouts: Array<{
+    bodyParts?: string[];
+    score?: number;
+    durationMinutes?: number;
+    reps?: number;
+    sets?: number;
+  }>
+): WorkoutInsights {
+  if (!workouts || workouts.length === 0) {
+    return EMPTY_INSIGHTS;
+  }
+
+  const muscleCounts: Record<string, number> = {};
+  let bestScore = 0;
+  let totalDuration = 0;
+  let totalReps = 0;
+  let totalSets = 0;
+
+  for (const workout of workouts) {
+    for (const muscle of workout.bodyParts || []) {
+      if (!muscle) continue;
+      muscleCounts[muscle] = (muscleCounts[muscle] || 0) + 1;
+    }
+
+    const score = Number(workout.score) || 0;
+    if (score > bestScore) bestScore = score;
+
+    totalDuration += Number(workout.durationMinutes) || 0;
+    totalReps += Number(workout.reps) || 0;
+    totalSets += Number(workout.sets) || 0;
+  }
+
+  let mostTrainedMuscle = "-";
+  let topCount = 0;
+  for (const [muscle, count] of Object.entries(muscleCounts)) {
+    if (count > topCount) {
+      topCount = count;
+      mostTrainedMuscle = muscle;
+    }
+  }
+
+  const avgMinutes = Math.round(totalDuration / workouts.length);
+
+  return {
+    mostTrainedMuscle,
+    bestWorkoutScore: bestScore > 0 ? String(bestScore) : "-",
+    averageWorkoutTime: avgMinutes > 0 ? String(avgMinutes) : "-",
+    totalReps: totalReps > 0 ? totalReps.toLocaleString() : "-",
+    totalSets: totalSets > 0 ? totalSets.toLocaleString() : "-",
+  };
+}
+
 const LOCAL_KEY = "workoutHistory";
 const MIGRATION_LOCK_KEY = "guestMigrationInProgress";
 

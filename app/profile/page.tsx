@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { calculateCurrentStreak, loadWorkoutHistory } from "@/lib/workouts";
+import {
+  calculateCurrentStreak,
+  calculateWorkoutInsights,
+  loadWorkoutHistory,
+} from "@/lib/workouts";
 import { useRouter } from "next/navigation";
 import {
   CircleUserRound,
@@ -12,6 +16,10 @@ import {
   Flame,
   Clock3,
   UserPlus,
+  Timer,
+  BicepsFlexed,
+  ClipboardList,
+  Activity,
 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 
@@ -147,6 +155,7 @@ export default function ProfilePage() {
       : null;
 
   const currentStreak = calculateCurrentStreak(history);
+  const insights = calculateWorkoutInsights(filteredHistory);
 
   const googleAvatarUrl =
     user?.user_metadata?.avatar_url || user?.user_metadata?.picture || null;
@@ -362,6 +371,66 @@ export default function ProfilePage() {
 
         </div>
 
+        {/* Workout Insights */}
+
+        <div className="mt-8 rounded-2xl border border-zinc-800 bg-[#111111] p-5">
+
+          <h2 className="text-lg font-semibold">
+            Workout Insights
+          </h2>
+
+          <div className="mt-5 space-y-4">
+
+            <InsightRow
+              icon={<Activity size={18} />}
+              label="Most Trained Muscle"
+              value={insights.mostTrainedMuscle === "-" ? "-" : insights.mostTrainedMuscle}
+            />
+
+            <InsightRow
+              icon={<Trophy size={18} />}
+              label="Best Workout Score"
+              value={
+                insights.bestWorkoutScore === "-"
+                  ? "-"
+                  : `${insights.bestWorkoutScore} Points`
+              }
+            />
+
+            <InsightRow
+              icon={<Timer size={18} />}
+              label="Average Workout Time"
+              value={
+                insights.averageWorkoutTime === "-"
+                  ? "-"
+                  : `${insights.averageWorkoutTime} min`
+              }
+            />
+
+            <InsightRow
+              icon={<BicepsFlexed size={18} />}
+              label="Total Reps"
+              value={
+                insights.totalReps === "-"
+                  ? "-"
+                  : `${insights.totalReps} Reps`
+              }
+            />
+
+            <InsightRow
+              icon={<ClipboardList size={18} />}
+              label="Total Sets"
+              value={
+                insights.totalSets === "-"
+                  ? "-"
+                  : `${insights.totalSets} Sets`
+              }
+            />
+
+          </div>
+
+        </div>
+
         {/* Upgrade */}
 
         {!user && (
@@ -423,6 +492,33 @@ function StatCard({
       <div className="mt-1 text-sm text-zinc-500">
         {title}
       </div>
+    </div>
+  );
+}
+
+function InsightRow({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <div className="flex min-w-0 items-center gap-3">
+        <div className="text-lime-400 shrink-0">
+          {icon}
+        </div>
+        <span className="text-sm text-zinc-400">
+          {label}
+        </span>
+      </div>
+
+      <span className="shrink-0 text-right font-semibold text-white">
+        {value}
+      </span>
     </div>
   );
 }
