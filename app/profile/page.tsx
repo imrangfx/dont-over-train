@@ -23,13 +23,17 @@ import {
   ChevronRight,
 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
+import LoadingCard from "@/components/ui/LoadingCard";
+import { useToast } from "@/components/ui/Toast";
 
 export default function ProfilePage() {
+  const { toast } = useToast();
   const [history, setHistory] = useState<any[]>([]);
   const [filter, setFilter] = useState("all");
   const [showFilter, setShowFilter] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [avatarError, setAvatarError] = useState(false);
+  const [loadingHistory, setLoadingHistory] = useState(true);
 
   const handleGoogleSignIn = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
@@ -41,7 +45,7 @@ export default function ProfilePage() {
 
     if (error) {
       console.error(error);
-      alert(error.message);
+      toast(error.message || "Couldn't start Google sign-in.", "error");
     }
   };
 
@@ -84,6 +88,7 @@ export default function ProfilePage() {
     loadWorkoutHistory().then((result) => {
       if (!active) return;
       setHistory(result.history);
+      setLoadingHistory(false);
     });
 
     return () => {
@@ -170,8 +175,10 @@ export default function ProfilePage() {
 
   const displayName = getDisplayName(googleFullName);
 
+  const hasInsightData = filteredHistory.length > 0;
+
   return (
-    <main className="min-h-screen bg-black px-6 py-8 pb-[calc(72px+env(safe-area-inset-bottom)+1.5rem)] text-white">
+    <main className="min-h-screen bg-black px-6 py-8 pb-[calc(72px+env(safe-area-inset-bottom)+1.5rem)] text-white animate-[fade-in_200ms_ease-out]">
 
       <div className="mx-auto max-w-[390px]">
 
@@ -216,8 +223,12 @@ export default function ProfilePage() {
           <div className="relative">
 
             <button
+              type="button"
               onClick={() => setShowFilter(!showFilter)}
-              className="inline-flex w-[7.5rem] shrink-0 items-center justify-between rounded-full border border-zinc-800 bg-[#111] px-3 py-1.5 text-sm text-zinc-300 hover:border-lime-400"
+              aria-haspopup="listbox"
+              aria-expanded={showFilter}
+              aria-label="Filter workout history"
+              className="btn-base inline-flex w-[7.5rem] shrink-0 items-center justify-between rounded-full border border-zinc-800 bg-[#111] px-3 py-1.5 text-sm text-zinc-300 hover:border-lime-400"
             >
 
               <span className="truncate">
@@ -238,7 +249,11 @@ export default function ProfilePage() {
 
             {showFilter && (
 
-              <div className="absolute right-0 mt-2 w-44 rounded-xl border border-zinc-800 bg-[#111] p-2 z-50">
+              <div
+                role="listbox"
+                aria-label="History filter options"
+                className="absolute right-0 z-50 mt-2 w-44 rounded-xl border border-zinc-800 bg-[#111] p-2 animate-[fade-in_160ms_ease-out]"
+              >
 
                 {[
                   ["today", "Today"],
@@ -252,11 +267,14 @@ export default function ProfilePage() {
 
                   <button
                     key={id}
+                    type="button"
+                    role="option"
+                    aria-selected={filter === id}
                     onClick={() => {
                       setFilter(id);
                       setShowFilter(false);
                     }}
-                    className={`block w-full rounded-lg px-3 py-2 text-left text-sm ${filter === id
+                    className={`btn-base block w-full rounded-lg px-3 py-2 text-left text-sm ${filter === id
                       ? "bg-lime-400 text-black"
                       : "text-zinc-300 hover:bg-zinc-800"
                       }`}
@@ -276,43 +294,58 @@ export default function ProfilePage() {
 
         {/* Stats */}
 
-        <div className="mt-8 grid grid-cols-2 gap-4">
+        {loadingHistory ? (
+          <div className="mt-8 grid grid-cols-2 gap-4" aria-busy="true">
+            <LoadingCard rows={2} />
+            <LoadingCard rows={2} />
+            <LoadingCard rows={2} />
+            <LoadingCard rows={2} />
+          </div>
+        ) : (
+          <div className="mt-8 grid grid-cols-2 gap-4">
 
-          <StatCard
-            icon={<Dumbbell size={20} />}
-            title="Total Workouts"
-            value={String(totalWorkouts)}
-          />
+            <StatCard
+              icon={<Dumbbell size={20} />}
+              title="Total Workouts"
+              value={String(totalWorkouts)}
+            />
 
-          <StatCard
-            icon={<Trophy size={20} />}
-            title="Exercises Completed"
-            value={String(totalExercises)}
-          />
+            <StatCard
+              icon={<Trophy size={20} />}
+              title="Exercises Completed"
+              value={String(totalExercises)}
+            />
 
-          <StatCard
-            icon={<Clock3 size={20} />}
-            title="Training Time"
-            value={`${trainingHours}h ${remainingMinutes}m`}
-          />
+            <StatCard
+              icon={<Clock3 size={20} />}
+              title="Training Time"
+              value={`${trainingHours}h ${remainingMinutes}m`}
+            />
 
-          <StatCard
-            icon={<Flame size={20} />}
-            title="Current Streak"
-            value={`${currentStreak} Days`}
-          />
+            <StatCard
+              icon={<Flame size={20} />}
+              title="Current Streak"
+              value={`${currentStreak} Days`}
+            />
 
-        </div>
+          </div>
+        )}
 
         {/* Last Workout */}
 
-        <div className="mt-8 rounded-2xl border border-zinc-800 bg-[#111111] p-5">
+        <div className="card-surface mt-8 p-5">
 
           <div className="text-sm text-zinc-500">
             Last Workout
           </div>
 
-          {lastWorkout ? (
+          {loadingHistory ? (
+            <div className="mt-4 space-y-3" aria-busy="true">
+              <div className="h-7 w-1/2 animate-pulse rounded bg-zinc-800" />
+              <div className="h-5 w-2/3 animate-pulse rounded bg-zinc-800" />
+              <div className="h-4 w-1/3 animate-pulse rounded bg-zinc-800" />
+            </div>
+          ) : lastWorkout ? (
 
             <>
 
@@ -338,7 +371,7 @@ export default function ProfilePage() {
 
               <Link
                 href={`/history/${lastWorkout.id}`}
-                className="mt-6 block w-full rounded-xl bg-[#191919] py-3 text-center font-medium transition hover:bg-[#222]"
+                className="btn-base mt-6 block w-full rounded-xl bg-[#191919] py-3 text-center font-medium hover:bg-[#222]"
               >
                 View Workout Details →
               </Link>
@@ -349,8 +382,12 @@ export default function ProfilePage() {
 
             <>
 
+              <div className="mt-4 flex h-11 w-11 items-center justify-center rounded-full bg-zinc-900 text-lime-400">
+                <Dumbbell size={20} aria-hidden="true" />
+              </div>
+
               <div className="mt-3 text-xl font-semibold">
-                No workouts yet
+                No workout data available
               </div>
 
               <div className="mt-2 text-sm text-zinc-500">
@@ -365,18 +402,35 @@ export default function ProfilePage() {
 
         {/* Workout Insights */}
 
-        <div className="mt-8 rounded-2xl border border-zinc-800 bg-[#111111] p-5">
+        <div className="card-surface mt-8 p-5">
 
           <h2 className="text-lg font-semibold">
             Workout Insights
           </h2>
+
+          {loadingHistory ? (
+            <div className="mt-5 space-y-3" aria-busy="true">
+              <div className="h-4 w-full animate-pulse rounded bg-zinc-800" />
+              <div className="h-4 w-5/6 animate-pulse rounded bg-zinc-800" />
+              <div className="h-4 w-4/6 animate-pulse rounded bg-zinc-800" />
+            </div>
+          ) : !hasInsightData ? (
+            <div className="mt-5">
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-zinc-900 text-lime-400">
+                <Activity size={20} aria-hidden="true" />
+              </div>
+              <p className="mt-3 text-sm leading-6 text-zinc-500">
+                Complete your first workout to unlock insights.
+              </p>
+            </div>
+          ) : (
 
           <div className="mt-5 space-y-4">
 
             <InsightRow
               icon={<Activity size={18} />}
               label="Most Trained Muscle"
-              value={insights.mostTrainedMuscle === "-" ? "-" : insights.mostTrainedMuscle}
+              value={insights.mostTrainedMuscle}
             />
 
             <InsightRow
@@ -420,6 +474,7 @@ export default function ProfilePage() {
             />
 
           </div>
+          )}
 
         </div>
 
@@ -427,8 +482,9 @@ export default function ProfilePage() {
 
         {!user && (
           <button
+            type="button"
             onClick={handleGoogleSignIn}
-            className="mt-8 w-full rounded-2xl border border-yellow-500 bg-yellow-500/5 p-5 text-left transition hover:bg-yellow-500/10"
+            className="btn-base mt-8 w-full rounded-2xl border border-yellow-500 bg-yellow-500/5 p-5 text-left hover:bg-yellow-500/10"
           >
             <div className="flex items-center gap-3">
               <UserPlus size={20} className="shrink-0 text-yellow-400" />
@@ -448,7 +504,7 @@ export default function ProfilePage() {
 
         <Link
           href="/settings"
-          className="mt-8 flex w-full items-center justify-between gap-3 rounded-2xl border border-zinc-800 bg-[#111111] p-5 transition hover:border-zinc-700"
+          className="btn-base card-surface mt-8 flex w-full items-center justify-between gap-3 p-5 hover:border-zinc-700"
         >
           <div className="flex min-w-0 items-center gap-3">
             <div className="shrink-0 text-lime-400">
@@ -483,8 +539,8 @@ function StatCard({
   icon: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-[#111111] p-4">
-      <div className="text-lime-400">
+    <div className="card-surface p-4">
+      <div className="text-lime-400" aria-hidden="true">
         {icon}
       </div>
 

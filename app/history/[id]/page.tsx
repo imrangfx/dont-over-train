@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Dumbbell } from "lucide-react";
 import { loadWorkoutHistoryById, type WorkoutHistoryEntry } from "@/lib/workouts";
+import EmptyState from "@/components/ui/EmptyState";
+import LoadingCard from "@/components/ui/LoadingCard";
 
 export default function WorkoutDetailsPage() {
   const params = useParams();
@@ -31,38 +33,67 @@ export default function WorkoutDetailsPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-black flex items-center justify-center text-white">
-        Loading workout...
+      <main className="min-h-screen bg-black px-6 py-8 text-white">
+        <div className="mx-auto max-w-[390px] space-y-4">
+          <LoadingCard rows={2} />
+          <LoadingCard rows={4} />
+        </div>
       </main>
     );
   }
 
   if (error) {
     return (
-      <main className="min-h-screen bg-black flex items-center justify-center text-red-400">
-        {error}
+      <main className="min-h-screen bg-black px-6 py-8 text-white">
+        <div className="mx-auto max-w-[390px]">
+          <EmptyState
+            icon={<Dumbbell size={22} />}
+            title="Couldn't load workout"
+            description="Something went wrong while loading this workout. Please go back and try again."
+          />
+          <Link
+            href="/history"
+            className="btn-base mt-6 inline-flex items-center gap-2 rounded-lg text-zinc-400 hover:text-white"
+          >
+            <ArrowLeft size={18} aria-hidden="true" />
+            ← History
+          </Link>
+        </div>
       </main>
     );
   }
 
   if (!workout) {
     return (
-      <main className="min-h-screen bg-black flex items-center justify-center text-white">
-        Workout not found
+      <main className="min-h-screen bg-black px-6 py-8 text-white">
+        <div className="mx-auto max-w-[390px]">
+          <EmptyState
+            icon={<Dumbbell size={22} />}
+            title="Workout not found"
+            description="This workout may have been deleted or is unavailable."
+          />
+          <Link
+            href="/history"
+            className="btn-base mt-6 inline-flex items-center gap-2 rounded-lg text-zinc-400 hover:text-white"
+          >
+            <ArrowLeft size={18} aria-hidden="true" />
+            ← History
+          </Link>
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-black px-6 py-8 text-white">
+    <main className="min-h-screen bg-black px-6 py-8 text-white animate-[fade-in_200ms_ease-out]">
       <div className="mx-auto max-w-[390px]">
 
         <Link
           href="/history"
-          className="inline-flex items-center gap-2 text-zinc-400 hover:text-white"
+          className="btn-base inline-flex items-center gap-2 rounded-lg text-zinc-400 hover:text-white"
         >
-          <ArrowLeft size={18} />
-          Back
+          <ArrowLeft size={18} aria-hidden="true" />
+          ← History
         </Link>
 
         <h1 className="mt-8 text-4xl font-bold">
@@ -71,7 +102,7 @@ export default function WorkoutDetailsPage() {
 
         {/* Summary */}
 
-        <div className="mt-8 rounded-3xl border border-zinc-800 bg-[#111] p-6">
+        <div className="card-surface mt-8 p-6">
 
           <div className="text-sm text-zinc-500">
             Date
@@ -110,7 +141,7 @@ export default function WorkoutDetailsPage() {
 
               <div
                 key={index}
-                className="mb-5 rounded-2xl border border-zinc-800 bg-[#111] p-5"
+                className="card-surface mb-5 p-5"
               >
 
                 <h3 className="text-xl font-semibold">
@@ -201,7 +232,7 @@ export default function WorkoutDetailsPage() {
 
         {Object.keys(workout.fatigueBreakdown || {}).length > 0 && (
 
-          <div className="mt-8 rounded-3xl border border-zinc-800 bg-[#111] p-6">
+          <div className="card-surface mt-8 p-6">
 
             <h2 className="mb-6 text-2xl font-semibold">
               Final Fatigue

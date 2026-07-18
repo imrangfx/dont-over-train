@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Dumbbell } from "lucide-react";
 import { loadWorkoutHistory, type WorkoutHistoryEntry } from "@/lib/workouts";
 import BottomNav from "@/components/BottomNav";
+import EmptyState from "@/components/ui/EmptyState";
+import LoadingCard from "@/components/ui/LoadingCard";
 
 export default function HistoryPage() {
   const [history, setHistory] = useState<WorkoutHistoryEntry[]>([]);
@@ -27,11 +29,10 @@ export default function HistoryPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-black px-6 py-6 pb-[calc(72px+env(safe-area-inset-bottom)+1.5rem)] text-white">
-      <div className="max-w-md mx-auto">
+    <main className="min-h-screen bg-black px-6 py-6 pb-[calc(72px+env(safe-area-inset-bottom)+1.5rem)] text-white animate-[fade-in_200ms_ease-out]">
+      <div className="mx-auto w-full max-w-md">
 
         <div className="mb-8">
-
           <h1 className="text-4xl font-bold">
             Workout History
           </h1>
@@ -39,77 +40,62 @@ export default function HistoryPage() {
           <p className="mt-2 text-zinc-500">
             All your completed workouts
           </p>
-
         </div>
 
         {loading ? (
-          <div className="rounded-3xl border border-zinc-800 bg-[#111] p-10 text-center">
-            <p className="text-zinc-500">
-              Loading workouts...
-            </p>
+          <div className="space-y-4" aria-busy="true">
+            <LoadingCard rows={3} />
+            <LoadingCard rows={2} />
+            <LoadingCard rows={2} />
           </div>
         ) : error ? (
-          <div className="rounded-3xl border border-red-500 bg-red-500/5 p-10 text-center">
-            <h2 className="text-xl font-semibold text-red-400">
-              Couldn't load workouts
-            </h2>
-            <p className="mt-3 text-zinc-500">
-              {error}
-            </p>
-          </div>
+          <EmptyState
+            icon={<Dumbbell size={22} />}
+            title="Couldn't load workouts"
+            description="Something went wrong while loading your history. Please try again."
+          />
         ) : history.length === 0 ? (
-          <div className="rounded-3xl border border-zinc-800 bg-[#111] p-10 text-center">
-
-            <h2 className="text-xl font-semibold">
-              No workouts yet
-            </h2>
-
-            <p className="mt-3 text-zinc-500">
-              Finish your first workout and it will appear here.
-            </p>
-
-          </div>
+          <EmptyState
+            icon={<Dumbbell size={22} />}
+            title="No workouts yet"
+            description="Finish your first workout and it will appear here."
+          />
         ) : (
-          history.map((workout) => (
+          <div className="space-y-4">
+            {history.map((workout) => (
+              <article
+                key={workout.id}
+                className="card-surface p-5 transition hover:border-zinc-700"
+              >
+                <p className="text-sm text-zinc-500">
+                  {workout.date}
+                </p>
 
-            <div
-              key={workout.id}
-              className="mb-5 rounded-3xl border border-zinc-800 bg-[#111] p-5"
-            >
+                <h2 className="mt-3 text-2xl font-bold text-lime-400">
+                  {workout.bodyParts?.join(" + ") || "Workout"}
+                </h2>
 
-              <p className="text-sm text-zinc-500">
-                {workout.date}
-              </p>
+                <p className="mt-2 text-zinc-400">
+                  {workout.exercises} Exercises • {workout.durationMinutes} min
+                </p>
 
-              <h2 className="mt-3 text-2xl font-bold text-lime-400">
-                {workout.bodyParts?.join(" + ") || "Workout"}
-              </h2>
+                <div className="mt-5 flex items-center justify-between gap-3">
+                  <span className="rounded-full bg-lime-400/15 px-3 py-1 text-sm text-lime-400">
+                    Score {workout.score}
+                  </span>
 
-              <p className="mt-2 text-zinc-400">
-                {workout.exercises} Exercises • {workout.durationMinutes} min
-              </p>
-
-              <div className="mt-5 flex items-center justify-between">
-
-                <span className="rounded-full bg-lime-400/15 px-3 py-1 text-sm text-lime-400">
-                  Score {workout.score}
-                </span>
-
-                <Link
-                  href={`/history/${workout.id}`}
-                  className="flex items-center gap-2 text-zinc-300 hover:text-white"
-                >
-                  View Details
-
-                  <ChevronRight size={18} />
-
-                </Link>
-
-              </div>
-
-            </div>
-
-          ))
+                  <Link
+                    href={`/history/${workout.id}`}
+                    className="btn-base inline-flex items-center gap-2 rounded-lg text-zinc-300 hover:text-white"
+                    aria-label={`View details for ${workout.bodyParts?.join(" + ") || "workout"} on ${workout.date}`}
+                  >
+                    View Details
+                    <ChevronRight size={18} aria-hidden="true" />
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
         )}
       </div>
 

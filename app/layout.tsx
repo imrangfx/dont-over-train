@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Oxanium } from "next/font/google";
+import Providers from "@/components/Providers";
 import "./globals.css";
 
 const oxanium = Oxanium({
@@ -33,7 +34,9 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${oxanium.variable} h-full scroll-smooth antialiased`}
     >
-      <body>{children}</body>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

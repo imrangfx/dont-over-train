@@ -57,7 +57,7 @@ function BodyPartCard({ name, slug, image }: BodyPart) {
 export default function Home() {
   
   return (
-    <main className="min-h-screen bg-black px-6 pt-8 pb-[calc(72px+env(safe-area-inset-bottom)+1.5rem)] text-white">
+    <main className="min-h-screen bg-black px-6 pt-8 pb-[calc(72px+env(safe-area-inset-bottom)+1.5rem)] text-white animate-[fade-in_200ms_ease-out]">
       <div className="mx-auto w-full max-w-[390px]">
         <header className="pb-5">
 
@@ -71,12 +71,12 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="bg-yellow-500/5 border border-yellow-500 rounded-2xl p-4 mt-6 mb-8">
+          <div className="mt-6 mb-8 rounded-2xl border border-yellow-500 bg-yellow-500/5 p-4">
 
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xl">⚠️</span>
+            <div className="mb-2 flex items-center gap-2">
+              <span className="text-xl" aria-hidden="true">⚠️</span>
 
-              <h2 className="text-yellow-400 font-semibold">
+              <h2 className="font-semibold text-yellow-400">
                 Warm Up First
               </h2>
             </div>

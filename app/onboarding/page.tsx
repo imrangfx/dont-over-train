@@ -6,9 +6,11 @@ import { useRouter } from "next/navigation";
 import { Info } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { FcGoogle } from "react-icons/fc";
+import { useToast } from "@/components/ui/Toast";
 
 export default function OnboardingPage() {
     const router = useRouter();
+    const { toast } = useToast();
     const signInWithGoogle = async () => {
         const { error } = await supabase.auth.signInWithOAuth({
             provider: "google",
@@ -19,7 +21,7 @@ export default function OnboardingPage() {
 
         if (error) {
             console.error(error);
-            alert(error.message);
+            toast(error.message || "Couldn't start Google sign-in.", "error");
         }
     };
 
@@ -44,7 +46,7 @@ export default function OnboardingPage() {
                         localStorage.setItem("hasSeenOnboarding", "true");
                         router.replace("/home");
                     }}
-                    className="w-full h-14 rounded-3xl bg-lime-400 text-black text-lg font-semibold transition-all duration-200 hover:brightness-110 hover:shadow-[0_0_24px_rgba(57,255,20,0.25)] active:scale-95"
+                    className="btn-base w-full h-14 rounded-3xl bg-lime-400 text-black text-lg font-semibold hover:brightness-110 hover:shadow-[0_0_24px_rgba(57,255,20,0.25)]"
                 >
                     Continue as Guest
                 </button>
@@ -66,7 +68,7 @@ export default function OnboardingPage() {
                 
                 <button
                     onClick={signInWithGoogle}
-                    className="w-full h-14 rounded-3xl bg-white text-black text-lg font-semibold flex items-center justify-center gap-3 transition-all duration-200 hover:brightness-95 active:scale-95"
+                    className="btn-base w-full h-14 rounded-3xl bg-white text-black text-lg font-semibold flex items-center justify-center gap-3 hover:brightness-95"
                 >
                     <FcGoogle size={24} />
                     Continue with Google

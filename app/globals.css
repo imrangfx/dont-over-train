@@ -55,6 +55,31 @@ body {
   }
 }
 
+/* Shared interactive control polish */
+.btn-base {
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 120ms ease, opacity 160ms ease;
+}
+
+.btn-base:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn-base:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #000, 0 0 0 4px #39ff14;
+}
+
+.btn-base:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.card-surface {
+  border-radius: 1rem;
+  border: 1px solid #27272a;
+  background: #111111;
+}
+
 @keyframes fade-out {
   from {
     opacity: 1;

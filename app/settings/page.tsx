@@ -4,8 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  ArrowLeft,
-  ChevronRight,
   Cloud,
   Download,
   FileText,
@@ -22,6 +20,14 @@ import {
   type WorkoutHistoryEntry,
 } from "@/lib/workouts";
 import BottomNav from "@/components/BottomNav";
+import ConfirmationModal from "@/components/ui/ConfirmationModal";
+import SectionHeader from "@/components/ui/SectionHeader";
+import {
+  SettingButton,
+  SettingLink,
+  SettingRow,
+} from "@/components/ui/SettingRow";
+import { useToast } from "@/components/ui/Toast";
 
 function formatLastSynced(iso: string | null): string {
   if (!iso) return "Never";
@@ -72,9 +78,11 @@ function exportHistoryAsCsv(history: WorkoutHistoryEntry[]) {
 
 export default function SettingsPage() {
   const router = useRouter();
+  const { toast } = useToast();
   const [user, setUser] = useState<any>(null);
   const [lastSynced, setLastSynced] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -106,10 +114,16 @@ export default function SettingsPage() {
   }, []);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    localStorage.removeItem("hasSeenOnboarding");
-    setUser(null);
-    router.replace("/");
+    setBusy(true);
+    try {
+      await supabase.auth.signOut();
+      localStorage.removeItem("hasSeenOnboarding");
+      setUser(null);
+      toast("Signed out successfully");
+      router.replace("/");
+    } finally {
+      setBusy(false);
+    }
   };
 
   const handleExport = async () => {
@@ -117,49 +131,45 @@ export default function SettingsPage() {
     try {
       const { history, error } = await loadWorkoutHistory();
       if (error) {
-        alert("Couldn't export workouts. Please try again.");
+        toast("Couldn't export workouts. Please try again.", "error");
         return;
       }
       if (history.length === 0) {
-        alert("No workouts to export.");
+        toast("No workouts to export.", "error");
         return;
       }
       exportHistoryAsCsv(history);
       setLastSynced(getLastSyncedAt());
+      toast("History exported");
     } finally {
       setBusy(false);
     }
   };
 
-  const handleDeleteHistory = async () => {
-    const confirmed = window.confirm(
-      "Delete all workout history? This cannot be undone."
-    );
-    if (!confirmed) return;
-
+  const handleConfirmDelete = async () => {
     setBusy(true);
     try {
       const { error } = await deleteAllWorkoutHistory();
       if (error) {
-        alert("Couldn't delete workout history. Please try again.");
+        toast("Couldn't delete workout history. Please try again.", "error");
         return;
       }
-      alert("Workout history deleted.");
+      setConfirmDeleteOpen(false);
+      toast("History cleared");
     } finally {
       setBusy(false);
     }
   };
 
   return (
-    <main className="min-h-screen bg-black px-6 py-8 pb-[calc(72px+env(safe-area-inset-bottom)+1.5rem)] text-white">
-      <div className="mx-auto max-w-[390px]">
+    <main className="min-h-screen bg-black px-6 py-8 pb-[calc(72px+env(safe-area-inset-bottom)+1.5rem)] text-white animate-[fade-in_200ms_ease-out]">
+      <div className="mx-auto w-full max-w-[390px]">
 
         <Link
           href="/profile"
-          className="inline-flex items-center gap-2 text-zinc-400 hover:text-white"
+          className="btn-base inline-flex items-center gap-1 rounded-lg text-zinc-400 hover:text-white"
         >
-          <ArrowLeft size={18} />
-          Back
+          ← Profile
         </Link>
 
         <h1 className="mt-6 text-4xl font-bold">
@@ -170,79 +180,109 @@ export default function SettingsPage() {
           Manage your account and app preferences
         </p>
 
-        {/* Account */}
-        <Section title="Account">
-          <SettingsRow
-            icon={<User size={18} />}
-            label="Account"
-            value={user?.email || "Guest mode"}
-          />
-        </Section>
+        <section className="mt-8" aria-labelledby="account-heading">
+          <SectionHeader title="Account" />
+          <div id="account-heading" className="sr-only">
+            Account
+          </div>
+          <div className="card-surface overflow-hidden divide-y divide-zinc-800">
+            <SettingRow
+              icon={<User size={18} />}
+              label="Account"
+              value={user?.email || "Guest mode"}
+            />
+          </div>
+        </section>
 
-        {/* Backup & Sync */}
-        <Section title="Backup & Sync">
-          <SettingsRow
-            icon={<Cloud size={18} />}
-            label="Sync status"
-            value={user ? "Cloud sync enabled" : "Local only"}
-          />
-          <SettingsRow
-            icon={<Cloud size={18} />}
-            label="Last synced"
-            value={user ? formatLastSynced(lastSynced) : "—"}
-          />
-        </Section>
+        <section className="mt-8" aria-labelledby="sync-heading">
+          <SectionHeader title="Backup & Sync" />
+          <div id="sync-heading" className="sr-only">
+            Backup and Sync
+          </div>
+          <div className="card-surface overflow-hidden divide-y divide-zinc-800">
+            <SettingRow
+              icon={<Cloud size={18} />}
+              label="Sync status"
+              value={user ? "Cloud sync enabled" : "Local only"}
+            />
+            <SettingRow
+              icon={<Cloud size={18} />}
+              label="Last synced"
+              value={user ? formatLastSynced(lastSynced) : "—"}
+            />
+          </div>
+        </section>
 
-        {/* Export */}
-        <Section title="Export">
-          <SettingsButton
-            icon={<Download size={18} />}
-            label="Export Workout History"
-            onClick={handleExport}
-            disabled={busy}
-          />
-        </Section>
+        <section className="mt-8" aria-labelledby="export-heading">
+          <SectionHeader title="Export" />
+          <div id="export-heading" className="sr-only">
+            Export
+          </div>
+          <div className="card-surface overflow-hidden">
+            <SettingButton
+              icon={<Download size={18} />}
+              label="Export Workout History"
+              onClick={handleExport}
+              disabled={busy}
+            />
+          </div>
+        </section>
 
-        {/* Data */}
-        <Section title="Data">
-          <SettingsButton
-            icon={<Trash2 size={18} />}
-            label="Delete Workout History"
-            onClick={handleDeleteHistory}
-            disabled={busy}
-            danger
-          />
-        </Section>
+        <section className="mt-8" aria-labelledby="danger-heading">
+          <SectionHeader title="Danger Zone" />
+          <div id="danger-heading" className="sr-only">
+            Danger Zone
+          </div>
+          <div className="overflow-hidden rounded-2xl border border-red-500/40 bg-red-500/5">
+            <p className="border-b border-red-500/20 px-4 py-3 text-sm leading-6 text-red-300/90">
+              Deleting your workout history permanently removes all saved
+              workouts. This cannot be undone.
+            </p>
+            <SettingButton
+              icon={<Trash2 size={18} />}
+              label="Delete Workout History"
+              onClick={() => setConfirmDeleteOpen(true)}
+              disabled={busy}
+              danger
+            />
+          </div>
+        </section>
 
-        {/* About */}
-        <Section title="About">
-          <SettingsRow
-            icon={<FileText size={18} />}
-            label="App Version"
-            value="1.0.0"
-          />
-          <SettingsLink
-            icon={<Shield size={18} />}
-            label="Privacy Policy"
-            href="mailto:support@dontovertrain.app?subject=Privacy%20Policy"
-          />
-          <SettingsLink
-            icon={<FileText size={18} />}
-            label="Terms & Conditions"
-            href="mailto:support@dontovertrain.app?subject=Terms%20%26%20Conditions"
-          />
-          <SettingsLink
-            icon={<Mail size={18} />}
-            label="Contact"
-            href="mailto:support@dontovertrain.app"
-          />
-        </Section>
+        <section className="mt-8" aria-labelledby="about-heading">
+          <SectionHeader title="About" />
+          <div id="about-heading" className="sr-only">
+            About
+          </div>
+          <div className="card-surface overflow-hidden divide-y divide-zinc-800">
+            <SettingRow
+              icon={<FileText size={18} />}
+              label="App Version"
+              value="v1.0.0"
+            />
+            <SettingLink
+              icon={<Shield size={18} />}
+              label="Privacy Policy"
+              href="mailto:support@dontovertrain.app?subject=Privacy%20Policy"
+            />
+            <SettingLink
+              icon={<FileText size={18} />}
+              label="Terms & Conditions"
+              href="mailto:support@dontovertrain.app?subject=Terms%20%26%20Conditions"
+            />
+            <SettingLink
+              icon={<Mail size={18} />}
+              label="Contact"
+              href="mailto:support@dontovertrain.app"
+            />
+          </div>
+        </section>
 
         {user && (
           <button
+            type="button"
             onClick={handleLogout}
             disabled={busy}
-            className="mt-8 w-full rounded-2xl border border-red-500 py-4 text-red-400 transition hover:bg-red-500/10 disabled:opacity-50"
+            className="btn-base mt-8 w-full rounded-2xl border border-red-500 py-4 font-medium text-red-400 hover:bg-red-500/10"
           >
             Sign Out
           </button>
@@ -250,114 +290,22 @@ export default function SettingsPage() {
 
       </div>
 
+      <ConfirmationModal
+        open={confirmDeleteOpen}
+        title="Delete workout history?"
+        description="This will permanently remove all of your workout history. This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        danger
+        showWarningIcon
+        busy={busy}
+        onClose={() => {
+          if (!busy) setConfirmDeleteOpen(false);
+        }}
+        onConfirm={handleConfirmDelete}
+      />
+
       <BottomNav />
     </main>
-  );
-}
-
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="mt-8">
-      <h2 className="mb-3 text-sm font-medium uppercase tracking-wide text-zinc-500">
-        {title}
-      </h2>
-      <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-[#111111]">
-        <div className="divide-y divide-zinc-800">
-          {children}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function SettingsRow({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="flex items-center justify-between gap-3 px-4 py-4">
-      <div className="flex min-w-0 items-center gap-3">
-        <div className="shrink-0 text-lime-400">
-          {icon}
-        </div>
-        <span className="text-sm text-zinc-300">
-          {label}
-        </span>
-      </div>
-      <span className="max-w-[55%] truncate text-right text-sm font-medium text-white">
-        {value}
-      </span>
-    </div>
-  );
-}
-
-function SettingsButton({
-  icon,
-  label,
-  onClick,
-  disabled,
-  danger,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  onClick: () => void;
-  disabled?: boolean;
-  danger?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left transition hover:bg-zinc-900/80 disabled:opacity-50"
-    >
-      <div className="flex min-w-0 items-center gap-3">
-        <div className={`shrink-0 ${danger ? "text-red-400" : "text-lime-400"}`}>
-          {icon}
-        </div>
-        <span className={`text-sm ${danger ? "text-red-400" : "text-zinc-300"}`}>
-          {label}
-        </span>
-      </div>
-      <ChevronRight size={18} className="shrink-0 text-zinc-600" />
-    </button>
-  );
-}
-
-function SettingsLink({
-  icon,
-  label,
-  href,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  href: string;
-}) {
-  return (
-    <a
-      href={href}
-      className="flex w-full items-center justify-between gap-3 px-4 py-4 transition hover:bg-zinc-900/80"
-    >
-      <div className="flex min-w-0 items-center gap-3">
-        <div className="shrink-0 text-lime-400">
-          {icon}
-        </div>
-        <span className="text-sm text-zinc-300">
-          {label}
-        </span>
-      </div>
-      <ChevronRight size={18} className="shrink-0 text-zinc-600" />
-    </a>
   );
 }
