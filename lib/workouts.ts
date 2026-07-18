@@ -25,6 +25,68 @@ export type WorkoutHistoryEntry = {
   fatigueBreakdown: Record<string, number>;
 };
 
+function toLocalDayKey(ms: number): string {
+  const d = new Date(ms);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function previousLocalDayKey(dayKey: string): string {
+  const [y, m, d] = dayKey.split("-").map(Number);
+  const date = new Date(y, m - 1, d);
+  date.setDate(date.getDate() - 1);
+  return toLocalDayKey(date.getTime());
+}
+
+/**
+ * Consecutive calendar days with at least one workout.
+ * Starts from today if present, otherwise yesterday; otherwise 0.
+ * Same-day workouts count once.
+ */
+export function calculateCurrentStreak(
+  workouts: Array<{ timestamp?: number; date?: string }>
+): number {
+  if (!workouts || workouts.length === 0) return 0;
+
+  const uniqueDays = new Set<string>();
+
+  for (const workout of workouts) {
+    const ms =
+      typeof workout.timestamp === "number" && !Number.isNaN(workout.timestamp)
+        ? workout.timestamp
+        : workout.date
+          ? new Date(workout.date).getTime()
+          : NaN;
+
+    if (Number.isNaN(ms)) continue;
+    uniqueDays.add(toLocalDayKey(ms));
+  }
+
+  if (uniqueDays.size === 0) return 0;
+
+  const todayKey = toLocalDayKey(Date.now());
+  const yesterdayKey = previousLocalDayKey(todayKey);
+
+  let cursor: string;
+  if (uniqueDays.has(todayKey)) {
+    cursor = todayKey;
+  } else if (uniqueDays.has(yesterdayKey)) {
+    cursor = yesterdayKey;
+  } else {
+    return 0;
+  }
+
+  let streak = 0;
+  while (uniqueDays.has(cursor)) {
+    streak++;
+    cursor = previousLocalDayKey(cursor);
+  }
+
+  return streak;
+}
+
 const LOCAL_KEY = "workoutHistory";
 const MIGRATION_LOCK_KEY = "guestMigrationInProgress";
 

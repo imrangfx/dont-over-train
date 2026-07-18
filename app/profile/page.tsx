@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { loadWorkoutHistory } from "@/lib/workouts";
+import { calculateCurrentStreak, loadWorkoutHistory } from "@/lib/workouts";
 import { useRouter } from "next/navigation";
 import {
   CircleUserRound,
@@ -90,15 +90,50 @@ export default function ProfilePage() {
       active = false;
     };
   }, []);
+  const filteredHistory = history.filter((workout) => {
+    if (filter === "all") return true;
 
-  const totalWorkouts = history.length;
+    const workoutDate = new Date(workout.date);
+    const today = new Date();
 
-  const totalExercises = history.reduce(
+    workoutDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    const diffDays = Math.floor(
+      (today.getTime() - workoutDate.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    switch (filter) {
+      case "today":
+        return diffDays === 0;
+
+      case "7d":
+        return diffDays <= 7;
+
+      case "14d":
+        return diffDays <= 14;
+
+      case "30d":
+        return diffDays <= 30;
+
+      case "6m":
+        return diffDays <= 183;
+
+      case "1y":
+        return diffDays <= 365;
+
+      default:
+        return true;
+    }
+  });
+  const totalWorkouts = filteredHistory.length;
+
+  const totalExercises = filteredHistory.reduce(
     (sum, w) => sum + (w.exercises || 0),
     0
   );
 
-  const trainingMinutes = history.reduce(
+  const trainingMinutes = filteredHistory.reduce(
     (sum, w) => sum + (w.durationMinutes || 0),
     0
   );
@@ -107,11 +142,11 @@ export default function ProfilePage() {
   const remainingMinutes = trainingMinutes % 60;
 
   const lastWorkout =
-    history.length > 0
-      ? history[0]
+    filteredHistory.length > 0
+      ? filteredHistory[0]
       : null;
 
-  const currentStreak = history.length;
+  const currentStreak = calculateCurrentStreak(history);
 
   const googleAvatarUrl =
     user?.user_metadata?.avatar_url || user?.user_metadata?.picture || null;
