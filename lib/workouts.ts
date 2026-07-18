@@ -159,6 +159,17 @@ export function calculateWorkoutInsights(
 
 const LOCAL_KEY = "workoutHistory";
 const MIGRATION_LOCK_KEY = "guestMigrationInProgress";
+const LAST_SYNCED_KEY = "lastSyncedAt";
+
+export function getLastSyncedAt(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem(LAST_SYNCED_KEY);
+}
+
+function markLastSynced() {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(LAST_SYNCED_KEY, new Date().toISOString());
+}
 
 function readLocalHistory(): WorkoutHistoryEntry[] {
   try {
@@ -257,6 +268,7 @@ export async function saveWorkoutHistoryEntry(
       { onConflict: "id" }
     );
 
+    if (!error) markLastSynced();
     return { error: error?.message ?? null };
   } catch (err) {
     return { error: err instanceof Error ? err.message : "Failed to sync workout." };
@@ -303,6 +315,7 @@ export async function migrateGuestHistoryToCloud(
     }
 
     localStorage.removeItem(LOCAL_KEY);
+    markLastSynced();
     return { migrated: localHistory.length, error: null };
   } finally {
     localStorage.removeItem(MIGRATION_LOCK_KEY);
@@ -330,11 +343,38 @@ export async function loadWorkoutHistory(): Promise<{
       return { history: [], error: error.message };
     }
 
+    markLastSynced();
     return { history: (data || []).map(rowToEntry), error: null };
   } catch (err) {
     return {
       history: [],
       error: err instanceof Error ? err.message : "Failed to load workout history.",
+    };
+  }
+}
+
+/** Clears guest localStorage history or deletes all cloud workouts for the signed-in user. */
+export async function deleteAllWorkoutHistory(): Promise<{ error: string | null }> {
+  const userId = await getCurrentUserId();
+
+  if (!userId) {
+    try {
+      localStorage.removeItem(LOCAL_KEY);
+      return { error: null };
+    } catch (err) {
+      return {
+        error: err instanceof Error ? err.message : "Failed to delete workout history.",
+      };
+    }
+  }
+
+  try {
+    const { error } = await supabase.from("workouts").delete().eq("user_id", userId);
+    if (error) return { error: error.message };
+    return { error: null };
+  } catch (err) {
+    return {
+      error: err instanceof Error ? err.message : "Failed to delete workout history.",
     };
   }
 }

@@ -27,6 +27,15 @@ function isActive(pathname: string, href: string) {
     return pathname === "/home" || pathname.startsWith("/home/");
   }
 
+  if (href === "/profile") {
+    return (
+      pathname === "/profile" ||
+      pathname.startsWith("/profile/") ||
+      pathname === "/settings" ||
+      pathname.startsWith("/settings/")
+    );
+  }
+
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 

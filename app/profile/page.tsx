@@ -8,7 +8,6 @@ import {
   calculateWorkoutInsights,
   loadWorkoutHistory,
 } from "@/lib/workouts";
-import { useRouter } from "next/navigation";
 import {
   CircleUserRound,
   Trophy,
@@ -20,24 +19,17 @@ import {
   BicepsFlexed,
   ClipboardList,
   Activity,
+  Settings,
+  ChevronRight,
 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 
 export default function ProfilePage() {
-  const router = useRouter();
-
   const [history, setHistory] = useState<any[]>([]);
   const [filter, setFilter] = useState("all");
   const [showFilter, setShowFilter] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [avatarError, setAvatarError] = useState(false);
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    localStorage.removeItem("hasSeenOnboarding");
-    setUser(null);
-    router.replace("/");
-  };
 
   const handleGoogleSignIn = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
@@ -454,14 +446,25 @@ export default function ProfilePage() {
           </button>
         )}
 
-        {user && (
-          <button
-            onClick={handleLogout}
-            className="mt-8 w-full rounded-2xl border border-red-500 py-4 text-red-400 transition hover:bg-red-500/10"
-          >
-            Sign Out
-          </button>
-        )}
+        <Link
+          href="/settings"
+          className="mt-8 flex w-full items-center justify-between gap-3 rounded-2xl border border-zinc-800 bg-[#111111] p-5 transition hover:border-zinc-700"
+        >
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="shrink-0 text-lime-400">
+              <Settings size={20} />
+            </div>
+            <div className="min-w-0">
+              <p className="font-semibold">
+                Settings
+              </p>
+              <p className="mt-1 text-sm text-zinc-400">
+                Manage your account and app preferences
+              </p>
+            </div>
+          </div>
+          <ChevronRight size={18} className="shrink-0 text-zinc-500" />
+        </Link>
 
       </div>
 
