@@ -19,8 +19,6 @@ import {
   BicepsFlexed,
   ClipboardList,
   Activity,
-  Settings,
-  ChevronRight,
 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import LoadingCard from "@/components/ui/LoadingCard";
@@ -501,26 +499,6 @@ export default function ProfilePage() {
             </div>
           </button>
         )}
-
-        <Link
-          href="/settings"
-          className="btn-base card-surface mt-8 flex w-full items-center justify-between gap-3 p-5 hover:border-zinc-700"
-        >
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="shrink-0 text-lime-400">
-              <Settings size={20} />
-            </div>
-            <div className="min-w-0">
-              <p className="font-semibold">
-                Settings
-              </p>
-              <p className="mt-1 text-sm text-zinc-400">
-                Manage your account and app preferences
-              </p>
-            </div>
-          </div>
-          <ChevronRight size={18} className="shrink-0 text-zinc-500" />
-        </Link>
 
       </div>
 
