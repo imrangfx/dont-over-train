@@ -32,16 +32,18 @@ import {
 } from "@/lib/progression";
 import { exerciseHref } from "@/lib/exerciseAnalytics";
 import {
-  calculateRecoveryScore,
   calculateWeeklyProgress,
-  formatMuscleLabel,
   getGreeting,
-  getTodaysRecommendation,
-  type RecoveryStatusLabel,
-  type RecoverySummary,
-  type TodaysRecommendation,
   type WeeklyProgress as WeeklyProgressData,
 } from "@/lib/dashboard";
+import {
+  calculateRecoveryIntelligence,
+  recommendTodaysWorkout,
+  type BodyPartRecovery,
+  type RecoveryIntelligenceReport,
+  type TrainingStatus,
+  type WorkoutRecommendation,
+} from "@/lib/recoveryIntelligence";
 
 type BodyPart = {
   name: string;
@@ -119,23 +121,23 @@ function SectionIcon({
   );
 }
 
-const RECOVERY_STYLES: Record<
-  RecoveryStatusLabel,
+const STATUS_STYLES: Record<
+  TrainingStatus,
   { text: string; bar: string; bg: string; icon: React.ReactNode }
 > = {
-  Fresh: {
+  Ready: {
     text: "text-lime-400",
     bar: "bg-lime-400",
     bg: "bg-lime-400/10",
     icon: <BatteryCharging size={18} />,
   },
-  Recovering: {
+  "Moderate Fatigue": {
     text: "text-yellow-400",
     bar: "bg-yellow-400",
     bg: "bg-yellow-400/10",
     icon: <BatteryMedium size={18} />,
   },
-  Fatigued: {
+  "Recovery Needed": {
     text: "text-orange-400",
     bar: "bg-orange-400",
     bg: "bg-orange-400/10",
@@ -143,63 +145,107 @@ const RECOVERY_STYLES: Record<
   },
 };
 
-function RecoveryScoreCard({ recovery }: { recovery: RecoverySummary }) {
-  const style = RECOVERY_STYLES[recovery.status];
+/** Overall status label, using the same thresholds as each body part's status. */
+function overallStatus(score: number): TrainingStatus {
+  if (score >= 85) return "Ready";
+  if (score >= 50) return "Moderate Fatigue";
+  return "Recovery Needed";
+}
+
+function BodyPartRow({ bodyPart }: { bodyPart: BodyPartRecovery }) {
+  const style = STATUS_STYLES[bodyPart.status];
 
   return (
-    <div className="card-surface p-5">
+    <div className="flex items-center justify-between gap-3 rounded-xl bg-[#191919] px-3 py-2.5">
+      <div className="min-w-0">
+        <p className="truncate text-sm font-medium text-white">{bodyPart.bodyPart}</p>
+        <p className="mt-0.5 truncate text-xs text-zinc-500">
+          {bodyPart.daysSinceLastTrained == null
+            ? "Never trained"
+            : bodyPart.daysSinceLastTrained === 0
+              ? "Trained today"
+              : `${bodyPart.daysSinceLastTrained}d ago`}
+          {" • "}
+          {bodyPart.estimatedReadiness}
+        </p>
+      </div>
+
+      <div className="flex shrink-0 items-center gap-2">
+        <span className={`text-sm font-semibold ${style.text}`}>{bodyPart.recoveryPercent}%</span>
+        <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${style.bg} ${style.text}`}>
+          {bodyPart.status}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function RecoveryScoreCard({
+  report,
+  hasHistory,
+}: {
+  report: RecoveryIntelligenceReport;
+  hasHistory: boolean;
+}) {
+  const status = overallStatus(report.overallRecoveryScore);
+  const style = STATUS_STYLES[status];
+
+  return (
+    <div id="recovery" className="card-surface p-5">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
           <SectionIcon className={`${style.bg} ${style.text}`}>{style.icon}</SectionIcon>
           <h2 className="text-lg font-semibold tracking-tight">Recovery Score</h2>
         </div>
 
-        {recovery.hasData && (
+        {hasHistory && (
           <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${style.bg} ${style.text}`}>
-            {recovery.status}
+            {status}
           </span>
         )}
       </div>
 
-      {!recovery.hasData ? (
+      {!hasHistory ? (
         <p className="mt-4 text-sm leading-6 text-zinc-500">
-          Complete a workout to start tracking your recovery.
+          Complete a workout to start tracking recovery for every muscle group.
         </p>
       ) : (
         <>
           <div className="mt-4 flex items-baseline gap-1.5">
             <span className={`text-4xl font-bold tracking-tight ${style.text}`}>
-              <AnimatedStatValue value={`${recovery.overallRecoveryPercent}%`} />
+              <AnimatedStatValue value={`${report.overallRecoveryScore}%`} />
             </span>
-            <span className="text-sm text-zinc-500">ready to train</span>
+            <span className="text-sm text-zinc-500">overall readiness</span>
           </div>
 
           <div
             className="mt-4 h-2.5 w-full overflow-hidden rounded-full bg-zinc-800"
             role="progressbar"
-            aria-valuenow={recovery.overallRecoveryPercent}
+            aria-valuenow={report.overallRecoveryScore}
             aria-valuemin={0}
             aria-valuemax={100}
-            aria-label="Recovery percent"
+            aria-label="Overall recovery percent"
           >
             <div
               className={`h-full rounded-full transition-all duration-500 ${style.bar}`}
-              style={{ width: `${recovery.overallRecoveryPercent}%` }}
+              style={{ width: `${report.overallRecoveryScore}%` }}
             />
           </div>
 
-          <p className="mt-3 text-sm leading-6 text-zinc-400">
-            {recovery.mostFatiguedMuscle
-              ? `${formatMuscleLabel(recovery.mostFatiguedMuscle.muscle)} is still recovering (${recovery.mostFatiguedMuscle.recoveryPercent}% ready).`
-              : "All muscle groups are fully recovered."}
-          </p>
+          <div className="mt-5 space-y-2.5">
+            {report.bodyParts.map((bodyPart) => (
+              <BodyPartRow key={bodyPart.bodyPart} bodyPart={bodyPart} />
+            ))}
+          </div>
         </>
       )}
     </div>
   );
 }
 
-function RecommendationCard({ recommendation }: { recommendation: TodaysRecommendation }) {
+function RecommendationCard({ recommendation }: { recommendation: WorkoutRecommendation }) {
+  const [showReasoning, setShowReasoning] = useState(false);
+
   return (
     <div
       className="card-surface overflow-hidden p-5"
@@ -229,6 +275,34 @@ function RecommendationCard({ recommendation }: { recommendation: TodaysRecommen
       >
         {recommendation.ctaLabel}
       </Link>
+
+      {recommendation.reasoning.length > 0 && (
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={() => setShowReasoning((visible) => !visible)}
+            aria-expanded={showReasoning}
+            className="btn-base flex w-full items-center justify-between text-sm text-zinc-500 hover:text-zinc-300"
+          >
+            <span>Why this recommendation?</span>
+            <ChevronRight
+              size={14}
+              className={`transition-transform duration-200 ${showReasoning ? "rotate-90" : ""}`}
+              aria-hidden="true"
+            />
+          </button>
+
+          {showReasoning && (
+            <ul className="mt-3 space-y-2 border-t border-zinc-800 pt-3">
+              {recommendation.reasoning.map((reason, index) => (
+                <li key={index} className="text-xs leading-5 text-zinc-500">
+                  {reason}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -520,11 +594,16 @@ export default function Home() {
   );
 
   const currentStreak = useMemo(() => calculateCurrentStreak(history), [history]);
-  const recovery = useMemo(() => calculateRecoveryScore(history), [history]);
+  const hasHistory = history.length > 0;
+
+  const recoveryReport = useMemo(
+    () => calculateRecoveryIntelligence(history, BODY_PART_NAMES),
+    [history]
+  );
 
   const recommendation = useMemo(
-    () => getTodaysRecommendation(history, recovery, BODY_PART_NAMES),
-    [history, recovery]
+    () => recommendTodaysWorkout(recoveryReport, history),
+    [recoveryReport, history]
   );
 
   const weeklyProgress = useMemo(() => calculateWeeklyProgress(history), [history]);
@@ -564,7 +643,11 @@ export default function Home() {
 
         {/* 2. Recovery Score */}
         <section aria-label="Recovery score" className="mt-6">
-          {isLoading ? <LoadingCard rows={2} /> : <RecoveryScoreCard recovery={recovery} />}
+          {isLoading ? (
+            <LoadingCard rows={2} />
+          ) : (
+            <RecoveryScoreCard report={recoveryReport} hasHistory={hasHistory} />
+          )}
         </section>
 
         {/* 3. Today's Recommendation */}
