@@ -39,6 +39,29 @@ export type ExerciseMilestone = {
   date?: string;
 };
 
+export type MilestoneEventType = "firstWorkout" | "firstPR" | "biggestJump" | "highestVolume";
+
+/**
+ * A milestone tied to a specific session (timestamp + value), so both the
+ * textual Milestones list (below) and the chart overlay markers (Sprint 2,
+ * lib/chartAnalytics.ts) can be derived from the exact same computation
+ * instead of re-scanning session history twice.
+ */
+export type MilestoneEvent = {
+  type: MilestoneEventType;
+  label: string;
+  icon: string;
+  session: ExerciseSession;
+  detail: string;
+};
+
+export type MilestoneEvents = {
+  firstWorkout: MilestoneEvent | null;
+  firstPR: MilestoneEvent | null;
+  biggestJump: MilestoneEvent | null;
+  highestVolume: MilestoneEvent | null;
+};
+
 export type ExerciseInsights = {
   averageWeeklyImprovement: string;
   averageTrainingFrequency: string;
@@ -106,36 +129,86 @@ function extractSessions(exerciseName: string, history: WorkoutHistoryEntry[]): 
   return sessions.sort((a, b) => b.timestamp - a.timestamp);
 }
 
-function buildMilestones(chronological: ExerciseSession[]): ExerciseMilestone[] {
-  if (chronological.length === 0) return [];
-
-  const milestones: ExerciseMilestone[] = [
-    { label: "First Time Performed", value: chronological[0].date },
-  ];
-
-  const firstWithWeight = chronological.find((s) => s.weight > 0);
-  if (firstWithWeight) {
-    milestones.push({
-      label: "First PR",
-      value: `${firstWithWeight.weight} kg`,
-      date: firstWithWeight.date,
-    });
+/**
+ * Finds the four "key session" milestone events once. Shared by the
+ * textual Milestones list here and by the chart milestone overlay in
+ * lib/chartAnalytics.ts, so the detection logic (first performed, first
+ * PR, biggest single jump, highest volume session) exists in exactly one
+ * place.
+ */
+export function findMilestoneEvents(chronological: ExerciseSession[]): MilestoneEvents {
+  if (chronological.length === 0) {
+    return { firstWorkout: null, firstPR: null, biggestJump: null, highestVolume: null };
   }
 
-  let biggestIncrease = 0;
-  let biggestIncreaseDate: string | null = null;
+  const firstWorkout: MilestoneEvent = {
+    type: "firstWorkout",
+    label: "First Workout",
+    icon: "🏋️",
+    session: chronological[0],
+    detail: chronological[0].date,
+  };
+
+  const firstWithWeight = chronological.find((s) => s.weight > 0);
+  const firstPR: MilestoneEvent | null = firstWithWeight
+    ? {
+        type: "firstPR",
+        label: "First PR",
+        icon: "🏆",
+        session: firstWithWeight,
+        detail: `${firstWithWeight.weight} kg`,
+      }
+    : null;
+
+  let biggestDelta = 0;
+  let biggestSession: ExerciseSession | null = null;
+
+  for (let i = 1; i < chronological.length; i++) {
+    const delta = chronological[i].weight - chronological[i - 1].weight;
+    if (delta > biggestDelta) {
+      biggestDelta = delta;
+      biggestSession = chronological[i];
+    }
+  }
+
+  const biggestJump: MilestoneEvent | null =
+    biggestSession && biggestDelta > 0
+      ? {
+          type: "biggestJump",
+          label: "Biggest PR Jump",
+          icon: "🏆",
+          session: biggestSession,
+          detail: `+${biggestDelta.toFixed(1)} kg`,
+        }
+      : null;
+
+  const highestVolumeSession = chronological.reduce(
+    (best, s) => (s.volume > best.volume ? s : best),
+    chronological[0]
+  );
+
+  const highestVolume: MilestoneEvent | null =
+    highestVolumeSession.volume > 0
+      ? {
+          type: "highestVolume",
+          label: "Highest Volume",
+          icon: "🏆",
+          session: highestVolumeSession,
+          detail: `${Math.round(highestVolumeSession.volume).toLocaleString()} kg`,
+        }
+      : null;
+
+  return { firstWorkout, firstPR, biggestJump, highestVolume };
+}
+
+/** Longest run of consecutive sessions (chronological) that never dropped below the previous weight. */
+export function calculateLongestImprovementStreak(chronological: ExerciseSession[]): number {
   let currentStreak = 1;
-  let longestStreak = 1;
+  let longestStreak = chronological.length > 0 ? 1 : 0;
 
   for (let i = 1; i < chronological.length; i++) {
     const prev = chronological[i - 1];
     const curr = chronological[i];
-    const delta = curr.weight - prev.weight;
-
-    if (delta > biggestIncrease) {
-      biggestIncrease = delta;
-      biggestIncreaseDate = curr.date;
-    }
 
     if (curr.weight > 0 && curr.weight >= prev.weight) {
       currentStreak++;
@@ -145,31 +218,112 @@ function buildMilestones(chronological: ExerciseSession[]): ExerciseMilestone[] 
     }
   }
 
-  if (biggestIncrease > 0 && biggestIncreaseDate) {
+  return longestStreak;
+}
+
+/** Sessions per week across the given (already-filtered, if desired) session list. */
+export function calculateTrainingFrequency(sessions: ExerciseSession[]): number | null {
+  if (sessions.length < MIN_SESSIONS_FOR_TRENDS) return null;
+
+  const timestamps = sessions.map((s) => s.timestamp);
+  const spanMs = Math.max(Math.max(...timestamps) - Math.min(...timestamps), 1);
+  const spanWeeks = Math.max(spanMs / WEEK_MS, 1 / 7);
+
+  return sessions.length / spanWeeks;
+}
+
+/** Average calendar days between consecutive sessions (chronological order assumed by caller not required - sorted internally). */
+export function calculateAverageDaysBetweenSessions(sessions: ExerciseSession[]): number | null {
+  if (sessions.length < MIN_SESSIONS_FOR_TRENDS) return null;
+
+  const sorted = [...sessions].sort((a, b) => a.timestamp - b.timestamp);
+  const gaps: number[] = [];
+
+  for (let i = 1; i < sorted.length; i++) {
+    gaps.push((sorted[i].timestamp - sorted[i - 1].timestamp) / (24 * 60 * 60 * 1000));
+  }
+
+  return average(gaps);
+}
+
+/** 0-100: proportion of weeks within the session span that contain at least one session. */
+export function calculateConsistencyPercent(sessions: ExerciseSession[]): number | null {
+  if (sessions.length < MIN_SESSIONS_FOR_TRENDS) return null;
+
+  const timestamps = sessions.map((s) => s.timestamp);
+  const spanMs = Math.max(Math.max(...timestamps) - Math.min(...timestamps), 1);
+  const spanWeeks = Math.max(spanMs / WEEK_MS, 1 / 7);
+
+  const distinctWeeks = new Set(timestamps.map((t) => Math.floor(t / WEEK_MS)));
+  const totalWeeksSpanned = Math.max(Math.ceil(spanWeeks), 1);
+
+  return Math.min(100, Math.round((distinctWeeks.size / totalWeeksSpanned) * 100));
+}
+
+/** The calendar month (e.g. "July 2026") with the highest summed session volume. */
+export function calculateBestMonthByVolume(
+  sessions: ExerciseSession[]
+): { label: string; volume: number } | null {
+  if (sessions.length === 0) return null;
+
+  const volumeByMonth = new Map<string, number>();
+  for (const session of sessions) {
+    const key = new Date(session.timestamp).toLocaleDateString(undefined, {
+      month: "long",
+      year: "numeric",
+    });
+    volumeByMonth.set(key, (volumeByMonth.get(key) ?? 0) + session.volume);
+  }
+
+  let bestMonth: { label: string; volume: number } | null = null;
+  for (const [label, volume] of volumeByMonth) {
+    if (!bestMonth || volume > bestMonth.volume) {
+      bestMonth = { label, volume };
+    }
+  }
+
+  return bestMonth && bestMonth.volume > 0 ? bestMonth : null;
+}
+
+function buildMilestones(chronological: ExerciseSession[]): ExerciseMilestone[] {
+  if (chronological.length === 0) return [];
+
+  const events = findMilestoneEvents(chronological);
+  const milestones: ExerciseMilestone[] = [];
+
+  if (events.firstWorkout) {
+    milestones.push({ label: "First Time Performed", value: events.firstWorkout.session.date });
+  }
+
+  if (events.firstPR) {
+    milestones.push({
+      label: "First PR",
+      value: events.firstPR.detail,
+      date: events.firstPR.session.date,
+    });
+  }
+
+  if (events.biggestJump) {
     milestones.push({
       label: "Biggest PR Increase",
-      value: `+${biggestIncrease.toFixed(1)} kg`,
-      date: biggestIncreaseDate,
+      value: events.biggestJump.detail,
+      date: events.biggestJump.session.date,
     });
   }
 
   if (chronological.length >= MIN_SESSIONS_FOR_TRENDS) {
+    const longestStreak = calculateLongestImprovementStreak(chronological);
     milestones.push({
       label: "Longest Improvement Streak",
       value: `${longestStreak} Session${longestStreak === 1 ? "" : "s"}`,
     });
   }
 
-  const highestVolumeSession = chronological.reduce(
-    (best, s) => (s.volume > best.volume ? s : best),
-    chronological[0]
-  );
-
-  if (highestVolumeSession.volume > 0) {
+  if (events.highestVolume) {
     milestones.push({
       label: "Highest Volume Session",
-      value: `${Math.round(highestVolumeSession.volume).toLocaleString()} kg`,
-      date: highestVolumeSession.date,
+      value: events.highestVolume.detail,
+      date: events.highestVolume.session.date,
     });
   }
 
@@ -192,38 +346,18 @@ function buildInsights(chronological: ExerciseSession[]): ExerciseInsights {
   const spanWeeks = Math.max(spanMs / WEEK_MS, 1 / 7);
 
   const weeklyImprovement = (last.weight - first.weight) / spanWeeks;
-  const frequency = chronological.length / spanWeeks;
-
-  const volumeByMonth = new Map<string, number>();
-  for (const session of chronological) {
-    const key = new Date(session.timestamp).toLocaleDateString(undefined, {
-      month: "long",
-      year: "numeric",
-    });
-    volumeByMonth.set(key, (volumeByMonth.get(key) ?? 0) + session.volume);
-  }
-
-  let bestMonth = "-";
-  let bestVolume = 0;
-  for (const [month, volume] of volumeByMonth) {
-    if (volume > bestVolume) {
-      bestVolume = volume;
-      bestMonth = month;
-    }
-  }
-
-  const distinctWeeks = new Set(chronological.map((s) => Math.floor(s.timestamp / WEEK_MS)));
-  const totalWeeksSpanned = Math.max(Math.ceil(spanWeeks), 1);
-  const consistency = Math.min(100, Math.round((distinctWeeks.size / totalWeeksSpanned) * 100));
+  const frequency = calculateTrainingFrequency(chronological);
+  const bestMonth = calculateBestMonthByVolume(chronological);
+  const consistency = calculateConsistencyPercent(chronological);
 
   return {
     averageWeeklyImprovement:
       Math.abs(weeklyImprovement) < 0.05
         ? "No change"
         : `${weeklyImprovement > 0 ? "+" : ""}${weeklyImprovement.toFixed(1)} kg/week`,
-    averageTrainingFrequency: `${frequency.toFixed(1)} sessions/week`,
-    bestPerformingMonth: bestMonth,
-    estimatedConsistency: `${consistency}% Consistent`,
+    averageTrainingFrequency: frequency != null ? `${frequency.toFixed(1)} sessions/week` : "-",
+    bestPerformingMonth: bestMonth?.label ?? "-",
+    estimatedConsistency: consistency != null ? `${consistency}% Consistent` : "-",
   };
 }
 

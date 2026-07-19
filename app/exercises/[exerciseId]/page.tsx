@@ -22,8 +22,14 @@ import { loadWorkoutHistory, type WorkoutHistoryEntry } from "@/lib/workouts";
 import { loadPersonalRecords } from "@/lib/personalRecords";
 import { CATEGORY_LABELS, type PersonalRecord } from "@/lib/progression";
 import { buildExerciseAnalytics } from "@/lib/exerciseAnalytics";
+import { buildChartSeries } from "@/lib/chartAnalytics";
+import { buildTrendSummary } from "@/lib/trendAnalytics";
+import { buildGraphInsights } from "@/lib/graphInsights";
 import EmptyState from "@/components/ui/EmptyState";
 import LoadingCard from "@/components/ui/LoadingCard";
+import ExerciseChart from "@/components/ExerciseChart";
+import TrendSummaryGrid from "@/components/TrendSummaryGrid";
+import GraphInsightsList from "@/components/GraphInsightsList";
 
 const PAGE_SIZE = 10;
 
@@ -72,6 +78,25 @@ export default function ExerciseDetailPage() {
 
   const visibleSessions = analytics.sessions.slice(0, visibleCount);
   const hasMoreSessions = analytics.sessions.length > visibleCount;
+
+  // Chronological (oldest -> newest) copy: the chart/trend/insight helpers
+  // all assume ascending order, while analytics.sessions (Sprint 1) is
+  // newest-first for the Recent Sessions list. Memoized so the graph's own
+  // internal metric/range switching never triggers this to recompute.
+  const chronological = useMemo(
+    () => [...analytics.sessions].sort((a, b) => a.timestamp - b.timestamp),
+    [analytics.sessions]
+  );
+
+  const trendCards = useMemo(() => {
+    const weightSeries = buildChartSeries(chronological, "weight");
+    return buildTrendSummary(chronological, "weight", weightSeries);
+  }, [chronological]);
+
+  const graphInsights = useMemo(
+    () => buildGraphInsights(chronological, analytics.exerciseName),
+    [chronological, analytics.exerciseName]
+  );
 
   if (loading) {
     return (
@@ -164,6 +189,24 @@ export default function ExerciseDetailPage() {
                     }
                   </p>
                 )}
+              </div>
+            )}
+
+            {/* Analytics Graph - the visual centerpiece of this page */}
+            <div className="mt-8">
+              <ExerciseChart exerciseName={analytics.exerciseName} sessions={analytics.sessions} />
+            </div>
+
+            {/* Trend Summary */}
+            <h2 className="mt-8 text-xl font-semibold">Trend Summary</h2>
+            <div className="mt-4">
+              <TrendSummaryGrid cards={trendCards} />
+            </div>
+
+            {/* Graph Insights */}
+            {graphInsights.length > 0 && (
+              <div className="mt-8">
+                <GraphInsightsList insights={graphInsights} />
               </div>
             )}
 
