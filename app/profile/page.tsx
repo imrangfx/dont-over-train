@@ -14,6 +14,8 @@ import {
   getHighestPersonalRecord,
   type PersonalRecord,
 } from "@/lib/progression";
+import { getFriendCount } from "@/lib/friendService";
+import { buildLevelShareCard } from "@/lib/shareCard";
 import {
   CircleUserRound,
   Trophy,
@@ -25,10 +27,14 @@ import {
   BicepsFlexed,
   ClipboardList,
   Activity,
+  Users,
+  ChevronRight,
+  Share2,
 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import LoadingCard from "@/components/ui/LoadingCard";
 import { useToast } from "@/components/ui/Toast";
+import ShareCardModal from "@/components/ShareCardModal";
 
 export default function ProfilePage() {
   const { toast } = useToast();
@@ -40,6 +46,8 @@ export default function ProfilePage() {
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [personalRecords, setPersonalRecords] = useState<PersonalRecord[]>([]);
   const [loadingRecords, setLoadingRecords] = useState(true);
+  const [friendCount, setFriendCount] = useState(0);
+  const [showShareCard, setShowShareCard] = useState(false);
 
   const handleGoogleSignIn = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
@@ -115,6 +123,20 @@ export default function ProfilePage() {
       active = false;
     };
   }, [user]);
+
+  useEffect(() => {
+    let active = true;
+
+    getFriendCount().then((result) => {
+      if (!active) return;
+      setFriendCount(result.count);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [user]);
+
   const filteredHistory = history.filter((workout) => {
     if (filter === "all") return true;
 
@@ -342,9 +364,20 @@ export default function ProfilePage() {
                 </span>
               </div>
 
-              <span className="text-sm font-semibold text-zinc-400">
-                {overallLevel.title}
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold text-zinc-400">
+                  {overallLevel.title}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => setShowShareCard(true)}
+                  aria-label="Share your progress"
+                  className="btn-base rounded-full p-1.5 text-zinc-500 hover:text-lime-400"
+                >
+                  <Share2 size={16} aria-hidden="true" />
+                </button>
+              </div>
             </div>
 
             <div className="mt-4 h-2.5 w-full overflow-hidden rounded-full bg-zinc-800">
@@ -562,6 +595,29 @@ export default function ProfilePage() {
 
         </div>
 
+        {/* Friends */}
+
+        <Link
+          href="/friends"
+          className="btn-base card-surface mt-8 flex items-center justify-between gap-3 p-5 hover:border-lime-400/40"
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-zinc-900 text-lime-400">
+              <Users size={20} aria-hidden="true" />
+            </div>
+            <div>
+              <p className="font-semibold text-white">
+                Friends {user ? `(${friendCount})` : ""}
+              </p>
+              <p className="mt-0.5 text-sm text-zinc-500">
+                {user ? "View All" : "Sign in to connect with friends"}
+              </p>
+            </div>
+          </div>
+
+          <ChevronRight size={20} className="shrink-0 text-zinc-500" aria-hidden="true" />
+        </Link>
+
         {/* Upgrade */}
 
         {!user && (
@@ -587,6 +643,13 @@ export default function ProfilePage() {
         )}
 
       </div>
+
+      {showShareCard && (
+        <ShareCardModal
+          data={buildLevelShareCard(overallLevel, highestPR, currentStreak)}
+          onClose={() => setShowShareCard(false)}
+        />
+      )}
 
       <BottomNav />
     </main>

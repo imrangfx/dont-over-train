@@ -1,11 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getCurrentUserId, saveWorkoutHistoryEntry } from "@/lib/workouts";
+import { Share2 } from "lucide-react";
+import { calculateCurrentStreak, getCurrentUserId, loadWorkoutHistory, saveWorkoutHistoryEntry } from "@/lib/workouts";
 import { recordWorkoutPersonalRecords } from "@/lib/personalRecords";
 import { calculateOverallLevel } from "@/lib/progression";
+import { buildPersonalRecordShareCard, type ShareCardData } from "@/lib/shareCard";
 import { useToast } from "@/components/ui/Toast";
 import LevelUpCelebration from "@/components/LevelUpCelebration";
+import ShareCardModal from "@/components/ShareCardModal";
 
 /** Best (highest) weight lifted for a single exercise this session. */
 function maxWeightLifted(item: any): number {
@@ -27,6 +30,8 @@ export default function CompletePage() {
     title: string;
     color: string;
   } | null>(null);
+  const [shareData, setShareData] = useState<ShareCardData | null>(null);
+  const [showShareCard, setShowShareCard] = useState(false);
 
   useEffect(() => {
     const saved = JSON.parse(
@@ -182,6 +187,23 @@ export default function CompletePage() {
           newLevel.nextLevel
             ? `📈 Progress increased! Getting closer to ${newLevel.nextLevel.title}.`
             : "📈 Progress increased!"
+        );
+      }
+
+      if (result.brokenRecords.length > 0) {
+        const topBroken = result.brokenRecords.reduce((best, current) =>
+          current.record.weight > best.record.weight ? current : best
+        );
+        const { history } = await loadWorkoutHistory();
+        const currentStreak = calculateCurrentStreak(history);
+
+        setShareData(
+          buildPersonalRecordShareCard(
+            topBroken.record,
+            topBroken.previousWeight,
+            newLevel,
+            currentStreak
+          )
         );
       }
     })();
@@ -373,6 +395,17 @@ ${fatigueArray
             </div>
           )}
 
+          {shareData && (
+            <button
+              type="button"
+              onClick={() => setShowShareCard(true)}
+              className="btn-base mb-5 flex w-full items-center justify-center gap-2 rounded-2xl border border-lime-400/40 bg-lime-400/10 py-3 font-semibold text-lime-400 hover:bg-lime-400/15"
+            >
+              <Share2 size={18} aria-hidden="true" />
+              Share Achievement
+            </button>
+          )}
+
           {syncError && (
             <div className="mb-5 w-full rounded-2xl border border-red-500 bg-red-500/10 p-4 text-center">
               <p className="font-semibold text-red-400">
@@ -510,6 +543,10 @@ ${fatigueArray
           color={levelUp.color}
           onClose={() => setLevelUp(null)}
         />
+      )}
+
+      {showShareCard && shareData && (
+        <ShareCardModal data={shareData} onClose={() => setShowShareCard(false)} />
       )}
     </main>
   );
