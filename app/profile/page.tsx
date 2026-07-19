@@ -15,6 +15,7 @@ import {
   type PersonalRecord,
 } from "@/lib/progression";
 import { getFriendCount } from "@/lib/friendService";
+import { exerciseHref } from "@/lib/exerciseAnalytics";
 import { buildLevelShareCard } from "@/lib/shareCard";
 import {
   CircleUserRound,
@@ -442,6 +443,7 @@ export default function ProfilePage() {
                 icon={<span aria-hidden="true">🏋</span>}
                 title={highestPR ? `Highest PR • ${highestPR.exerciseName}` : "Highest PR"}
                 value={highestPR ? `${highestPR.weight} kg` : "-"}
+                href={highestPR ? exerciseHref(highestPR.exerciseName) : undefined}
               />
             </div>
 
@@ -660,13 +662,15 @@ function StatCard({
   title,
   value,
   icon,
+  href,
 }: {
   title: string;
   value: string;
   icon: React.ReactNode;
+  href?: string;
 }) {
-  return (
-    <div className="card-surface p-4">
+  const content = (
+    <>
       <div className="text-lime-400" aria-hidden="true">
         {icon}
       </div>
@@ -678,8 +682,18 @@ function StatCard({
       <div className="mt-1 text-sm text-zinc-500">
         {title}
       </div>
-    </div>
+    </>
   );
+
+  if (href) {
+    return (
+      <Link href={href} className="btn-base card-surface block p-4 hover:border-lime-400/40">
+        {content}
+      </Link>
+    );
+  }
+
+  return <div className="card-surface p-4">{content}</div>;
 }
 
 function InsightRow({

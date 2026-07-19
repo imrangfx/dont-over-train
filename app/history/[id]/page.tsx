@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Dumbbell } from "lucide-react";
+import { ArrowLeft, ChevronRight, Dumbbell } from "lucide-react";
 import { loadWorkoutHistoryById, type WorkoutHistoryEntry } from "@/lib/workouts";
+import { exerciseHref } from "@/lib/exerciseAnalytics";
 import EmptyState from "@/components/ui/EmptyState";
 import LoadingCard from "@/components/ui/LoadingCard";
 
@@ -144,9 +145,13 @@ export default function WorkoutDetailsPage() {
                 className="card-surface mb-5 p-5"
               >
 
-                <h3 className="text-xl font-semibold">
+                <Link
+                  href={exerciseHref(exercise.name)}
+                  className="btn-base -m-1 flex items-center justify-between gap-2 rounded-lg p-1 text-xl font-semibold hover:text-lime-400"
+                >
                   {exercise.name}
-                </h3>
+                  <ChevronRight size={18} className="text-zinc-500" aria-hidden="true" />
+                </Link>
 
                 <p className="mt-2 text-zinc-400">
                   {exercise.sets} Sets • {exercise.reps} Reps
