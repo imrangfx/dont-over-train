@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useMemo, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Sparkles, Trophy } from "lucide-react";
 import type { ExerciseSession } from "@/lib/exerciseAnalytics";
 import {
@@ -51,6 +51,7 @@ function formatValue(value: number, metric: ChartMetric): string {
 
 export default function ExerciseChart({ exerciseName, sessions, className = "" }: ExerciseChartProps) {
   const reactId = useId();
+  const prefersReducedMotion = useReducedMotion();
   const { ref, size } = useContainerSize<HTMLDivElement>();
   const [metric, setMetric] = useState<ChartMetric>("weight");
   const [range, setRange] = useState<ChartRange>("90D");
@@ -116,15 +117,21 @@ export default function ExerciseChart({ exerciseName, sessions, className = "" }
         }, latest ${formatValue(series[series.length - 1].value, metric)}.`
       : `No ${METRIC_META[metric].label.toLowerCase()} data for ${exerciseName} in this range.`;
 
+  const fadeTransition = { duration: prefersReducedMotion ? 0 : 0.25 };
+  const pillTransition = prefersReducedMotion
+    ? { duration: 0 }
+    : { type: "spring" as const, stiffness: 500, damping: 40 };
+  const drawTransition = { duration: prefersReducedMotion ? 0 : 0.6, ease: "easeOut" as const };
+
   return (
-    <div className={`card-surface p-5 ${className}`}>
+    <div className={`card-surface p-5 sm:p-6 ${className}`}>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-xl font-semibold">Progress Graph</h2>
+        <h2 className="text-xl font-semibold tracking-tight">Progress Graph</h2>
         <button
           type="button"
           onClick={() => setShowMilestones((v) => !v)}
           aria-pressed={showMilestones}
-          className="btn-base flex items-center gap-1.5 rounded-full border border-zinc-800 px-3 py-1.5 text-xs font-medium text-zinc-400 hover:text-white"
+          className="btn-base flex items-center gap-1.5 rounded-full border border-zinc-800 px-3 py-2 text-xs font-medium text-zinc-400 hover:text-white"
         >
           <Trophy size={14} aria-hidden="true" />
           Milestones {showMilestones ? "On" : "Off"}
@@ -132,20 +139,20 @@ export default function ExerciseChart({ exerciseName, sessions, className = "" }
       </div>
 
       {/* Metric selector */}
-      <div className="mt-4 flex gap-1.5 rounded-2xl bg-zinc-950 p-1" role="group" aria-label="Select chart metric">
+      <div className="mt-5 flex gap-1.5 rounded-2xl bg-zinc-950 p-1" role="group" aria-label="Select chart metric">
         {CHART_METRICS.map((m) => (
           <button
             key={m}
             type="button"
             onClick={() => setMetric(m)}
             aria-pressed={metric === m}
-            className="btn-base relative flex-1 rounded-xl px-2 py-2 text-xs font-semibold sm:text-sm"
+            className="btn-base relative flex-1 rounded-xl px-2 py-2.5 text-xs font-semibold sm:text-sm"
           >
             {metric === m && (
               <motion.span
                 layoutId={`metric-pill-${reactId}`}
                 className="absolute inset-0 rounded-xl bg-lime-400"
-                transition={{ type: "spring", stiffness: 500, damping: 40 }}
+                transition={pillTransition}
               />
             )}
             <span className={`relative z-10 ${metric === m ? "text-black" : "text-zinc-300"}`}>
@@ -163,13 +170,13 @@ export default function ExerciseChart({ exerciseName, sessions, className = "" }
             type="button"
             onClick={() => setRange(r)}
             aria-pressed={range === r}
-            className="btn-base relative shrink-0 rounded-full px-3 py-1.5 text-xs font-medium"
+            className="btn-base relative shrink-0 rounded-full px-3 py-2 text-xs font-medium"
           >
             {range === r && (
               <motion.span
                 layoutId={`range-pill-${reactId}`}
                 className="absolute inset-0 rounded-full bg-zinc-800"
-                transition={{ type: "spring", stiffness: 500, damping: 40 }}
+                transition={pillTransition}
               />
             )}
             <span className={`relative z-10 ${range === r ? "text-white" : "text-zinc-500"}`}>{r}</span>
@@ -180,14 +187,16 @@ export default function ExerciseChart({ exerciseName, sessions, className = "" }
       {/* Chart */}
       <div
         ref={ref}
-        className="relative mt-5 h-[220px] w-full select-none touch-none sm:h-[260px]"
+        className="relative mt-6 h-[220px] w-full select-none touch-none sm:h-[260px]"
         onPointerMove={(e) => handlePointerActivity(e.clientX, e.currentTarget.getBoundingClientRect().left)}
         onPointerDown={(e) => handlePointerActivity(e.clientX, e.currentTarget.getBoundingClientRect().left)}
         onPointerLeave={() => setHoverIndex(null)}
       >
         <span className="sr-only">{chartDescription}</span>
 
-        {width > 0 && height > 0 && (
+        {width === 0 || height === 0 ? (
+          <div className="absolute inset-0 animate-pulse rounded-xl bg-zinc-900" aria-hidden="true" />
+        ) : (
           <>
             {series.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center gap-2 text-center">
@@ -212,7 +221,7 @@ export default function ExerciseChart({ exerciseName, sessions, className = "" }
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25 }}
+                  transition={fadeTransition}
                 >
                   <line
                     x1={PADDING.left}
@@ -233,14 +242,21 @@ export default function ExerciseChart({ exerciseName, sessions, className = "" }
                       strokeLinejoin="round"
                       initial={{ pathLength: 0, opacity: 0 }}
                       animate={{ pathLength: 1, opacity: 1 }}
-                      transition={{ duration: 0.6, ease: "easeOut" }}
+                      transition={drawTransition}
                     />
                   )}
 
                   {points.map(({ point, x, y }, index) => {
                     const isHovered = hoverIndex === index;
+                    const revealDelay = prefersReducedMotion ? 0 : Math.min(index * 0.02, 0.4);
                     return (
-                      <g key={`${point.session.workoutId}-${index}`}>
+                      <motion.g
+                        key={`${point.session.workoutId}-${index}`}
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: revealDelay, duration: prefersReducedMotion ? 0 : 0.25 }}
+                        style={{ transformOrigin: `${x}px ${y}px` }}
+                      >
                         {(point.isLatest || isHovered) && (
                           <circle cx={x} cy={y} r={isHovered ? 10 : 8} fill="#39ff14" opacity={0.15} />
                         )}
@@ -252,7 +268,7 @@ export default function ExerciseChart({ exerciseName, sessions, className = "" }
                           stroke={point.isLatest ? "#fff" : "none"}
                           strokeWidth={point.isLatest ? 2 : 0}
                         />
-                      </g>
+                      </motion.g>
                     );
                   })}
                 </motion.svg>
