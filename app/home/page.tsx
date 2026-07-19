@@ -10,7 +10,6 @@ import {
   BatteryWarning,
   CalendarCheck,
   ChevronRight,
-  History,
   Lightbulb,
   PlayCircle,
 } from "lucide-react";
@@ -313,38 +312,6 @@ function RecommendationCard({ recommendation }: { recommendation: WorkoutRecomme
             </ul>
           )}
         </div>
-      )}
-    </div>
-  );
-}
-
-function LastWorkoutCard({ workout }: { workout: WorkoutHistoryEntry | null }) {
-  return (
-    <div className="card-surface p-5">
-      <div className="flex items-center gap-2.5">
-        <SectionIcon className="bg-orange-400/10 text-orange-400">
-          <History size={18} />
-        </SectionIcon>
-        <h2 className="text-lg font-semibold tracking-tight">Last Workout</h2>
-      </div>
-
-      {!workout ? (
-        <>
-          <p className="mt-4 text-xl font-bold tracking-tight text-white">No workouts yet</p>
-          <p className="mt-2 text-sm leading-6 text-zinc-400">
-            Complete your first workout to start tracking your recovery.
-          </p>
-        </>
-      ) : (
-        <>
-          <p className="mt-4 text-xl font-bold tracking-tight text-white">
-            {workout.bodyParts?.join(" + ") || "Workout"}
-          </p>
-          <p className="mt-2 text-sm leading-6 text-zinc-400">
-            These muscles were trained most recently. Choose another muscle group below for
-            better recovery.
-          </p>
-        </>
       )}
     </div>
   );
@@ -678,15 +645,6 @@ export default function Home() {
                 : "Ready to make progress today?"}
           </p>
         </header>
-
-        {/* 3. Last Workout */}
-        <section aria-label="Last workout" className="mt-5">
-          {isLoading ? (
-            <LoadingCard rows={2} />
-          ) : (
-            <LastWorkoutCard workout={lastWorkout} />
-          )}
-        </section>
 
         {/* 6. Weekly Progress */}
         <section aria-label="Weekly progress" className="mt-5">
