@@ -10,6 +10,7 @@ import {
   BatteryWarning,
   CalendarCheck,
   ChevronRight,
+  History,
   Lightbulb,
   PlayCircle,
 } from "lucide-react";
@@ -37,8 +38,6 @@ import {
   type WeeklyProgress as WeeklyProgressData,
 } from "@/lib/dashboard";
 import {
-  calculateRecoveryIntelligence,
-  recommendTodaysWorkout,
   type BodyPartRecovery,
   type RecoveryIntelligenceReport,
   type TrainingStatus,
@@ -62,7 +61,6 @@ const BODY_PARTS: BodyPart[] = [
   { name: "Forearms", slug: "forearms", image: "/body-parts/forearms.webp" },
 ];
 
-const BODY_PART_NAMES = BODY_PARTS.map((part) => part.name);
 const WEEKDAY_LETTERS = ["M", "T", "W", "T", "F", "S", "S"];
 
 function fmtKg(value: number | null | undefined): string {
@@ -70,13 +68,26 @@ function fmtKg(value: number | null | undefined): string {
   return `${Math.round(value * 10) / 10} kg`;
 }
 
-function BodyPartCard({ name, slug, image }: BodyPart) {
+function BodyPartCard({
+  name,
+  slug,
+  image,
+  isLastTrained = false,
+}: BodyPart & { isLastTrained?: boolean }) {
   return (
     <Link
       href={`/workout/${slug}`}
       transitionTypes={["nav-forward"]}
-      className="group overflow-hidden rounded-xl bg-[#111111] border border-[#1a1a1a] transition-all duration-200 hover:border-[#39ff14] hover:shadow-[0_0_0_1px_#39ff14] active:scale-[0.98] active:border-[#39ff14] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#39ff14] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+      className={`group relative overflow-hidden rounded-xl bg-[#111111] border transition-all duration-200 hover:border-[#39ff14] hover:shadow-[0_0_0_1px_#39ff14] active:scale-[0.98] active:border-[#39ff14] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#39ff14] focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
+        isLastTrained ? "border-orange-500/30" : "border-[#1a1a1a]"
+      }`}
     >
+      {isLastTrained && (
+        <span className="absolute right-2 top-2 z-10 rounded-full bg-black/70 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-orange-300 ring-1 ring-orange-500/25 backdrop-blur-sm">
+          Last Trained
+        </span>
+      )}
+
       <div className="p-3">
         <div className="relative h-[140px] w-full overflow-hidden rounded-lg bg-black">
           <ViewTransition
@@ -302,6 +313,38 @@ function RecommendationCard({ recommendation }: { recommendation: WorkoutRecomme
             </ul>
           )}
         </div>
+      )}
+    </div>
+  );
+}
+
+function LastWorkoutCard({ workout }: { workout: WorkoutHistoryEntry | null }) {
+  return (
+    <div className="card-surface p-5">
+      <div className="flex items-center gap-2.5">
+        <SectionIcon className="bg-orange-400/10 text-orange-400">
+          <History size={18} />
+        </SectionIcon>
+        <h2 className="text-lg font-semibold tracking-tight">Last Workout</h2>
+      </div>
+
+      {!workout ? (
+        <>
+          <p className="mt-4 text-xl font-bold tracking-tight text-white">No workouts yet</p>
+          <p className="mt-2 text-sm leading-6 text-zinc-400">
+            Complete your first workout to start tracking your recovery.
+          </p>
+        </>
+      ) : (
+        <>
+          <p className="mt-4 text-xl font-bold tracking-tight text-white">
+            {workout.bodyParts?.join(" + ") || "Workout"}
+          </p>
+          <p className="mt-2 text-sm leading-6 text-zinc-400">
+            These muscles were trained most recently. Choose another muscle group below for
+            better recovery.
+          </p>
+        </>
       )}
     </div>
   );
@@ -596,16 +639,6 @@ export default function Home() {
   const currentStreak = useMemo(() => calculateCurrentStreak(history), [history]);
   const hasHistory = history.length > 0;
 
-  const recoveryReport = useMemo(
-    () => calculateRecoveryIntelligence(history, BODY_PART_NAMES),
-    [history]
-  );
-
-  const recommendation = useMemo(
-    () => recommendTodaysWorkout(recoveryReport, history),
-    [recoveryReport, history]
-  );
-
   const weeklyProgress = useMemo(() => calculateWeeklyProgress(history), [history]);
   const overallLevel = useMemo(() => calculateOverallLevel(personalRecords), [personalRecords]);
   const latestPR = useMemo(() => getMostRecentPersonalRecord(personalRecords), [personalRecords]);
@@ -618,6 +651,11 @@ export default function Home() {
   }, [lastWorkout]);
 
   const lastWorkoutBodyPartSlug = lastWorkout?.bodyParts?.[0]?.toLowerCase() || "chest";
+
+  const lastTrainedBodyParts = useMemo(
+    () => new Set(lastWorkout?.bodyParts ?? []),
+    [lastWorkout]
+  );
 
   return (
     <main className="min-h-screen bg-black px-6 pt-8 pb-[calc(72px+env(safe-area-inset-bottom)+1.5rem)] text-white animate-[fade-in_200ms_ease-out]">
@@ -641,12 +679,12 @@ export default function Home() {
           </p>
         </header>
 
-        {/* 3. Today's Recommendation */}
-        <section aria-label="Today's recommendation" className="mt-5">
+        {/* 3. Last Workout */}
+        <section aria-label="Last workout" className="mt-5">
           {isLoading ? (
             <LoadingCard rows={2} />
           ) : (
-            <RecommendationCard recommendation={recommendation} />
+            <LastWorkoutCard workout={lastWorkout} />
           )}
         </section>
 
@@ -701,7 +739,11 @@ export default function Home() {
               className="mt-5 grid grid-cols-2 gap-4"
             >
               {BODY_PARTS.map((part) => (
-                <BodyPartCard key={part.name} {...part} />
+                <BodyPartCard
+                  key={part.name}
+                  {...part}
+                  isLastTrained={lastTrainedBodyParts.has(part.name)}
+                />
               ))}
             </section>
           </ViewTransition>
