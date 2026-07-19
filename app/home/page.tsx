@@ -641,15 +641,6 @@ export default function Home() {
           </p>
         </header>
 
-        {/* 2. Recovery Score */}
-        <section aria-label="Recovery score" className="mt-6">
-          {isLoading ? (
-            <LoadingCard rows={2} />
-          ) : (
-            <RecoveryScoreCard report={recoveryReport} hasHistory={hasHistory} />
-          )}
-        </section>
-
         {/* 3. Today's Recommendation */}
         <section aria-label="Today's recommendation" className="mt-5">
           {isLoading ? (
@@ -659,24 +650,6 @@ export default function Home() {
           )}
         </section>
 
-        {/* 4. Continue Last Workout */}
-        <section aria-label="Continue last workout" className="mt-5">
-          {isLoading ? (
-            <LoadingCard rows={3} />
-          ) : (
-            <ContinueWorkoutCard
-              workout={lastWorkout}
-              isToday={lastWorkoutIsToday}
-              bodyPartSlug={lastWorkoutBodyPartSlug}
-            />
-          )}
-        </section>
-
-        {/* 5. Latest Personal Record */}
-        <section aria-label="Latest personal record" className="mt-5">
-          {isLoading ? <LoadingCard rows={2} /> : <LatestPRCard record={latestPR} />}
-        </section>
-
         {/* 6. Weekly Progress */}
         <section aria-label="Weekly progress" className="mt-5">
           {isLoading ? (
@@ -684,11 +657,6 @@ export default function Home() {
           ) : (
             <WeeklyProgressCard progress={weeklyProgress} />
           )}
-        </section>
-
-        {/* 7. Current Level */}
-        <section aria-label="Current level" className="mt-5">
-          {isLoading ? <LoadingCard rows={2} /> : <LevelCard level={overallLevel} />}
         </section>
 
         {/* 8. Quick Start Workout */}
