@@ -78,7 +78,7 @@ function BodyPartCard({
       href={`/workout/${slug}`}
       transitionTypes={["nav-forward"]}
       className={`group relative overflow-hidden rounded-xl bg-[#111111] border transition-all duration-200 hover:border-[#39ff14] hover:shadow-[0_0_0_1px_#39ff14] active:scale-[0.98] active:border-[#39ff14] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#39ff14] focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
-        isLastTrained ? "border-orange-500/30" : "border-[#1a1a1a]"
+        isLastTrained ? "border-orange-500/30 animate-last-trained-glow" : "border-[#1a1a1a]"
       }`}
     >
       {isLastTrained && (

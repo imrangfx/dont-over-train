@@ -112,6 +112,29 @@ body {
   animation: dangerPulse 1.4s infinite;
 }
 
+@keyframes lastTrainedGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(249, 115, 22, 0);
+    border-color: rgba(249, 115, 22, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 14px 1px rgba(249, 115, 22, 0.35);
+    border-color: rgba(249, 115, 22, 0.65);
+  }
+}
+
+.animate-last-trained-glow {
+  animation: lastTrainedGlow 2.6s ease-in-out infinite;
+}
+
+.animate-last-trained-glow:hover,
+.animate-last-trained-glow:focus-visible,
+.animate-last-trained-glow:active {
+  animation-play-state: paused;
+}
+
 @keyframes level-up-pop {
   from {
     opacity: 0;
@@ -134,6 +157,10 @@ body {
   }
 
   .animate-danger {
+    animation: none;
+  }
+
+  .animate-last-trained-glow {
     animation: none;
   }
 }
