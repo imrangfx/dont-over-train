@@ -57,20 +57,17 @@ export default function Page() {
 
     checkUser();
   }, [router]);
-  // Test Supabase Connection
-  useEffect(() => {
-    async function testSupabase() {
-      const { data, error } = await supabase.auth.getSession();
 
-      console.log("✅ Supabase Connected");
-      console.log("Session:", data.session);
-      console.log("Error:", error);
-    }
-
-    testSupabase();
-  }, []);
   if (checking) {
-    return null;
+    return (
+      <main
+        role="status"
+        aria-label="Loading"
+        className="flex min-h-screen items-center justify-center bg-black"
+      >
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-lime-400" />
+      </main>
+    );
   }
 
   return <OnboardingPage />;

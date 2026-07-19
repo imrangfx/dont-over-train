@@ -10,6 +10,28 @@ export type WorkoutExercise = {
   fatigueBreakdown: Record<string, number>;
 };
 
+/**
+ * Shape of one exercise entry in the `currentWorkout` localStorage array
+ * while a workout is still in progress (before it's saved as a
+ * WorkoutHistoryEntry on the complete page). Written by
+ * app/exercise/[slug]/page.tsx, read/mutated by app/workout/session/page.tsx
+ * and app/workout/complete/page.tsx.
+ */
+export type InProgressWorkoutItem = {
+  exercise: string;
+  slug: string;
+  sets: number;
+  reps: number;
+  setWeights: (number | "")[];
+  weight?: number;
+  bodyPart: string;
+  section?: string;
+  sourcePath: string;
+  fatigue: number;
+  primaryMuscle?: string;
+  fatigueBreakdown: Record<string, number>;
+};
+
 export type WorkoutHistoryEntry = {
   id: string;
   date: string;
@@ -193,7 +215,19 @@ function readLocalHistory(): WorkoutHistoryEntry[] {
   }
 }
 
-function rowToEntry(row: any): WorkoutHistoryEntry {
+/** Raw shape of a `workouts` table row as returned by the Supabase client. */
+type WorkoutRow = {
+  id: string;
+  workout_date: string;
+  total_sets?: number | null;
+  total_reps?: number | null;
+  duration_minutes?: number | null;
+  workout_score?: number | null;
+  body_parts?: string[] | string | null;
+  fatigue?: Partial<WorkoutHistoryEntry> | null;
+};
+
+function rowToEntry(row: WorkoutRow): WorkoutHistoryEntry {
   const snapshot = row.fatigue && typeof row.fatigue === "object" ? row.fatigue : {};
 
   return {

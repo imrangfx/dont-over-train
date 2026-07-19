@@ -77,7 +77,7 @@ export default function ExerciseChart({ exerciseName, sessions, className = "" }
 
   const { width, height } = size;
 
-  const { points, maxValue, minValue } = useMemo(() => {
+  const { points } = useMemo(() => {
     const values = series.map((p) => p.value);
     const max = values.length > 0 ? Math.max(...values) * 1.15 : 1;
     const min = 0;
@@ -283,7 +283,7 @@ export default function ExerciseChart({ exerciseName, sessions, className = "" }
                   type="button"
                   onFocus={() => setHoverIndex(index)}
                   onBlur={() => setHoverIndex((current) => (current === index ? null : current))}
-                  className="absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-400"
+                  className="absolute h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-400"
                   style={{ left: x, top: y }}
                   aria-label={`${point.session.date}: ${formatValue(point.value, metric)}${
                     point.isNewHigh ? ", new high" : ""
@@ -293,11 +293,10 @@ export default function ExerciseChart({ exerciseName, sessions, className = "" }
             </div>
 
             {/* Milestone overlay */}
-            {milestoneMarkers.map(({ event, value }) => {
+            {milestoneMarkers.map(({ event }) => {
               const index = series.findIndex((p) => p.session.timestamp === event.session.timestamp);
               if (index === -1) return null;
-              const x = getX(index, series.length, width);
-              const y = getY(value, minValue, maxValue, height);
+              const { x, y } = points[index];
               return (
                 <div
                   key={event.type}

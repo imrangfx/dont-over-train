@@ -10,27 +10,26 @@ import { triceps } from "@/app/Data/triceps";
 import { shoulders } from "@/app/Data/shoulders";
 import { legs } from "@/app/Data/legs";
 import { abs } from "@/app/Data/abs";
-import { recoveryHoursForFatigue } from "@/lib/workouts";
+import { recoveryHoursForFatigue, type InProgressWorkoutItem } from "@/lib/workouts";
 
 export default function SessionPage() {
   const router = useRouter();
-  const [workout, setWorkout] = useState<any[]>([]);
+  const [workout, setWorkout] = useState<InProgressWorkoutItem[]>([]);
   const muscleFatigue: Record<string, number> = {};
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("currentWorkout");
+    const parsed = saved ? JSON.parse(saved) : null;
 
-    if (saved) {
-      const parsed = JSON.parse(saved);
-
-      setWorkout(
-        Array.isArray(parsed)
-          ? parsed
-          : [parsed]
-      );
-    }
-    setLoaded(true);
+    // Deferred to a microtask so this effect never calls setState
+    // synchronously in its own body (avoids cascading renders).
+    queueMicrotask(() => {
+      if (parsed) {
+        setWorkout(Array.isArray(parsed) ? parsed : [parsed]);
+      }
+      setLoaded(true);
+    });
   }, []);
 
   workout.forEach((item) => {
@@ -91,18 +90,18 @@ export default function SessionPage() {
     workout[workout.length - 1]?.bodyPart || "Chest";
 
   return (
-    <main className="min-h-screen bg-black text-white px-6 py-4">
-      <div className="max-w-md mx-auto">
+    <main className="min-h-screen bg-black text-white px-6 py-4 pb-[max(2rem,env(safe-area-inset-bottom))]">
+      <div className="mx-auto w-full max-w-[430px]">
 
         <Link
           href={`/workout/${workout[0]?.bodyPart?.toLowerCase() || "chest"}`}
-          className="text-zinc-400 text-sm inline-block mb-3"
+          className="btn-base inline-flex items-center gap-1 rounded-lg text-zinc-400 text-sm hover:text-white"
         >
           ← Back
         </Link>
 
-        <h1 className="text-4xl font-bold mb-1">
-          Today's Workout
+        <h1 className="text-4xl font-bold mb-1 mt-3">
+          Today&apos;s Workout
         </h1>
 
         <p className="text-zinc-400 mb-5">
@@ -132,7 +131,10 @@ export default function SessionPage() {
               key={index}
               className="bg-[#1a1a1a] rounded-2xl p-4 flex items-start gap-4 mb-3"
             >
-              <div className="w-8 h-8 rounded-full bg-lime-400 flex items-center justify-center text-black font-bold">
+              <div
+                className="w-8 h-8 rounded-full bg-lime-400 flex items-center justify-center text-black font-bold"
+                aria-hidden="true"
+              >
                 ✓
               </div>
 
@@ -160,6 +162,7 @@ export default function SessionPage() {
                 </div>
 
                 <button
+                  type="button"
                   onClick={() => {
                     const updated = workout.filter((_, i) => i !== index);
 
@@ -174,20 +177,8 @@ export default function SessionPage() {
                       router.push(workout[index].sourcePath);
                     }
                   }}
-                  className="
-  rounded-xl
-  px-3
-  py-2
-  text-sm
-  font-medium
-  text-red-400
-  transition-all
-  duration-150
-  hover:bg-red-500/10
-  hover:text-red-300
-  active:scale-95
-  active:bg-red-500/20
-"
+                  aria-label={`Remove ${exercise.exercise} from this workout`}
+                  className="btn-base rounded-xl px-3 py-2 text-sm font-medium text-red-400 transition-all duration-150 hover:bg-red-500/10 hover:text-red-300 active:scale-95 active:bg-red-500/20"
                 >
                   Remove
                 </button>
@@ -291,31 +282,34 @@ export default function SessionPage() {
 
         {/* Buttons */}
         <button
+          type="button"
           onClick={() =>
             router.push(
               `/workout/${lastBodyPart.toLowerCase()}`
             )
           }
-          className="w-full bg-lime-400 text-black font-semibold py-4 rounded-2xl text-xl mb-4 transition-all duration-150 active:scale-[0.97] active:brightness-90"
+          className="btn-base w-full bg-lime-400 text-black font-semibold py-4 rounded-2xl text-xl mb-4 active:brightness-90"
         >
           + Add Another {lastBodyPart} Exercise
         </button>
 
         <button
+          type="button"
           onClick={() => router.push("/")}
-          className="w-full bg-[#111] border border-[#222] text-white py-4 rounded-2xl text-xl mb-4 transition-all duration-150 active:scale-[0.97]"
+          className="btn-base w-full bg-[#111] border border-[#222] text-white py-4 rounded-2xl text-xl mb-4"
         >
           Choose Another Body Part
         </button>
 
         <button
+          type="button"
           onClick={() => router.push("/workout/complete")}
-          className="w-full border border-lime-400 text-lime-400 py-4 rounded-2xl text-xl"
+          className="btn-base w-full border border-lime-400 text-lime-400 py-4 rounded-2xl text-xl"
         >
           Finish Workout
         </button>
 
       </div>
-    </main >
+    </main>
   );
 }

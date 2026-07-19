@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Download, Share2, Copy, X } from "lucide-react";
 import { buildShareSummaryText, type ShareCardData } from "@/lib/shareCard";
 import { useToast } from "@/components/ui/Toast";
@@ -16,6 +16,21 @@ export default function ShareCardModal({ data, onClose }: ShareCardModalProps) {
   const { toast } = useToast();
   const [busy, setBusy] = useState(false);
   const summaryText = buildShareSummaryText(data);
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [onClose]);
 
   async function renderPng(): Promise<string | null> {
     if (!cardRef.current) return null;
@@ -36,42 +51,48 @@ export default function ShareCardModal({ data, onClose }: ShareCardModalProps) {
 
   const handleDownload = async () => {
     setBusy(true);
-    const dataUrl = await renderPng();
-    setBusy(false);
+    try {
+      const dataUrl = await renderPng();
 
-    if (!dataUrl) {
-      toast("Couldn't generate image.", "error");
-      return;
+      if (!dataUrl) {
+        toast("Couldn't generate image.", "error");
+        return;
+      }
+
+      downloadDataUrl(dataUrl);
+      toast("Image downloaded");
+    } finally {
+      setBusy(false);
     }
-
-    downloadDataUrl(dataUrl);
-    toast("Image downloaded");
   };
 
   const handleShare = async () => {
     setBusy(true);
-    const dataUrl = await renderPng();
-    setBusy(false);
-
-    if (!dataUrl) {
-      toast("Couldn't generate image.", "error");
-      return;
-    }
-
     try {
-      const blob = await (await fetch(dataUrl)).blob();
-      const file = new File([blob], "progressive-overload.png", { type: "image/png" });
+      const dataUrl = await renderPng();
 
-      if (navigator.share && navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], title: "Progressive Overload", text: summaryText });
+      if (!dataUrl) {
+        toast("Couldn't generate image.", "error");
         return;
       }
-    } catch {
-      // Fall through to a plain download below.
-    }
 
-    downloadDataUrl(dataUrl);
-    toast("Sharing isn't supported here — image downloaded instead.");
+      try {
+        const blob = await (await fetch(dataUrl)).blob();
+        const file = new File([blob], "progressive-overload.png", { type: "image/png" });
+
+        if (navigator.share && navigator.canShare?.({ files: [file] })) {
+          await navigator.share({ files: [file], title: "Progressive Overload", text: summaryText });
+          return;
+        }
+      } catch {
+        // Fall through to a plain download below.
+      }
+
+      downloadDataUrl(dataUrl);
+      toast("Sharing isn't supported here — image downloaded instead.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   const handleCopyText = async () => {
@@ -98,7 +119,7 @@ export default function ShareCardModal({ data, onClose }: ShareCardModalProps) {
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="btn-base rounded-full p-2 text-zinc-400 hover:text-white"
+            className="btn-base flex h-10 w-10 items-center justify-center rounded-full text-zinc-400 hover:text-white"
           >
             <X size={20} aria-hidden="true" />
           </button>

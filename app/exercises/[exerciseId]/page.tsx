@@ -111,6 +111,9 @@ export default function ExerciseDetailPage() {
 
   const visibleSessions = analytics.sessions.slice(0, visibleCount);
   const hasMoreSessions = analytics.sessions.length > visibleCount;
+  const currentPRSession = analytics.sessions.find(
+    (s) => s.weight === analytics.stats.currentPR
+  );
 
   // Chronological (oldest -> newest) copy: the chart/trend/insight helpers
   // all assume ascending order, while analytics.sessions (Sprint 1) is
@@ -294,13 +297,9 @@ export default function ExerciseDetailPage() {
                 <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
                   <AnimatedStatValue value={fmtKg(analytics.stats.currentPR)} />
                 </p>
-                {analytics.sessions.find((s) => s.weight === analytics.stats.currentPR)?.date && (
+                {currentPRSession?.date && (
                   <p className="mt-2 text-sm text-zinc-400">
-                    Achieved{" "}
-                    {
-                      analytics.sessions.find((s) => s.weight === analytics.stats.currentPR)
-                        ?.date
-                    }
+                    Achieved {currentPRSession.date}
                   </p>
                 )}
               </div>

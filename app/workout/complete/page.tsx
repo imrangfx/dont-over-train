@@ -6,12 +6,13 @@ import { calculateCurrentStreak, getCurrentUserId, loadWorkoutHistory, saveWorko
 import { recordWorkoutPersonalRecords } from "@/lib/personalRecords";
 import { calculateOverallLevel } from "@/lib/progression";
 import { buildPersonalRecordShareCard, type ShareCardData } from "@/lib/shareCard";
+import { type InProgressWorkoutItem } from "@/lib/workouts";
 import { useToast } from "@/components/ui/Toast";
 import LevelUpCelebration from "@/components/LevelUpCelebration";
 import ShareCardModal from "@/components/ShareCardModal";
 
 /** Best (highest) weight lifted for a single exercise this session. */
-function maxWeightLifted(item: any): number {
+function maxWeightLifted(item: InProgressWorkoutItem): number {
   const weights = Array.isArray(item.setWeights) ? item.setWeights : [];
   const numeric = weights.filter(
     (w: unknown): w is number => typeof w === "number" && w > 0
@@ -22,7 +23,7 @@ function maxWeightLifted(item: any): number {
 
 export default function CompletePage() {
   const { toast } = useToast();
-  const [workouts, setWorkouts] = useState<any[]>([]);
+  const [workouts, setWorkouts] = useState<InProgressWorkoutItem[]>([]);
   const [isPR, setIsPR] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
   const [levelUp, setLevelUp] = useState<{
@@ -38,19 +39,21 @@ export default function CompletePage() {
       localStorage.getItem("currentWorkout") || "[]"
     );
 
-    const formatted = Array.isArray(saved)
+    const formatted: InProgressWorkoutItem[] = Array.isArray(saved)
       ? saved
       : [saved];
 
-    setWorkouts(formatted);
+    // Deferred to a microtask so this effect never calls setState
+    // synchronously in its own body (avoids cascading renders).
+    queueMicrotask(() => setWorkouts(formatted));
 
     const totalSetsHistory = formatted.reduce(
-      (acc: number, item: any) => acc + item.sets,
+      (acc, item) => acc + item.sets,
       0
     );
 
     const totalRepsHistory = formatted.reduce(
-      (acc: number, item: any) =>
+      (acc, item) =>
         acc + item.sets * item.reps,
       0
     );
@@ -66,7 +69,7 @@ export default function CompletePage() {
 
     const fatigueTotals: Record<string, number> = {};
 
-    formatted.forEach((exercise: any) => {
+    formatted.forEach((exercise) => {
       if (!exercise.fatigueBreakdown) return;
 
       Object.entries(exercise.fatigueBreakdown).forEach(
@@ -91,29 +94,30 @@ export default function CompletePage() {
 
       reps: totalRepsHistory,
 
-      durationMinutes: formatted.length * 8, // পরে dynamic করবো
+      // Fixed estimate until per-set duration is tracked.
+      durationMinutes: formatted.length * 8,
 
       score,
 
       bodyParts: Array.from(
         new Set(
           formatted
-            .map((item: any) => item.bodyPart)
+            .map((item) => item.bodyPart)
             .filter(Boolean)
         )
       ),
       sections: Array.from(
         new Set(
           formatted
-            .map((item: any) => item.section)
-            .filter(Boolean)
+            .map((item) => item.section)
+            .filter((section): section is string => Boolean(section))
         )
       ),
 
-      exerciseList: formatted.map((item: any) => ({
+      exerciseList: formatted.map((item) => ({
         name: item.exercise,
         bodyPart: item.bodyPart,
-        section: item.section,
+        section: item.section || "",
         sets: item.sets,
         reps: item.reps,
         weights: item.setWeights || [],
@@ -157,7 +161,7 @@ export default function CompletePage() {
     // Progressive Overload tracking: independent of the history save above -
     // runs for both guests (localStorage) and signed-in users (Supabase).
     (async () => {
-      const performed = formatted.map((item: any) => ({
+      const performed = formatted.map((item) => ({
         name: item.exercise,
         bodyPart: item.bodyPart,
         weight: maxWeightLifted(item),
@@ -215,12 +219,12 @@ export default function CompletePage() {
     const currentScore = Math.min(
       Math.round(
         formatted.reduce(
-          (acc: number, item: any) =>
+          (acc, item) =>
             acc + item.sets,
           0
         ) * 5 +
         formatted.reduce(
-          (acc: number, item: any) =>
+          (acc, item) =>
             acc + item.sets * item.reps,
           0
         ) * 0.2 +
@@ -235,30 +239,24 @@ export default function CompletePage() {
         String(currentScore)
       );
 
-      setIsPR(true);
+      queueMicrotask(() => setIsPR(true));
     }
-  }, []);
+    // `toast` is a stable useCallback reference (see components/ui/Toast.tsx)
+    // so including it here does not cause this mount-only effect to re-run.
+  }, [toast]);
 
   const totalSets = workouts.reduce(
-    (acc: number, item: any) => acc + item.sets,
+    (acc, item) => acc + item.sets,
     0
   );
 
   const totalReps = workouts.reduce(
-    (acc: number, item: any) => acc + item.sets * item.reps,
+    (acc, item) => acc + item.sets * item.reps,
     0
-  );
-  const workoutScore = Math.min(
-    Math.round(
-      totalSets * 5 +
-      totalReps * 0.2 +
-      workouts.length * 10
-    ),
-    100
   );
 
   const fatigueTotals = workouts.reduce(
-    (acc: Record<string, number>, exercise: any) => {
+    (acc: Record<string, number>, exercise) => {
       const fatigue = exercise.fatigueBreakdown || {};
   
       Object.entries(fatigue).forEach(([muscle, value]) => {
@@ -280,25 +278,28 @@ export default function CompletePage() {
     value: Math.min(Number(value), 100),
   }));
   const downloadSummary = () => {
+    const bodyPartsTrained = new Set(
+      workouts.map((item) => item.bodyPart).filter(Boolean)
+    ).size;
 
     const summary = `
 DON'T OVER TRAIN
 Workout Report
 ----------------
 
-Date: May 27, 2026
+Date: ${new Date().toLocaleDateString()}
 
 Exercises:
 ${workouts
         .map(
-          (item: any) =>
+          (item) =>
             `- ${item.exercise}: ${item.sets} x ${item.reps}`
         )
         .join("\n")}
 
 Total Sets: ${totalSets}
 Total Reps: ${totalReps}
-Body Parts Trained: 1
+Body Parts Trained: ${bodyPartsTrained}
 
 Fatigue:
 ${fatigueArray
@@ -332,12 +333,15 @@ ${fatigueArray
   };
 
   return (
-    <main className="min-h-screen bg-black text-white px-6 py-8">
-      <div className="mx-auto flex w-full max-w-[520px] flex-col items-center gap-6">
+    <main className="min-h-screen bg-black text-white px-6 py-8 pb-[max(2rem,env(safe-area-inset-bottom))]">
+      <div className="mx-auto flex w-full max-w-[430px] flex-col items-center gap-6">
 
         {/* Check Icon */}
         <div className="flex w-full justify-center">
-          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-lime-400 text-6xl text-black">
+          <div
+            className="flex h-24 w-24 items-center justify-center rounded-full bg-lime-400 text-6xl text-black"
+            aria-hidden="true"
+          >
             ✓
           </div>
         </div>
@@ -409,7 +413,7 @@ ${fatigueArray
           {syncError && (
             <div className="mb-5 w-full rounded-2xl border border-red-500 bg-red-500/10 p-4 text-center">
               <p className="font-semibold text-red-400">
-                Couldn't sync to cloud
+                Couldn&apos;t sync to cloud
               </p>
 
               <p className="mt-1 text-zinc-300">
@@ -419,7 +423,7 @@ ${fatigueArray
           )}
 
           <div className="flex w-full flex-col gap-3">
-            {workouts.map((item: any, index: number) => (
+            {workouts.map((item, index) => (
 
               <div
                 key={index}
@@ -517,19 +521,21 @@ ${fatigueArray
 
         {/* Download Button */}
         <button
+          type="button"
           onClick={downloadSummary}
-          className="w-full rounded-2xl border border-lime-400 py-4 text-xl text-lime-400"
+          className="btn-base w-full rounded-2xl border border-lime-400 py-4 text-xl text-lime-400 hover:bg-lime-400/10"
         >
           Download Summary
         </button>
 
         {/* Start New Workout */}
         <button
+          type="button"
           onClick={() => {
             localStorage.removeItem("currentWorkout");
             window.location.href = "/home";
           }}
-          className="w-full rounded-2xl bg-lime-400 py-5 text-2xl font-semibold text-black"
+          className="btn-base w-full rounded-2xl bg-lime-400 py-5 text-2xl font-semibold text-black hover:brightness-110"
         >
           Start New Workout
         </button>

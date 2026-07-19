@@ -53,12 +53,19 @@ export default function SectionPage() {
     slug as keyof typeof DATABASE
   ] || {}) as Record<string, Exercise>;
 
+  const filteredExercises = Object.entries(allExercises)
+    .filter(([, exercise]) => exercise.section === section)
+    .filter(([, exercise]) =>
+      exercise.name.toLowerCase().includes(search.toLowerCase())
+    )
+    .sort((a, b) => a[1].name.localeCompare(b[1].name));
+
   return (
     <main className="min-h-dvh bg-black px-6 pt-4 pb-8 text-white">
       <div className="mx-auto w-full max-w-[430px]">
         <Link
           href={`/workout/${slug}`}
-          className="mb-6 inline-flex items-center gap-2 text-zinc-400 transition hover:text-white"
+          className="btn-base mb-6 inline-flex items-center gap-2 rounded-lg text-zinc-400 hover:text-white"
         >
           ← Back
         </Link>
@@ -73,22 +80,23 @@ export default function SectionPage() {
             placeholder="Search exercises..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-2xl bg-[#111] px-4 py-4 text-white placeholder:text-zinc-500 outline-none"
+            aria-label="Search exercises"
+            className="w-full rounded-2xl bg-[#111] px-4 py-4 text-white placeholder:text-zinc-500 outline-none focus:ring-2 focus:ring-lime-400"
           />
         </div>
 
         <div className="mt-6 space-y-4">
-          {Object.entries(allExercises)
-            .filter(([_, exercise]) => exercise.section === section)
-            .filter(([_, exercise]) =>
-              exercise.name
-                .toLowerCase()
-                .includes(search.toLowerCase())
-            )
-            .sort((a, b) =>
-              a[1].name.localeCompare(b[1].name)
-            )
-            .map(([slug, exercise]) => {
+          {filteredExercises.length === 0 && (
+            <div className="rounded-2xl bg-[#111] px-4 py-10 text-center">
+              <p className="text-sm text-zinc-400">
+                {search
+                  ? `No exercises match "${search}".`
+                  : "No exercises found for this section."}
+              </p>
+            </div>
+          )}
+
+          {filteredExercises.map(([slug, exercise]) => {
               const muscles = Object.entries(exercise.fatigue).sort(
                 (a, b) => b[1] - a[1]
               );

@@ -200,7 +200,7 @@ export default function FriendsPage() {
               className="btn-base mt-6 w-full rounded-2xl border border-yellow-500 bg-yellow-500/5 p-5 text-left hover:bg-yellow-500/10"
             >
               <div className="flex items-center gap-3">
-                <UserPlus size={20} className="shrink-0 text-yellow-400" />
+                <UserPlus size={20} className="shrink-0 text-yellow-400" aria-hidden="true" />
                 <div>
                   <p className="font-semibold text-yellow-400">Sign in with Google</p>
                   <p className="mt-1 text-sm text-zinc-400">
@@ -285,7 +285,7 @@ export default function FriendsPage() {
                           type="button"
                           disabled={busyId === profile.id}
                           onClick={() => handleAccept(profile.id)}
-                          className="btn-base rounded-full bg-lime-400 px-3 py-1.5 text-xs font-semibold text-black disabled:opacity-50"
+                          className="btn-base min-h-10 rounded-full bg-lime-400 px-3 py-2.5 text-xs font-semibold text-black disabled:opacity-50"
                         >
                           Accept
                         </button>
@@ -293,7 +293,7 @@ export default function FriendsPage() {
                           type="button"
                           disabled={busyId === profile.id}
                           onClick={() => handleDecline(profile.id)}
-                          className="btn-base rounded-full border border-zinc-700 px-3 py-1.5 text-xs font-medium text-zinc-300 disabled:opacity-50"
+                          className="btn-base min-h-10 rounded-full border border-zinc-700 px-3 py-2.5 text-xs font-medium text-zinc-300 disabled:opacity-50"
                         >
                           Decline
                         </button>
@@ -317,7 +317,7 @@ export default function FriendsPage() {
                       type="button"
                       disabled={busyId === profile.id}
                       onClick={() => handleCancel(profile.id)}
-                      className="btn-base shrink-0 rounded-full border border-zinc-700 px-3 py-1.5 text-xs font-medium text-zinc-300 hover:border-red-500 hover:text-red-400 disabled:opacity-50"
+                      className="btn-base min-h-10 shrink-0 rounded-full border border-zinc-700 px-3 py-2.5 text-xs font-medium text-zinc-300 hover:border-red-500 hover:text-red-400 disabled:opacity-50"
                     >
                       Cancel
                     </button>

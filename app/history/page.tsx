@@ -30,7 +30,7 @@ export default function HistoryPage() {
 
   return (
     <main className="min-h-screen bg-black px-6 py-6 pb-[calc(72px+env(safe-area-inset-bottom)+1.5rem)] text-white animate-[fade-in_200ms_ease-out]">
-      <div className="mx-auto w-full max-w-md">
+      <div className="mx-auto w-full max-w-[390px]">
 
         <div className="mb-8">
           <h1 className="text-4xl font-bold">

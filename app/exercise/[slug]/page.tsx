@@ -15,6 +15,8 @@ import { shoulders } from "@/app/Data/shoulders";
 import { legs } from "@/app/Data/legs";
 import { abs } from "@/app/Data/abs";
 import { forearms } from "@/app/Data/forearms";
+import EmptyState from "@/components/ui/EmptyState";
+import { Dumbbell } from "lucide-react";
 
 export default function ExercisePage() {
   const [sets, setSets] = useState(3);
@@ -87,13 +89,34 @@ export default function ExercisePage() {
       );
     });
 
-    setCurrentFatigue(fatigue);
+    // Deferred to a microtask so this effect never calls setState
+    // synchronously in its own body (avoids cascading renders).
+    queueMicrotask(() => setCurrentFatigue(fatigue));
   }, []);
 
   const exerciseData =
     exercises[slug as keyof typeof exercises];
   if (!exerciseData) {
-    return null;
+    return (
+      <main className="min-h-screen bg-black px-6 py-8 text-white">
+        <div className="mx-auto w-full max-w-[430px]">
+          <Link
+            href={from}
+            className="btn-base inline-flex items-center gap-1 rounded-lg text-sm text-zinc-400 hover:text-white"
+          >
+            ← Back
+          </Link>
+
+          <div className="mt-8">
+            <EmptyState
+              icon={<Dumbbell size={22} />}
+              title="Exercise not found"
+              description="This exercise may have been removed or the link is invalid."
+            />
+          </div>
+        </div>
+      </main>
+    );
   }
   const exerciseName = exerciseData.name;
   const sortedMuscles = Object.entries(
@@ -125,16 +148,16 @@ export default function ExercisePage() {
         ? "#facc15"
         : "#ef4444";
   return (
-    <main className="min-h-screen bg-black text-white px-6 py-4">
-      <div className="max-w-md mx-auto">
+    <main className="min-h-screen bg-black text-white px-6 py-4 pb-[max(2rem,env(safe-area-inset-bottom))]">
+      <div className="mx-auto w-full max-w-[430px]">
         <Link
           href={from}
-          className="text-zinc-400 text-sm inline-block mb-4"
+          className="btn-base inline-flex items-center gap-1 rounded-lg text-zinc-400 text-sm hover:text-white"
         >
           ← Back
         </Link>
 
-        <h1 className="heading-font text-3xl font-semibold mb-6 text-[#39ff14]">
+        <h1 className="heading-font text-3xl font-semibold mb-6 mt-4 text-[#39ff14]">
           {exerciseName}
         </h1>
 
@@ -170,10 +193,6 @@ export default function ExercisePage() {
                 }}
               />
             </div>
-
-            <div className="mt-8">
-            </div>
-
           </div>
 
           <div>
@@ -227,21 +246,26 @@ export default function ExercisePage() {
 
               <div className="flex items-center gap-4">
                 <button
+                  type="button"
                   onClick={() =>
                     updateSets(Math.max(1, sets - 1))
                   }
-                  className="w-12 h-12 rounded-2xl bg-[#222] text-2xl"
+                  disabled={sets <= 1}
+                  aria-label="Decrease sets"
+                  className="btn-base w-12 h-12 rounded-2xl bg-[#222] text-2xl disabled:opacity-40"
                 >
                   -
                 </button>
 
-                <span className="text-3xl">
+                <span className="text-3xl" aria-live="polite">
                   {sets}
                 </span>
 
                 <button
+                  type="button"
                   onClick={() => updateSets(sets + 1)}
-                  className="w-12 h-12 rounded-2xl bg-[#222] text-2xl"
+                  aria-label="Increase sets"
+                  className="btn-base w-12 h-12 rounded-2xl bg-[#222] text-2xl"
                 >
                   +
                 </button>
@@ -254,21 +278,26 @@ export default function ExercisePage() {
 
               <div className="flex items-center gap-4">
                 <button
+                  type="button"
                   onClick={() =>
                     setReps(Math.max(1, reps - 1))
                   }
-                  className="w-12 h-12 rounded-2xl bg-[#222] text-2xl"
+                  disabled={reps <= 1}
+                  aria-label="Decrease reps"
+                  className="btn-base w-12 h-12 rounded-2xl bg-[#222] text-2xl disabled:opacity-40"
                 >
                   -
                 </button>
 
-                <span className="text-3xl">
+                <span className="text-3xl" aria-live="polite">
                   {reps}
                 </span>
 
                 <button
+                  type="button"
                   onClick={() => setReps(reps + 1)}
-                  className="w-12 h-12 rounded-2xl bg-[#222] text-2xl"
+                  aria-label="Increase reps"
+                  className="btn-base w-12 h-12 rounded-2xl bg-[#222] text-2xl"
                 >
                   +
                 </button>
@@ -305,6 +334,7 @@ export default function ExercisePage() {
                           : Number(e.target.value)
                       )
                     }
+                    aria-label={`Set ${index + 1} weight in kilograms`}
                     className="w-full rounded-2xl border border-[#333] bg-[#1a1a1a] px-5 py-4 text-center text-2xl font-semibold text-white outline-none focus:border-lime-400"
                   />
                 </div>
@@ -340,6 +370,7 @@ export default function ExercisePage() {
         </div>
 
         <button
+          type="button"
           onClick={() => {
             const savedWorkout = JSON.parse(
               localStorage.getItem("currentWorkout") || "[]"
@@ -383,14 +414,15 @@ export default function ExercisePage() {
             router.push("/workout/session");
           }}
 
-          className="w-full bg-lime-400 text-black font-semibold py-4 rounded-2xl text-xl mb-4 transition-all duration-150 active:scale-[0.97] active:brightness-90"
+          className="btn-base w-full bg-lime-400 text-black font-semibold py-4 rounded-2xl text-xl mb-4 active:brightness-90"
         >
           Add Exercise
         </button>
 
         <button
+          type="button"
           onClick={() => router.push(from)}
-          className="w-full bg-[#111] border border-[#222] text-white py-4 rounded-2xl text-xl transition-all duration-150 active:scale-[0.97] active:bg-[#1a1a1a]"
+          className="btn-base w-full bg-[#111] border border-[#222] text-white py-4 rounded-2xl text-xl active:bg-[#1a1a1a]"
         >
           Choose Another Exercise
         </button>

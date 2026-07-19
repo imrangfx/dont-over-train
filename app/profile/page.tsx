@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import {
   calculateCurrentStreak,
   calculateWorkoutInsights,
   loadWorkoutHistory,
+  type WorkoutHistoryEntry,
 } from "@/lib/workouts";
 import { loadPersonalRecords } from "@/lib/personalRecords";
 import {
@@ -39,10 +41,10 @@ import ShareCardModal from "@/components/ShareCardModal";
 
 export default function ProfilePage() {
   const { toast } = useToast();
-  const [history, setHistory] = useState<any[]>([]);
+  const [history, setHistory] = useState<WorkoutHistoryEntry[]>([]);
   const [filter, setFilter] = useState("all");
   const [showFilter, setShowFilter] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [avatarError, setAvatarError] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [personalRecords, setPersonalRecords] = useState<PersonalRecord[]>([]);
@@ -236,6 +238,7 @@ export default function ProfilePage() {
 
             <div className="flex h-16 w-16 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900 overflow-hidden">
               {googleAvatarUrl && !avatarError ? (
+                // eslint-disable-next-line @next/next/no-img-element -- external Google avatar URL, not a static/local asset
                 <img
                   src={googleAvatarUrl}
                   alt="Profile"
@@ -246,6 +249,7 @@ export default function ProfilePage() {
                 <CircleUserRound
                   size={42}
                   className="text-[#39ff14]"
+                  aria-hidden="true"
                 />
               )}
             </div>
@@ -629,7 +633,7 @@ export default function ProfilePage() {
             className="btn-base mt-8 w-full rounded-2xl border border-yellow-500 bg-yellow-500/5 p-5 text-left hover:bg-yellow-500/10"
           >
             <div className="flex items-center gap-3">
-              <UserPlus size={20} className="shrink-0 text-yellow-400" />
+              <UserPlus size={20} className="shrink-0 text-yellow-400" aria-hidden="true" />
 
               <div>
                 <p className="font-semibold text-yellow-400">
@@ -708,7 +712,7 @@ function InsightRow({
   return (
     <div className="flex items-center justify-between gap-3">
       <div className="flex min-w-0 items-center gap-3">
-        <div className="text-lime-400 shrink-0">
+        <div className="text-lime-400 shrink-0" aria-hidden="true">
           {icon}
         </div>
         <span className="text-sm text-zinc-400">

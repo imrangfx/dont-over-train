@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 import {
   Cloud,
   Download,
@@ -79,7 +80,7 @@ function exportHistoryAsCsv(history: WorkoutHistoryEntry[]) {
 export default function SettingsPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
   const [lastSynced, setLastSynced] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
@@ -181,10 +182,7 @@ export default function SettingsPage() {
         </p>
 
         <section className="mt-8" aria-labelledby="account-heading">
-          <SectionHeader title="Account" />
-          <div id="account-heading" className="sr-only">
-            Account
-          </div>
+          <SectionHeader id="account-heading" title="Account" />
           <div className="card-surface overflow-hidden divide-y divide-zinc-800">
             <SettingRow
               icon={<User size={18} />}
@@ -195,10 +193,7 @@ export default function SettingsPage() {
         </section>
 
         <section className="mt-8" aria-labelledby="sync-heading">
-          <SectionHeader title="Backup & Sync" />
-          <div id="sync-heading" className="sr-only">
-            Backup and Sync
-          </div>
+          <SectionHeader id="sync-heading" title="Backup & Sync" />
           <div className="card-surface overflow-hidden divide-y divide-zinc-800">
             <SettingRow
               icon={<Cloud size={18} />}
@@ -214,10 +209,7 @@ export default function SettingsPage() {
         </section>
 
         <section className="mt-8" aria-labelledby="export-heading">
-          <SectionHeader title="Export" />
-          <div id="export-heading" className="sr-only">
-            Export
-          </div>
+          <SectionHeader id="export-heading" title="Export" />
           <div className="card-surface overflow-hidden">
             <SettingButton
               icon={<Download size={18} />}
@@ -229,10 +221,7 @@ export default function SettingsPage() {
         </section>
 
         <section className="mt-8" aria-labelledby="danger-heading">
-          <SectionHeader title="Danger Zone" />
-          <div id="danger-heading" className="sr-only">
-            Danger Zone
-          </div>
+          <SectionHeader id="danger-heading" title="Danger Zone" />
           <div className="overflow-hidden rounded-2xl border border-red-500/40 bg-red-500/5">
             <p className="border-b border-red-500/20 px-4 py-3 text-sm leading-6 text-red-300/90">
               Deleting your workout history permanently removes all saved
@@ -249,10 +238,7 @@ export default function SettingsPage() {
         </section>
 
         <section className="mt-8" aria-labelledby="about-heading">
-          <SectionHeader title="About" />
-          <div id="about-heading" className="sr-only">
-            About
-          </div>
+          <SectionHeader id="about-heading" title="About" />
           <div className="card-surface overflow-hidden divide-y divide-zinc-800">
             <SettingRow
               icon={<FileText size={18} />}

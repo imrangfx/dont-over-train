@@ -102,7 +102,7 @@ export default function FriendSearchPage() {
         <h1 className="mt-4 text-4xl font-bold">Find Friends</h1>
         <p className="mt-2 text-zinc-500">Search by display name.</p>
 
-        <div className="mt-6 flex items-center gap-3 rounded-2xl border border-zinc-800 bg-[#111] px-4 py-3">
+        <div className="mt-6 flex items-center gap-3 rounded-2xl border border-zinc-800 bg-[#111] px-4 py-3 transition focus-within:border-lime-400">
           <Search size={18} className="shrink-0 text-zinc-500" aria-hidden="true" />
           <input
             type="search"

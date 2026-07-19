@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Info } from "lucide-react";
 import { supabase } from "@/lib/supabase";
@@ -42,6 +41,7 @@ export default function OnboardingPage() {
                 </div>
                 {/* Guest Button */}
                 <button
+                    type="button"
                     onClick={() => {
                         localStorage.setItem("hasSeenOnboarding", "true");
                         router.replace("/home");
@@ -67,10 +67,11 @@ export default function OnboardingPage() {
                 {/* Create Account */}
                 
                 <button
+                    type="button"
                     onClick={signInWithGoogle}
                     className="btn-base w-full h-14 rounded-3xl bg-white text-black text-lg font-semibold flex items-center justify-center gap-3 hover:brightness-95"
                 >
-                    <FcGoogle size={24} />
+                    <FcGoogle size={24} aria-hidden="true" />
                     Continue with Google
                 </button>
 
@@ -89,6 +90,7 @@ export default function OnboardingPage() {
                     <Info
                         size={20}
                         className="text-lime-400 mt-0.5 shrink-0"
+                        aria-hidden="true"
                     />
 
                     <p className="text-sm leading-7 text-gray-400">

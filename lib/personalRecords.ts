@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { getCurrentUserId, ensureProfileExists } from "@/lib/workouts";
 import {
   updatePersonalRecords,
+  type ExerciseCategory,
   type PersonalRecord,
   type PersonalRecordUpdateResult,
 } from "@/lib/progression";
@@ -24,11 +25,20 @@ function writeLocalRecords(records: PersonalRecord[]) {
   localStorage.setItem(LOCAL_KEY, JSON.stringify(records));
 }
 
-function rowToRecord(row: any): PersonalRecord {
+/** Raw shape of a `personal_records` table row as returned by the Supabase client. */
+type PersonalRecordRow = {
+  exercise_name: string;
+  body_part: string;
+  category: string;
+  weight: number | string | null;
+  achieved_at: string;
+};
+
+function rowToRecord(row: PersonalRecordRow): PersonalRecord {
   return {
     exerciseName: row.exercise_name,
     bodyPart: row.body_part,
-    category: row.category,
+    category: row.category as ExerciseCategory,
     weight: Number(row.weight) || 0,
     achievedAt: row.achieved_at,
   };

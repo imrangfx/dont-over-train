@@ -14,9 +14,7 @@ export default function EmptyState({
   className = "",
 }: EmptyStateProps) {
   return (
-    <div
-      className={`rounded-2xl border border-zinc-800 bg-[#111111] p-8 text-center ${className}`}
-    >
+    <div className={`card-surface p-8 text-center ${className}`}>
       <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-900 text-lime-400">
         {icon}
       </div>

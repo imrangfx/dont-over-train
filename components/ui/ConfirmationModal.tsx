@@ -63,7 +63,7 @@ export default function ConfirmationModal({
       <button
         type="button"
         aria-label="Close dialog"
-        className="absolute inset-0 bg-black/70"
+        className="btn-base absolute inset-0 bg-black/70"
         onClick={() => {
           if (!busy) onClose();
         }}

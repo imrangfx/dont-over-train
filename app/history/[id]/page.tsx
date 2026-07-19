@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { ArrowLeft, ChevronRight, Dumbbell } from "lucide-react";
-import { loadWorkoutHistoryById, type WorkoutHistoryEntry } from "@/lib/workouts";
+import { loadWorkoutHistoryById, type WorkoutHistoryEntry, type WorkoutExercise } from "@/lib/workouts";
 import { exerciseHref } from "@/lib/exerciseAnalytics";
 import EmptyState from "@/components/ui/EmptyState";
 import LoadingCard from "@/components/ui/LoadingCard";
@@ -138,7 +138,7 @@ export default function WorkoutDetailsPage() {
           </h2>
 
           {(workout.exerciseList || []).map(
-            (exercise: any, index: number) => (
+            (exercise: WorkoutExercise, index: number) => (
 
               <div
                 key={index}
@@ -160,7 +160,7 @@ export default function WorkoutDetailsPage() {
                 <div className="mt-4 space-y-2">
 
                   {(exercise.weights || []).map(
-                    (weight: number, i: number) => (
+                    (weight: number | "", i: number) => (
 
                       <div
                         key={i}
@@ -191,7 +191,7 @@ export default function WorkoutDetailsPage() {
                     {
                       Object.entries(exercise.fatigueBreakdown)
                         .filter(([, value]) => Number(value) > 0)
-                        .map(([muscle, value]: any) => (
+                        .map(([muscle, value]) => (
 
                           <div key={muscle} className="mb-3">
 
@@ -246,7 +246,7 @@ export default function WorkoutDetailsPage() {
             {
               Object.entries(workout.fatigueBreakdown)
                 .filter(([, value]) => Number(value) > 0)
-                .map(([muscle, value]: any) => (
+                .map(([muscle, value]) => (
 
                   <div
                     key={muscle}

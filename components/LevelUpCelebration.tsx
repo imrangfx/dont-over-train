@@ -18,7 +18,20 @@ export default function LevelUpCelebration({
 }: LevelUpCelebrationProps) {
   useEffect(() => {
     const timer = window.setTimeout(onClose, 3200);
-    return () => window.clearTimeout(timer);
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      window.clearTimeout(timer);
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, [onClose]);
 
   return (
