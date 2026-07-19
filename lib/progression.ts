@@ -349,6 +349,18 @@ export function getHighestPersonalRecord(
   );
 }
 
+/** Most recently achieved PR across every exercise (by achievedAt), regardless of weight. */
+export function getMostRecentPersonalRecord(
+  records: PersonalRecord[]
+): PersonalRecord | null {
+  if (!records || records.length === 0) return null;
+  return records.reduce((latest, record) => {
+    const latestTime = new Date(latest.achievedAt).getTime();
+    const recordTime = new Date(record.achievedAt).getTime();
+    return recordTime > latestTime ? record : latest;
+  }, records[0]);
+}
+
 export type PersonalRecordUpdateResult = {
   records: PersonalRecord[];
   brokenRecords: Array<{ record: PersonalRecord; previousWeight: number | null }>;

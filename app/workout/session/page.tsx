@@ -10,6 +10,7 @@ import { triceps } from "@/app/Data/triceps";
 import { shoulders } from "@/app/Data/shoulders";
 import { legs } from "@/app/Data/legs";
 import { abs } from "@/app/Data/abs";
+import { recoveryHoursForFatigue } from "@/lib/workouts";
 
 export default function SessionPage() {
   const router = useRouter();
@@ -281,13 +282,7 @@ export default function SessionPage() {
                 </span>
 
                 <span className="text-lime-400">
-                  {value <= 30
-                    ? "24h"
-                    : value <= 60
-                      ? "48h"
-                      : value <= 80
-                        ? "72h"
-                        : "96h"}
+                  {recoveryHoursForFatigue(value)}h
                 </span>
               </div>
             )

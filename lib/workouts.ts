@@ -25,12 +25,25 @@ export type WorkoutHistoryEntry = {
   fatigueBreakdown: Record<string, number>;
 };
 
-function toLocalDayKey(ms: number): string {
+export function toLocalDayKey(ms: number): string {
   const d = new Date(ms);
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
+}
+
+/**
+ * Hours of rest recommended for a muscle at a given cumulative fatigue
+ * value (0-100+). Same tiers already used for in-workout recovery
+ * guidance (see app/workout/session/page.tsx), extracted here so the Home
+ * dashboard's Recovery Score can reuse the identical rule.
+ */
+export function recoveryHoursForFatigue(value: number): number {
+  if (value <= 30) return 24;
+  if (value <= 60) return 48;
+  if (value <= 80) return 72;
+  return 96;
 }
 
 function previousLocalDayKey(dayKey: string): string {
