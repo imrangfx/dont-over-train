@@ -657,12 +657,6 @@ export default function Home() {
 
         {/* 8. Quick Start Workout */}
         <section aria-label="Quick start workout" id="quick-start" className="mt-8">
-          <h2 className="text-lg font-semibold tracking-tight text-white">
-            Quick Start Workout
-          </h2>
-          <p className="mt-1 text-sm text-zinc-500">
-            Select a muscle group to begin
-          </p>
 
           <ViewTransition
             name="home-content"
