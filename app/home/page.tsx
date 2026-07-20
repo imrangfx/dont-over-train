@@ -664,20 +664,6 @@ export default function Home() {
             Select a muscle group to begin
           </p>
 
-          <div className="mt-5 rounded-2xl border border-yellow-500 bg-yellow-500/5 p-4">
-            <div className="mb-2 flex items-center gap-2">
-              <span className="text-xl" aria-hidden="true">⚠️</span>
-
-              <h3 className="font-semibold text-yellow-400">
-                Warm Up First
-              </h3>
-            </div>
-
-            <p className="text-zinc-300 text-sm leading-6">
-              Warm up with light cardio and dynamic stretches for 5–10 minutes before every workout.
-            </p>
-          </div>
-
           <ViewTransition
             name="home-content"
             enter={{

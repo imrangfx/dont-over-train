@@ -6,9 +6,23 @@ import OnboardingPage from "./onboarding/page";
 import { supabase } from "@/lib/supabase";
 import { ensureProfileExists, migrateGuestHistoryToCloud } from "@/lib/workouts";
 
+// Rotates on the loading screen. Add more tips here anytime.
+const FITNESS_TIPS = [
+  "Warm up with light cardio and dynamic stretches for 5–10 minutes before every workout.",
+  "Stay hydrated before and after training.",
+  "Muscles grow during recovery, not during training.",
+  "Progressive overload beats random heavy lifting.",
+  "Perfect form is better than heavier weight.",
+  "Rest 60–90 seconds between hypertrophy sets.",
+  "Eat enough protein to support muscle recovery.",
+];
+
 export default function Page() {
   const router = useRouter();
   const [checking, setChecking] = useState(true);
+  const [tip] = useState(
+    () => FITNESS_TIPS[Math.floor(Math.random() * FITNESS_TIPS.length)]
+  );
 
   useEffect(() => {
     async function checkUser() {
@@ -63,9 +77,14 @@ export default function Page() {
       <main
         role="status"
         aria-label="Loading"
-        className="flex min-h-screen items-center justify-center bg-black"
+        className="flex min-h-screen flex-col items-center justify-center gap-5 bg-black px-8 text-center"
       >
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-lime-400" />
+
+        <p className="flex max-w-[280px] items-start justify-center gap-2 text-sm leading-relaxed text-zinc-500">
+          <span aria-hidden="true">💡</span>
+          <span>{tip}</span>
+        </p>
       </main>
     );
   }
