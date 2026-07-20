@@ -1,309 +1,373 @@
 export const biceps = {
-// =====================
-// LONG HEAD
-// =====================
-"incline-dumbbell-curl": {
-  name: "Incline Dumbbell Curl",
-  bodyPart: "Biceps",
-  section: "long-head",
-  fatigue: {
-    biceps: 18,
-    forearms: 3,
-  },
-},
+  // =====================
+  // LONG HEAD
+  // =====================
 
-"bayesian-cable-curl": {
-  name: "Bayesian Cable Curl",
-  bodyPart: "Biceps",
-  section: "long-head",
-  fatigue: {
-    biceps: 18,
-    forearms: 2,
+  "incline-dumbbell-curl": {
+    name: "Incline Dumbbell Curl",
+    bodyPart: "Biceps",
+    section: "long-head",
+    fatigue: {
+      "Long Head Biceps": 14,
+      "Short Head Biceps": 2,
+      Brachialis: 2,
+      Brachioradialis: 3,
+    },
   },
-},
 
-"close-grip-barbell-curl": {
-  name: "Close Grip Barbell Curl",
-  bodyPart: "Biceps",
-  section: "long-head",
-  fatigue: {
-    biceps: 18,
-    forearms: 4,
+  "bayesian-cable-curl": {
+    name: "Bayesian Cable Curl",
+    bodyPart: "Biceps",
+    section: "long-head",
+    fatigue: {
+      "Long Head Biceps": 15,
+      "Short Head Biceps": 2,
+      Brachialis: 1,
+      Brachioradialis: 2,
+    },
   },
-},
 
-"standing-dumbbell-curl": {
-  name: "Standing Dumbbell Curl",
-  bodyPart: "Biceps",
-  section: "long-head",
-  fatigue: {
-    biceps: 17,
-    forearms: 4,
+  "close-grip-barbell-curl": {
+    name: "Close Grip Barbell Curl",
+    bodyPart: "Biceps",
+    section: "long-head",
+    fatigue: {
+      "Long Head Biceps": 14,
+      "Short Head Biceps": 2,
+      Brachialis: 2,
+      Brachioradialis: 4,
+    },
   },
-},
 
-"alternating-dumbbell-curl": {
-  name: "Alternating Dumbbell Curl",
-  bodyPart: "Biceps",
-  section: "long-head",
-  fatigue: {
-    biceps: 17,
-    forearms: 4,
+  "standing-dumbbell-curl": {
+    name: "Standing Dumbbell Curl",
+    bodyPart: "Biceps",
+    section: "long-head",
+    fatigue: {
+      "Long Head Biceps": 12,
+      "Short Head Biceps": 3,
+      Brachialis: 2,
+      Brachioradialis: 4,
+    },
   },
-},
 
-"cable-curl-behind-body": {
-  name: "Cable Curl Behind Body",
-  bodyPart: "Biceps",
-  section: "long-head",
-  fatigue: {
-    biceps: 17,
-    forearms: 3,
+  "alternating-dumbbell-curl": {
+    name: "Alternating Dumbbell Curl",
+    bodyPart: "Biceps",
+    section: "long-head",
+    fatigue: {
+      "Long Head Biceps": 12,
+      "Short Head Biceps": 3,
+      Brachialis: 2,
+      Brachioradialis: 4,
+    },
   },
-},
 
-"single-arm-cable-curl": {
-  name: "Single Arm Cable Curl",
-  bodyPart: "Biceps",
-  section: "long-head",
-  fatigue: {
-    biceps: 17,
-    forearms: 3,
+  "cable-curl-behind-body": {
+    name: "Cable Curl Behind Body",
+    bodyPart: "Biceps",
+    section: "long-head",
+    fatigue: {
+      "Long Head Biceps": 14,
+      "Short Head Biceps": 2,
+      Brachialis: 1,
+      Brachioradialis: 3,
+    },
   },
-},
 
-"rope-cable-curl": {
-  name: "Rope Cable Curl",
-  bodyPart: "Biceps",
-  section: "long-head",
-  fatigue: {
-    biceps: 16,
-    forearms: 3,
+  "single-arm-cable-curl": {
+    name: "Single Arm Cable Curl",
+    bodyPart: "Biceps",
+    section: "long-head",
+    fatigue: {
+      "Long Head Biceps": 13,
+      "Short Head Biceps": 2,
+      Brachialis: 2,
+      Brachioradialis: 3,
+    },
   },
-},
 
-"seated-incline-dumbbell-curl": {
-  name: "Seated Incline Dumbbell Curl",
-  bodyPart: "Biceps",
-  section: "long-head",
-  fatigue: {
-    biceps: 18,
-    forearms: 3,
+  "rope-cable-curl": {
+    name: "Rope Cable Curl",
+    bodyPart: "Biceps",
+    section: "long-head",
+    fatigue: {
+      "Long Head Biceps": 12,
+      "Short Head Biceps": 2,
+      Brachialis: 2,
+      Brachioradialis: 3,
+    },
   },
-},
 
-"ez-bar-close-grip-curl": {
-  name: "EZ Bar Close Grip Curl",
-  bodyPart: "Biceps",
-  section: "long-head",
-  fatigue: {
-    biceps: 17,
-    forearms: 4,
+  "seated-incline-dumbbell-curl": {
+    name: "Seated Incline Dumbbell Curl",
+    bodyPart: "Biceps",
+    section: "long-head",
+    fatigue: {
+      "Long Head Biceps": 15,
+      "Short Head Biceps": 2,
+      Brachialis: 1,
+      Brachioradialis: 3,
+    },
   },
-},
-// =====================
-// Short Head
-// =====================
 
-"preacher-curl": {
-  name: "Preacher Curl",
-  bodyPart: "Biceps",
-  section: "short-head",
-  fatigue: {
-    biceps: 18,
-    forearms: 3,
+  "ez-bar-close-grip-curl": {
+    name: "EZ Bar Close Grip Curl",
+    bodyPart: "Biceps",
+    section: "long-head",
+    fatigue: {
+      "Long Head Biceps": 13,
+      "Short Head Biceps": 2,
+      Brachialis: 2,
+      Brachioradialis: 4,
+    },
   },
-},
 
-"spider-curl": {
-  name: "Spider Curl",
-  bodyPart: "Biceps",
-  section: "short-head",
-  fatigue: {
-    biceps: 18,
-    forearms: 2,
-  },
-},
+  // =====================
+  // SHORT HEAD
+  // =====================
 
-"concentration-curl": {
-  name: "Concentration Curl",
-  bodyPart: "Biceps",
-  section: "short-head",
-  fatigue: {
-    biceps: 18,
-    forearms: 2,
+  "preacher-curl": {
+    name: "Preacher Curl",
+    bodyPart: "Biceps",
+    section: "short-head",
+    fatigue: {
+      "Short Head Biceps": 14,
+      "Long Head Biceps": 2,
+      Brachialis: 2,
+      Brachioradialis: 3,
+    },
   },
-},
 
-"wide-grip-barbell-curl": {
-  name: "Wide Grip Barbell Curl",
-  bodyPart: "Biceps",
-  section: "short-head",
-  fatigue: {
-    biceps: 17,
-    forearms: 4,
+  "spider-curl": {
+    name: "Spider Curl",
+    bodyPart: "Biceps",
+    section: "short-head",
+    fatigue: {
+      "Short Head Biceps": 15,
+      "Long Head Biceps": 2,
+      Brachialis: 1,
+      Brachioradialis: 2,
+    },
   },
-},
 
-"machine-biceps-curl": {
-  name: "Machine Biceps Curl",
-  bodyPart: "Biceps",
-  section: "short-head",
-  fatigue: {
-    biceps: 17,
-    forearms: 2,
+  "concentration-curl": {
+    name: "Concentration Curl",
+    bodyPart: "Biceps",
+    section: "short-head",
+    fatigue: {
+      "Short Head Biceps": 15,
+      "Long Head Biceps": 2,
+      Brachialis: 1,
+      Brachioradialis: 2,
+    },
   },
-},
 
-"cable-preacher-curl": {
-  name: "Cable Preacher Curl",
-  bodyPart: "Biceps",
-  section: "short-head",
-  fatigue: {
-    biceps: 17,
-    forearms: 2,
+  "wide-grip-barbell-curl": {
+    name: "Wide Grip Barbell Curl",
+    bodyPart: "Biceps",
+    section: "short-head",
+    fatigue: {
+      "Short Head Biceps": 13,
+      "Long Head Biceps": 2,
+      Brachialis: 2,
+      Brachioradialis: 4,
+    },
   },
-},
 
-"high-cable-curl": {
-  name: "High Cable Curl",
-  bodyPart: "Biceps",
-  section: "short-head",
-  fatigue: {
-    biceps: 17,
-    forearms: 2,
+  "machine-biceps-curl": {
+    name: "Machine Biceps Curl",
+    bodyPart: "Biceps",
+    section: "short-head",
+    fatigue: {
+      "Short Head Biceps": 13,
+      "Long Head Biceps": 2,
+      Brachialis: 2,
+      Brachioradialis: 2,
+    },
   },
-},
 
-"dumbbell-preacher-curl": {
-  name: "Dumbbell Preacher Curl",
-  bodyPart: "Biceps",
-  section: "short-head",
-  fatigue: {
-    biceps: 17,
-    forearms: 2,
+  "cable-preacher-curl": {
+    name: "Cable Preacher Curl",
+    bodyPart: "Biceps",
+    section: "short-head",
+    fatigue: {
+      "Short Head Biceps": 13,
+      "Long Head Biceps": 2,
+      Brachialis: 2,
+      Brachioradialis: 2,
+    },
   },
-},
 
-"scott-curl": {
-  name: "Scott Curl",
-  bodyPart: "Biceps",
-  section: "short-head",
-  fatigue: {
-    biceps: 18,
-    forearms: 2,
+  "high-cable-curl": {
+    name: "High Cable Curl",
+    bodyPart: "Biceps",
+    section: "short-head",
+    fatigue: {
+      "Short Head Biceps": 14,
+      "Long Head Biceps": 2,
+      Brachialis: 1,
+      Brachioradialis: 2,
+    },
   },
-},
 
-"seated-dumbbell-curl": {
-  name: "Seated Dumbbell Curl",
-  bodyPart: "Biceps",
-  section: "short-head",
-  fatigue: {
-    biceps: 17,
-    forearms: 3,
+  "dumbbell-preacher-curl": {
+    name: "Dumbbell Preacher Curl",
+    bodyPart: "Biceps",
+    section: "short-head",
+    fatigue: {
+      "Short Head Biceps": 13,
+      "Long Head Biceps": 2,
+      Brachialis: 2,
+      Brachioradialis: 2,
+    },
   },
-},
-// =====================
-// Short Head
-// =====================
-"hammer-curl": {
-  name: "Hammer Curl",
-  bodyPart: "Biceps",
-  section: "brachialis",
-  fatigue: {
-    biceps: 14,
-    forearms: 10,
-  },
-},
 
-"cross-body-hammer-curl": {
-  name: "Cross Body Hammer Curl",
-  bodyPart: "Biceps",
-  section: "brachialis",
-  fatigue: {
-    biceps: 15,
-    forearms: 9,
+  "scott-curl": {
+    name: "Scott Curl",
+    bodyPart: "Biceps",
+    section: "short-head",
+    fatigue: {
+      "Short Head Biceps": 14,
+      "Long Head Biceps": 2,
+      Brachialis: 1,
+      Brachioradialis: 2,
+    },
   },
-},
 
-"rope-hammer-curl": {
-  name: "Rope Hammer Curl",
-  bodyPart: "Biceps",
-  section: "brachialis",
-  fatigue: {
-    biceps: 14,
-    forearms: 9,
+  "seated-dumbbell-curl": {
+    name: "Seated Dumbbell Curl",
+    bodyPart: "Biceps",
+    section: "short-head",
+    fatigue: {
+      "Short Head Biceps": 12,
+      "Long Head Biceps": 3,
+      Brachialis: 2,
+      Brachioradialis: 3,
+    },
   },
-},
 
-"reverse-ez-curl": {
-  name: "Reverse EZ Curl",
-  bodyPart: "Biceps",
-  section: "brachialis",
-  fatigue: {
-    biceps: 12,
-    forearms: 11,
-  },
-},
+  // =====================
+  // BRACHIALIS
+  // =====================
 
-"reverse-barbell-curl": {
-  name: "Reverse Barbell Curl",
-  bodyPart: "Biceps",
-  section: "brachialis",
-  fatigue: {
-    biceps: 12,
-    forearms: 11,
+  "hammer-curl": {
+    name: "Hammer Curl",
+    bodyPart: "Biceps",
+    section: "brachialis",
+    fatigue: {
+      Brachialis: 10,
+      Brachioradialis: 6,
+      "Long Head Biceps": 2,
+      "Short Head Biceps": 2,
+    },
   },
-},
 
-"reverse-cable-curl": {
-  name: "Reverse Cable Curl",
-  bodyPart: "Biceps",
-  section: "brachialis",
-  fatigue: {
-    biceps: 12,
-    forearms: 10,
+  "cross-body-hammer-curl": {
+    name: "Cross Body Hammer Curl",
+    bodyPart: "Biceps",
+    section: "brachialis",
+    fatigue: {
+      Brachialis: 11,
+      Brachioradialis: 5,
+      "Long Head Biceps": 2,
+      "Short Head Biceps": 2,
+    },
   },
-},
 
-"dumbbell-reverse-curl": {
-  name: "Dumbbell Reverse Curl",
-  bodyPart: "Biceps",
-  section: "brachialis",
-  fatigue: {
-    biceps: 12,
-    forearms: 10,
+  "rope-hammer-curl": {
+    name: "Rope Hammer Curl",
+    bodyPart: "Biceps",
+    section: "brachialis",
+    fatigue: {
+      Brachialis: 10,
+      Brachioradialis: 5,
+      "Long Head Biceps": 2,
+      "Short Head Biceps": 2,
+    },
   },
-},
 
-"zottman-curl": {
-  name: "Zottman Curl",
-  bodyPart: "Biceps",
-  section: "brachialis",
-  fatigue: {
-    biceps: 14,
-    forearms: 10,
+  "reverse-ez-curl": {
+    name: "Reverse EZ Curl",
+    bodyPart: "Biceps",
+    section: "brachialis",
+    fatigue: {
+      Brachioradialis: 10,
+      Brachialis: 6,
+      "Long Head Biceps": 1,
+      "Short Head Biceps": 1,
+    },
   },
-},
 
-"neutral-grip-cable-curl": {
-  name: "Neutral Grip Cable Curl",
-  bodyPart: "Biceps",
-  section: "brachialis",
-  fatigue: {
-    biceps: 14,
-    forearms: 9,
+  "reverse-barbell-curl": {
+    name: "Reverse Barbell Curl",
+    bodyPart: "Biceps",
+    section: "brachialis",
+    fatigue: {
+      Brachioradialis: 10,
+      Brachialis: 6,
+      "Long Head Biceps": 1,
+      "Short Head Biceps": 1,
+    },
   },
-},
 
-"machine-hammer-curl": {
-  name: "Machine Hammer Curl",
-  bodyPart: "Biceps",
-  section: "brachialis",
-  fatigue: {
-    biceps: 14,
-    forearms: 9,
+  "reverse-cable-curl": {
+    name: "Reverse Cable Curl",
+    bodyPart: "Biceps",
+    section: "brachialis",
+    fatigue: {
+      Brachioradialis: 9,
+      Brachialis: 6,
+      "Long Head Biceps": 1,
+      "Short Head Biceps": 1,
+    },
   },
-},
+
+  "dumbbell-reverse-curl": {
+    name: "Dumbbell Reverse Curl",
+    bodyPart: "Biceps",
+    section: "brachialis",
+    fatigue: {
+      Brachioradialis: 9,
+      Brachialis: 6,
+      "Long Head Biceps": 1,
+      "Short Head Biceps": 1,
+    },
+  },
+
+  "zottman-curl": {
+    name: "Zottman Curl",
+    bodyPart: "Biceps",
+    section: "brachialis",
+    fatigue: {
+      Brachialis: 8,
+      Brachioradialis: 8,
+      "Long Head Biceps": 2,
+      "Short Head Biceps": 2,
+    },
+  },
+
+  "neutral-grip-cable-curl": {
+    name: "Neutral Grip Cable Curl",
+    bodyPart: "Biceps",
+    section: "brachialis",
+    fatigue: {
+      Brachialis: 10,
+      Brachioradialis: 5,
+      "Long Head Biceps": 2,
+      "Short Head Biceps": 2,
+    },
+  },
+
+  "machine-hammer-curl": {
+    name: "Machine Hammer Curl",
+    bodyPart: "Biceps",
+    section: "brachialis",
+    fatigue: {
+      Brachialis: 10,
+      Brachioradialis: 5,
+      "Long Head Biceps": 2,
+      "Short Head Biceps": 2,
+    },
+  },
 };

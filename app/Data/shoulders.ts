@@ -2,6 +2,7 @@ export const shoulders = {
 // =====================
 // FRONT DELTS
 // =====================
+
 "barbell-overhead-press": {
   name: "Barbell Overhead Press",
   bodyPart: "Shoulders",
@@ -9,7 +10,9 @@ export const shoulders = {
   fatigue: {
     frontDelts: 18,
     sideDelts: 6,
-    triceps: 10,
+    "Lateral Head Triceps": 5,
+    "Medial Head Triceps": 3,
+    "Long Head Triceps": 2,
   },
 },
 
@@ -20,7 +23,9 @@ export const shoulders = {
   fatigue: {
     frontDelts: 17,
     sideDelts: 7,
-    triceps: 9,
+    "Lateral Head Triceps": 5,
+    "Medial Head Triceps": 3,
+    "Long Head Triceps": 1,
   },
 },
 
@@ -31,7 +36,9 @@ export const shoulders = {
   fatigue: {
     frontDelts: 18,
     sideDelts: 8,
-    triceps: 8,
+    "Lateral Head Triceps": 4,
+    "Medial Head Triceps": 3,
+    "Long Head Triceps": 1,
   },
 },
 
@@ -42,7 +49,9 @@ export const shoulders = {
   fatigue: {
     frontDelts: 17,
     sideDelts: 6,
-    triceps: 8,
+    "Lateral Head Triceps": 4,
+    "Medial Head Triceps": 3,
+    "Long Head Triceps": 1,
   },
 },
 
@@ -53,7 +62,9 @@ export const shoulders = {
   fatigue: {
     frontDelts: 17,
     sideDelts: 6,
-    triceps: 9,
+    "Lateral Head Triceps": 5,
+    "Medial Head Triceps": 3,
+    "Long Head Triceps": 1,
   },
 },
 
@@ -64,7 +75,9 @@ export const shoulders = {
   fatigue: {
     frontDelts: 15,
     sideDelts: 5,
-    triceps: 7,
+    "Lateral Head Triceps": 3,
+    "Medial Head Triceps": 2,
+    "Long Head Triceps": 2,
   },
 },
 
@@ -75,7 +88,9 @@ export const shoulders = {
   fatigue: {
     frontDelts: 16,
     sideDelts: 6,
-    triceps: 8,
+    "Lateral Head Triceps": 4,
+    "Medial Head Triceps": 3,
+    "Long Head Triceps": 1,
   },
 },
 
@@ -86,7 +101,9 @@ export const shoulders = {
   fatigue: {
     frontDelts: 18,
     sideDelts: 6,
-    triceps: 10,
+    "Lateral Head Triceps": 5,
+    "Medial Head Triceps": 3,
+    "Long Head Triceps": 2,
   },
 },
 
@@ -97,7 +114,9 @@ export const shoulders = {
   fatigue: {
     frontDelts: 17,
     sideDelts: 7,
-    triceps: 9,
+    "Lateral Head Triceps": 5,
+    "Medial Head Triceps": 3,
+    "Long Head Triceps": 1,
   },
 },
 
@@ -108,9 +127,12 @@ export const shoulders = {
   fatigue: {
     frontDelts: 18,
     sideDelts: 6,
-    triceps: 10,
+    "Lateral Head Triceps": 5,
+    "Medial Head Triceps": 3,
+    "Long Head Triceps": 2,
   },
 },
+
 // =====================
 // SIDE DELTS
 // =====================
@@ -223,8 +245,8 @@ export const shoulders = {
   bodyPart: "Shoulders",
   section: "rear-delts",
   fatigue: {
-    rearDelts: 17,
-    upperBack: 6,
+    rearDelts: 16,
+    upperBack: 7,
   },
 },
 
@@ -279,8 +301,8 @@ export const shoulders = {
   bodyPart: "Shoulders",
   section: "rear-delts",
   fatigue: {
-    rearDelts: 17,
-    upperBack: 6,
+    rearDelts: 16,
+    upperBack: 7,
   },
 },
 

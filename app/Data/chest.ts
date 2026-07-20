@@ -1,5 +1,5 @@
 export const chest = {
-    // =====================
+  // =====================
   // UPPER CHEST
   // =====================
 
@@ -13,7 +13,9 @@ export const chest = {
       midChest: 6,
       lowerChest: 1,
       frontDelts: 5,
-      triceps: 6,
+      "Lateral Head Triceps": 3,
+      "Medial Head Triceps": 2,
+      "Long Head Triceps": 1,
     },
   },
 
@@ -26,7 +28,9 @@ export const chest = {
       midChest: 8,
       lowerChest: 2,
       frontDelts: 8,
-      triceps: 10,
+      "Lateral Head Triceps": 5,
+      "Medial Head Triceps": 3,
+      "Long Head Triceps": 2,
     },
   },
 
@@ -39,12 +43,14 @@ export const chest = {
       midChest: 6,
       lowerChest: 1,
       frontDelts: 6,
-      triceps: 7,
+      "Lateral Head Triceps": 4,
+      "Medial Head Triceps": 2,
+      "Long Head Triceps": 1,
     },
   },
 
-  "low-cable-crossover": {
-    name: "Low Cable Crossover",
+  "low-to-high-cable-crossover": {
+    name: "Low to High Cable Crossover",
     bodyPart: "Chest",
     section: "upper-chest",
     fatigue: {
@@ -52,7 +58,6 @@ export const chest = {
       midChest: 3,
       lowerChest: 1,
       frontDelts: 2,
-      triceps: 1,
     },
   },
 
@@ -65,7 +70,9 @@ export const chest = {
       midChest: 6,
       lowerChest: 1,
       frontDelts: 5,
-      triceps: 7,
+      "Lateral Head Triceps": 4,
+      "Medial Head Triceps": 2,
+      "Long Head Triceps": 1,
     },
   },
 
@@ -78,7 +85,9 @@ export const chest = {
       midChest: 6,
       lowerChest: 1,
       frontDelts: 4,
-      triceps: 6,
+      "Lateral Head Triceps": 3,
+      "Medial Head Triceps": 2,
+      "Long Head Triceps": 1,
     },
   },
 
@@ -91,7 +100,6 @@ export const chest = {
       midChest: 4,
       lowerChest: 1,
       frontDelts: 2,
-      triceps: 1,
     },
   },
 
@@ -104,7 +112,9 @@ export const chest = {
       midChest: 6,
       lowerChest: 1,
       frontDelts: 5,
-      triceps: 8,
+      "Lateral Head Triceps": 4,
+      "Medial Head Triceps": 2,
+      "Long Head Triceps": 2,
     },
   },
 
@@ -117,7 +127,9 @@ export const chest = {
       midChest: 4,
       lowerChest: 1,
       frontDelts: 10,
-      triceps: 4,
+      "Lateral Head Triceps": 2,
+      "Medial Head Triceps": 1,
+      "Long Head Triceps": 1,
     },
   },
 
@@ -130,7 +142,9 @@ export const chest = {
       midChest: 7,
       lowerChest: 1,
       frontDelts: 5,
-      triceps: 6,
+      "Lateral Head Triceps": 3,
+      "Medial Head Triceps": 2,
+      "Long Head Triceps": 1,
     },
   },
 
@@ -147,7 +161,9 @@ export const chest = {
       midChest: 18,
       lowerChest: 4,
       frontDelts: 7,
-      triceps: 10,
+      "Lateral Head Triceps": 5,
+      "Medial Head Triceps": 3,
+      "Long Head Triceps": 2,
     },
   },
 
@@ -160,7 +176,9 @@ export const chest = {
       midChest: 17,
       lowerChest: 4,
       frontDelts: 6,
-      triceps: 8,
+      "Lateral Head Triceps": 4,
+      "Medial Head Triceps": 3,
+      "Long Head Triceps": 1,
     },
   },
 
@@ -173,20 +191,24 @@ export const chest = {
       midChest: 16,
       lowerChest: 4,
       frontDelts: 4,
-      triceps: 8,
+      "Lateral Head Triceps": 4,
+      "Medial Head Triceps": 3,
+      "Long Head Triceps": 1,
     },
   },
 
   "hex-press": {
-  name: "Hex Press",
-  bodyPart: "Chest",
-  section: "mid-chest",
-  fatigue: {
-    midChest: 17,
-    triceps: 8,
-    frontDelts: 5,
+    name: "Hex Press",
+    bodyPart: "Chest",
+    section: "mid-chest",
+    fatigue: {
+      midChest: 17,
+      frontDelts: 5,
+      "Lateral Head Triceps": 4,
+      "Medial Head Triceps": 3,
+      "Long Head Triceps": 1,
+    },
   },
-},
 
   "cable-press": {
     name: "Cable Press",
@@ -197,7 +219,9 @@ export const chest = {
       midChest: 14,
       lowerChest: 4,
       frontDelts: 4,
-      triceps: 6,
+      "Lateral Head Triceps": 3,
+      "Medial Head Triceps": 2,
+      "Long Head Triceps": 1,
     },
   },
 
@@ -210,7 +234,9 @@ export const chest = {
       midChest: 16,
       lowerChest: 4,
       frontDelts: 6,
-      triceps: 8,
+      "Lateral Head Triceps": 4,
+      "Medial Head Triceps": 3,
+      "Long Head Triceps": 1,
     },
   },
 
@@ -223,7 +249,9 @@ export const chest = {
       midChest: 18,
       lowerChest: 4,
       frontDelts: 7,
-      triceps: 10,
+      "Lateral Head Triceps": 5,
+      "Medial Head Triceps": 3,
+      "Long Head Triceps": 2,
     },
   },
 
@@ -236,7 +264,9 @@ export const chest = {
       midChest: 16,
       lowerChest: 4,
       frontDelts: 5,
-      triceps: 8,
+      "Lateral Head Triceps": 4,
+      "Medial Head Triceps": 3,
+      "Long Head Triceps": 1,
     },
   },
 
@@ -249,7 +279,9 @@ export const chest = {
       midChest: 16,
       lowerChest: 4,
       frontDelts: 5,
-      triceps: 8,
+      "Lateral Head Triceps": 4,
+      "Medial Head Triceps": 3,
+      "Long Head Triceps": 1,
     },
   },
 
@@ -262,7 +294,6 @@ export const chest = {
       midChest: 14,
       lowerChest: 3,
       frontDelts: 2,
-      triceps: 1,
     },
   },
 
@@ -279,7 +310,9 @@ export const chest = {
       midChest: 6,
       lowerChest: 18,
       frontDelts: 3,
-      triceps: 10,
+      "Lateral Head Triceps": 5,
+      "Medial Head Triceps": 3,
+      "Long Head Triceps": 2,
     },
   },
 
@@ -292,7 +325,9 @@ export const chest = {
       midChest: 6,
       lowerChest: 17,
       frontDelts: 3,
-      triceps: 8,
+      "Lateral Head Triceps": 4,
+      "Medial Head Triceps": 3,
+      "Long Head Triceps": 1,
     },
   },
 
@@ -305,7 +340,9 @@ export const chest = {
       midChest: 6,
       lowerChest: 20,
       frontDelts: 2,
-      triceps: 12,
+      "Lateral Head Triceps": 5,
+      "Long Head Triceps": 5,
+      "Medial Head Triceps": 2,
     },
   },
 
@@ -318,7 +355,9 @@ export const chest = {
       midChest: 6,
       lowerChest: 16,
       frontDelts: 2,
-      triceps: 8,
+      "Lateral Head Triceps": 4,
+      "Medial Head Triceps": 3,
+      "Long Head Triceps": 1,
     },
   },
 
@@ -331,7 +370,6 @@ export const chest = {
       midChest: 4,
       lowerChest: 15,
       frontDelts: 1,
-      triceps: 1,
     },
   },
 
@@ -344,7 +382,9 @@ export const chest = {
       midChest: 5,
       lowerChest: 17,
       frontDelts: 2,
-      triceps: 8,
+      "Lateral Head Triceps": 4,
+      "Medial Head Triceps": 3,
+      "Long Head Triceps": 1,
     },
   },
 
@@ -357,7 +397,9 @@ export const chest = {
       midChest: 5,
       lowerChest: 16,
       frontDelts: 2,
-      triceps: 8,
+      "Lateral Head Triceps": 4,
+      "Medial Head Triceps": 3,
+      "Long Head Triceps": 1,
     },
   },
 
@@ -370,7 +412,9 @@ export const chest = {
       midChest: 5,
       lowerChest: 18,
       frontDelts: 2,
-      triceps: 10,
+      "Lateral Head Triceps": 5,
+      "Long Head Triceps": 4,
+      "Medial Head Triceps": 1,
     },
   },
 
@@ -383,7 +427,9 @@ export const chest = {
       midChest: 4,
       lowerChest: 14,
       frontDelts: 2,
-      triceps: 8,
+      "Lateral Head Triceps": 4,
+      "Long Head Triceps": 3,
+      "Medial Head Triceps": 1,
     },
   },
 
@@ -396,7 +442,9 @@ export const chest = {
       midChest: 5,
       lowerChest: 15,
       frontDelts: 2,
-      triceps: 6,
+      "Lateral Head Triceps": 3,
+      "Medial Head Triceps": 2,
+      "Long Head Triceps": 1,
     },
   },
 };
