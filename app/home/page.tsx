@@ -42,6 +42,7 @@ import {
   type TrainingStatus,
   type WorkoutRecommendation,
 } from "@/lib/recoveryIntelligence";
+import { workouts } from "@/app/Data/workouts";
 
 type BodyPart = {
   name: string;
@@ -67,17 +68,39 @@ function fmtKg(value: number | null | undefined): string {
   return `${Math.round(value * 10) / 10} kg`;
 }
 
+/** Drops a trailing body-part name from a section title, e.g. "Upper Chest" + "Chest" -> "Upper". */
+function shortSectionLabel(title: string, bodyPartName: string): string {
+  const stripped = title.replace(new RegExp(`\\s*${bodyPartName}$`, "i"), "").trim();
+  return stripped.length > 0 ? stripped : title;
+}
+
+/** Section labels + total exercise count per body part, derived once from the existing workouts data. */
+const BODY_PART_META = new Map(
+  BODY_PARTS.map((part) => {
+    const sections = workouts[part.slug as keyof typeof workouts]?.sections ?? [];
+    return [
+      part.name,
+      {
+        sectionLabels: sections.map((section) => shortSectionLabel(section.title, part.name)),
+        exerciseCount: sections.reduce((sum, section) => sum + section.exerciseCount, 0),
+      },
+    ] as const;
+  })
+);
+
 function BodyPartCard({
   name,
   slug,
   image,
   isLastTrained = false,
 }: BodyPart & { isLastTrained?: boolean }) {
+  const meta = BODY_PART_META.get(name);
+
   return (
     <Link
       href={`/workout/${slug}`}
       transitionTypes={["nav-forward"]}
-      className={`group relative overflow-hidden rounded-xl bg-[#111111] border transition-all duration-200 hover:border-[#39ff14] hover:shadow-[0_0_0_1px_#39ff14] active:scale-[0.98] active:border-[#39ff14] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#39ff14] focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
+      className={`group relative flex items-center gap-3 overflow-hidden rounded-xl bg-[#111111] border px-5 py-3 transition-all duration-200 hover:border-[#39ff14] hover:shadow-[0_0_0_1px_#39ff14] active:scale-[0.98] active:border-[#39ff14] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#39ff14] focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
         isLastTrained ? "border-orange-500/30 animate-last-trained-glow" : "border-[#1a1a1a]"
       }`}
     >
@@ -87,29 +110,43 @@ function BodyPartCard({
         </span>
       )}
 
-      <div className="p-3">
-        <div className="relative h-[140px] w-full overflow-hidden rounded-lg bg-black">
-          <ViewTransition
-            name={`muscle-${slug}`}
-            default="none"
-            share="auto"
-          >
-            <Image
-              src={image}
-              alt={name}
-              fill
-              className="object-cover"
-              sizes="(max-width: 640px) 50vw, 180px"
-            />
-          </ViewTransition>
-        </div>
+      <div className="min-w-0 flex-1">
+        <h2 className="truncate text-[18px] font-normal text-white">{name}</h2>
+
+        {meta && meta.sectionLabels.length > 0 && (
+          <p className="mt-1 truncate text-xs text-zinc-500">
+            {meta.sectionLabels.join(" • ")}
+          </p>
+        )}
+
+        {meta && (
+          <p className="mt-1 text-xs font-medium text-lime-400">
+            {meta.exerciseCount} Exercise{meta.exerciseCount !== 1 ? "s" : ""}
+          </p>
+        )}
       </div>
 
-      <div className="pb-4">
-        <h2 className="text-center text-[18px] font-normal text-white">
-          {name}
-        </h2>
+      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-black">
+        <ViewTransition
+          name={`muscle-${slug}`}
+          default="none"
+          share="auto"
+        >
+          <Image
+            src={image}
+            alt={name}
+            fill
+            className="object-contain"
+            sizes="80px"
+          />
+        </ViewTransition>
       </div>
+
+      <ChevronRight
+        size={18}
+        className="shrink-0 text-zinc-500 transition-colors group-hover:text-[#39ff14]"
+        aria-hidden="true"
+      />
     </Link>
   );
 }
@@ -674,7 +711,7 @@ export default function Home() {
           >
             <section
               aria-label="Muscle groups"
-              className="mt-5 grid grid-cols-2 gap-4"
+              className="mt-5 flex flex-col gap-4"
             >
               {BODY_PARTS.map((part) => (
                 <BodyPartCard
