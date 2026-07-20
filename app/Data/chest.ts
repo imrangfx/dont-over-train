@@ -103,51 +103,6 @@ export const chest = {
     },
   },
 
-  "reverse-grip-bench-press": {
-    name: "Reverse Grip Bench Press",
-    bodyPart: "Chest",
-    section: "upper-chest",
-    fatigue: {
-      upperChest: 17,
-      midChest: 6,
-      lowerChest: 1,
-      frontDelts: 5,
-      "Lateral Head Triceps": 4,
-      "Medial Head Triceps": 2,
-      "Long Head Triceps": 2,
-    },
-  },
-
-  "landmine-press": {
-    name: "Landmine Press",
-    bodyPart: "Chest",
-    section: "upper-chest",
-    fatigue: {
-      upperChest: 12,
-      midChest: 4,
-      lowerChest: 1,
-      frontDelts: 10,
-      "Lateral Head Triceps": 2,
-      "Medial Head Triceps": 1,
-      "Long Head Triceps": 1,
-    },
-  },
-
-  "wide-grip-incline-press": {
-    name: "Wide Grip Incline Press",
-    bodyPart: "Chest",
-    section: "upper-chest",
-    fatigue: {
-      upperChest: 16,
-      midChest: 7,
-      lowerChest: 1,
-      frontDelts: 5,
-      "Lateral Head Triceps": 3,
-      "Medial Head Triceps": 2,
-      "Long Head Triceps": 1,
-    },
-  },
-
   // =====================
   // MID CHEST
   // =====================
