@@ -131,11 +131,8 @@ export default function SessionPage() {
               key={index}
               className="bg-[#1a1a1a] rounded-2xl p-4 flex items-start gap-4 mb-3"
             >
-              <div
-                className="w-8 h-8 rounded-full bg-lime-400 flex items-center justify-center text-black font-bold"
-                aria-hidden="true"
-              >
-                ✓
+              <div className="w-8 h-8 rounded-full bg-lime-400 flex items-center justify-center text-black font-bold">
+                {index + 1}
               </div>
 
               <div className="flex justify-between w-full">
