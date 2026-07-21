@@ -503,12 +503,11 @@ function WeeklyProgressCard({ progress }: { progress: WeeklyProgressData }) {
         ))}
       </div>
 
-      <div className="mt-5 flex items-center justify-between text-sm">
+      <div className="mt-5 text-sm">
         <span className="text-zinc-400">
           <span className="font-semibold text-white">{progress.workoutsThisWeek}</span> workout
           {progress.workoutsThisWeek !== 1 ? "s" : ""} this week
         </span>
-        <span className="text-zinc-500">{progress.setsThisWeek} sets</span>
       </div>
     </div>
   );
