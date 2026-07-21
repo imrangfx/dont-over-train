@@ -107,36 +107,6 @@ export const chest = {
   // MID CHEST
   // =====================
 
-  "flat-barbell-bench-press": {
-    name: "Flat Barbell Bench Press",
-    bodyPart: "Chest",
-    section: "mid-chest",
-    fatigue: {
-      upperChest: 4,
-      midChest: 18,
-      lowerChest: 4,
-      frontDelts: 7,
-      "Lateral Head Triceps": 5,
-      "Medial Head Triceps": 3,
-      "Long Head Triceps": 2,
-    },
-  },
-
-  "flat-dumbbell-press": {
-    name: "Flat Dumbbell Press",
-    bodyPart: "Chest",
-    section: "mid-chest",
-    fatigue: {
-      upperChest: 4,
-      midChest: 17,
-      lowerChest: 4,
-      frontDelts: 6,
-      "Lateral Head Triceps": 4,
-      "Medial Head Triceps": 3,
-      "Long Head Triceps": 1,
-    },
-  },
-
   "machine-chest-press": {
     name: "Machine Chest Press",
     bodyPart: "Chest",
@@ -152,8 +122,8 @@ export const chest = {
     },
   },
 
-  "hex-press": {
-    name: "Hex Press",
+  "dumbell-hex-press": {
+    name: "Dumbell Hex Press",
     bodyPart: "Chest",
     section: "mid-chest",
     fatigue: {
