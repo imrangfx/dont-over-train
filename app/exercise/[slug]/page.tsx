@@ -62,6 +62,18 @@ export default function ExercisePage() {
     });
   }
 
+  const WEIGHT_STEP = 2.5;
+
+  function adjustSetWeight(index: number, delta: number) {
+    setSetWeights((prev) => {
+      const next = [...prev];
+      const current = next[index];
+      const base = current === "" ? 0 : current;
+      next[index] = Math.max(0, Math.round((base + delta) * 10) / 10);
+      return next;
+    });
+  }
+
   const exercises = {
     ...chest,
     ...back,
@@ -320,23 +332,44 @@ export default function ExercisePage() {
                     Set {index + 1}
                   </span>
 
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.5"
-                    placeholder="e.g. 60"
-                    value={setWeight}
-                    onChange={(e) =>
-                      updateSetWeight(
-                        index,
-                        e.target.value === ""
-                          ? ""
-                          : Number(e.target.value)
-                      )
-                    }
-                    aria-label={`Set ${index + 1} weight in kilograms`}
-                    className="w-full rounded-2xl border border-[#333] bg-[#1a1a1a] px-5 py-4 text-center text-2xl font-semibold text-white outline-none focus:border-lime-400"
-                  />
+                  <div className="relative flex-1">
+                    <button
+                      type="button"
+                      onClick={() => adjustSetWeight(index, -WEIGHT_STEP)}
+                      disabled={setWeight === "" || setWeight <= 0}
+                      aria-label={`Decrease set ${index + 1} weight by 2.5 kilograms`}
+                      className="btn-base absolute left-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-lg font-semibold text-white disabled:opacity-40"
+                    >
+                      −
+                    </button>
+
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.5"
+                      placeholder="e.g. 60"
+                      value={setWeight}
+                      onChange={(e) =>
+                        updateSetWeight(
+                          index,
+                          e.target.value === ""
+                            ? ""
+                            : Number(e.target.value)
+                        )
+                      }
+                      aria-label={`Set ${index + 1} weight in kilograms`}
+                      className="w-full [appearance:textfield] rounded-2xl border border-[#333] bg-[#1a1a1a] px-14 py-4 text-center text-2xl font-semibold text-white outline-none focus:border-lime-400 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => adjustSetWeight(index, WEIGHT_STEP)}
+                      aria-label={`Increase set ${index + 1} weight by 2.5 kilograms`}
+                      className="btn-base absolute right-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-lg font-semibold text-white"
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
