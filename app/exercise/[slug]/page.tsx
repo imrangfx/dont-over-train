@@ -19,6 +19,8 @@ import EmptyState from "@/components/ui/EmptyState";
 import { Dumbbell } from "lucide-react";
 import { loadWorkoutHistory, type WorkoutHistoryEntry } from "@/lib/workouts";
 import { getQualifyingPersonalRecord } from "@/lib/exerciseAnalytics";
+import LoadingScreen from "@/components/ui/LoadingScreen";
+import { useMinimumLoadingDelay } from "@/lib/hooks/useMinimumLoadingDelay";
 
 const PR_MIN_REPS = 8;
 
@@ -123,6 +125,17 @@ export default function ExercisePage() {
       active = false;
     };
   }, []);
+
+  const isLoading = useMinimumLoadingDelay();
+
+  if (isLoading) {
+    return (
+      <LoadingScreen
+        title="Before You Lift"
+        message="Choose a weight that allows 8–12 reps with good form, finishing 0–2 reps before failure."
+      />
+    );
+  }
 
   const exerciseData =
     exercises[slug as keyof typeof exercises];
@@ -414,32 +427,6 @@ export default function ExercisePage() {
               ))}
             </div>
           </div>
-        </div>
-
-        <div className="mb-6 rounded-2xl border border-[#222] bg-[#111] px-4 py-4">
-          <h3 className="mb-3 text-sm font-semibold text-lime-400">
-            💡 Training Tips
-          </h3>
-
-          <ul className="space-y-3 text-sm leading-6 text-zinc-400">
-            <li>
-              • Choose a weight that allows
-              <span className="font-medium text-white"> 8–12 reps </span>
-              with good form, finishing
-              <span className="font-medium text-lime-400">
-                {" "}0–2 reps before failure.
-              </span>
-            </li>
-
-            <li>
-              • For most workouts, limit yourself to
-              <span className="font-medium text-white">
-                {" "}1-2 exercises per muscle area
-              </span>
-              {" "}(e.g. Upper Chest, Mid Chest, Lower Chest)
-              to help reduce unnecessary fatigue.
-            </li>
-          </ul>
         </div>
 
         <button

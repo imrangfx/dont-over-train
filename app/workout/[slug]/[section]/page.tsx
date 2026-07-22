@@ -12,6 +12,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { usePathname, useParams } from "next/navigation";
 import Image from "next/image";
+import LoadingScreen from "@/components/ui/LoadingScreen";
+import { useMinimumLoadingDelay } from "@/lib/hooks/useMinimumLoadingDelay";
 
 type Exercise = {
   name: string;
@@ -25,6 +27,17 @@ export default function SectionPage() {
   const pathname = usePathname();
 
   const params = useParams<{ slug: string; section: string }>();
+
+  const isLoading = useMinimumLoadingDelay();
+
+  if (isLoading) {
+    return (
+      <LoadingScreen
+        title="Before You Start"
+        message="For most workouts, limit yourself to 1–2 exercises per muscle area (e.g. Upper Chest, Mid Chest, Lower Chest) to help reduce unnecessary fatigue."
+      />
+    );
+  }
 
   const slug = params.slug;
 
