@@ -17,6 +17,10 @@ import { abs } from "@/app/Data/abs";
 import { forearms } from "@/app/Data/forearms";
 import EmptyState from "@/components/ui/EmptyState";
 import { Dumbbell } from "lucide-react";
+import { loadWorkoutHistory, type WorkoutHistoryEntry } from "@/lib/workouts";
+import { getQualifyingPersonalRecord } from "@/lib/exerciseAnalytics";
+
+const PR_MIN_REPS = 8;
 
 export default function ExercisePage() {
   const [sets, setSets] = useState(3);
@@ -29,6 +33,7 @@ export default function ExercisePage() {
   const [currentFatigue, setCurrentFatigue] = useState<
     Record<string, number>
   >({});
+  const [history, setHistory] = useState<WorkoutHistoryEntry[]>([]);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -106,6 +111,19 @@ export default function ExercisePage() {
     queueMicrotask(() => setCurrentFatigue(fatigue));
   }, []);
 
+  useEffect(() => {
+    let active = true;
+
+    loadWorkoutHistory().then((result) => {
+      if (!active) return;
+      setHistory(result.history);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const exerciseData =
     exercises[slug as keyof typeof exercises];
   if (!exerciseData) {
@@ -131,6 +149,7 @@ export default function ExercisePage() {
     );
   }
   const exerciseName = exerciseData.name;
+  const qualifyingPR = getQualifyingPersonalRecord(exerciseName, history, PR_MIN_REPS);
   const sortedMuscles = Object.entries(
     exerciseData.fatigue
   ).sort((a, b) => b[1] - a[1]);
@@ -238,6 +257,27 @@ export default function ExercisePage() {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Personal Record */}
+        <div className="rounded-3xl p-5 mb-5 bg-[#111] border border-[#222]">
+          <h2 className="text-sm font-semibold text-zinc-400">
+            🏆 Personal Record
+          </h2>
+
+          {qualifyingPR ? (
+            <p className="mt-2 text-2xl font-semibold text-lime-400">
+              {qualifyingPR.weight} kg × {qualifyingPR.reps} reps
+            </p>
+          ) : (
+            <p className="mt-2 text-2xl font-semibold text-zinc-500">
+              No Personal Record Yet
+            </p>
+          )}
+
+          <p className="mt-2 text-xs text-zinc-500">
+            Only sets with at least 8 reps count toward your Personal Record.
+          </p>
         </div>
 
         {/* Sets & Reps */}

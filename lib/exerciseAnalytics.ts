@@ -23,6 +23,35 @@ export function exerciseHref(exerciseName: string): string {
   return `/exercises/${encodeURIComponent(exerciseName)}`;
 }
 
+export type QualifyingPersonalRecord = {
+  weight: number;
+  reps: number;
+};
+
+/**
+ * Highest weight ever lifted for this exercise, counting only sets that hit
+ * at least `minReps` reps (default 8). Reuses extractSessions() below so
+ * this scans workout history exactly the same way the rest of Exercise
+ * Analytics does - no separate/duplicate history scan.
+ */
+export function getQualifyingPersonalRecord(
+  exerciseName: string,
+  history: WorkoutHistoryEntry[],
+  minReps = 8
+): QualifyingPersonalRecord | null {
+  const qualifying = extractSessions(exerciseName, history).filter(
+    (session) => session.reps >= minReps && session.weight > 0
+  );
+
+  if (qualifying.length === 0) return null;
+
+  const best = qualifying.reduce((max, session) =>
+    session.weight > max.weight ? session : max
+  );
+
+  return { weight: best.weight, reps: best.reps };
+}
+
 export type ExerciseSession = {
   workoutId: string;
   date: string;
