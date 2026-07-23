@@ -50,6 +50,19 @@ export function getQualifyingPersonalRecord(
   return { weight: best.weight, reps: best.reps };
 }
 
+/**
+ * How many completed workout sessions included this exercise (one count per
+ * workout, regardless of how many sets were performed in it). Reuses
+ * extractSessions() below - one session is already generated per matching
+ * workout - so this is just its length, not a separate history scan.
+ */
+export function countExercisePerformances(
+  exerciseName: string,
+  history: WorkoutHistoryEntry[]
+): number {
+  return extractSessions(exerciseName, history).length;
+}
+
 export type ExerciseSession = {
   workoutId: string;
   date: string;
