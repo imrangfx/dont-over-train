@@ -471,7 +471,7 @@ export default function ExercisePage() {
               JSON.stringify(existingWorkout)
             );
 
-            router.push("/workout/session");
+            router.push("/workout/start");
           }}
 
           className="btn-base w-full bg-lime-400 text-black font-semibold py-4 rounded-2xl text-xl mb-4 active:brightness-90"
