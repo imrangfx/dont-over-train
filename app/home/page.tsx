@@ -24,12 +24,9 @@ import {
   type WorkoutHistoryEntry,
 } from "@/lib/workouts";
 import { loadPersonalRecords } from "@/lib/personalRecords";
-import {
-  calculateOverallLevel,
-  getMostRecentPersonalRecord,
-  type LevelProgress,
-  type PersonalRecord,
-} from "@/lib/progression";
+import { getMostRecentPersonalRecord, type PersonalRecord } from "@/lib/progression";
+import { calculateBodyPartLevel } from "@/lib/bodyPartProgression";
+import type { BodyPartLevelProgress } from "@/lib/bodyPartProgression";
 import { exerciseHref } from "@/lib/exerciseAnalytics";
 import {
   calculateWeeklyProgress,
@@ -513,7 +510,7 @@ function WeeklyProgressCard({ progress }: { progress: WeeklyProgressData }) {
   );
 }
 
-function LevelCard({ level }: { level: LevelProgress }) {
+function LevelCard({ level }: { level: BodyPartLevelProgress }) {
   return (
     <div
       className="card-surface overflow-hidden p-5"
@@ -643,7 +640,7 @@ export default function Home() {
   const hasHistory = history.length > 0;
 
   const weeklyProgress = useMemo(() => calculateWeeklyProgress(history), [history]);
-  const overallLevel = useMemo(() => calculateOverallLevel(personalRecords), [personalRecords]);
+  const overallLevel = useMemo(() => calculateBodyPartLevel(history), [history]);
   const latestPR = useMemo(() => getMostRecentPersonalRecord(personalRecords), [personalRecords]);
 
   const lastWorkout = history[0] ?? null;

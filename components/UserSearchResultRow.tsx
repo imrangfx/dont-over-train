@@ -3,11 +3,11 @@
 import { CircleUserRound } from "lucide-react";
 import Link from "next/link";
 import { getFriendDisplayName, type PublicProfile, type RelationshipStatus } from "@/lib/friends";
-import type { LevelProgress } from "@/lib/progression";
+import type { BodyPartLevelProgress } from "@/lib/bodyPartProgression";
 
 type UserSearchResultRowProps = {
   profile: PublicProfile;
-  level?: LevelProgress;
+  level?: BodyPartLevelProgress;
   status: RelationshipStatus;
   busy?: boolean;
   onAdd: () => void;

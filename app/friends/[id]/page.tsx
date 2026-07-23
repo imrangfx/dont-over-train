@@ -295,7 +295,7 @@ export default function FriendProfilePage() {
                 />
               </div>
               <div className="mt-2 flex items-center justify-between text-xs text-zinc-500">
-                <span>Overall Strength: {profile.overallStrength}/100</span>
+                <span>{profile.level.progressPercent}%</span>
                 <span>
                   {profile.level.nextLevel ? `Next: ${profile.level.nextLevel.title}` : "Max Level"}
                 </span>

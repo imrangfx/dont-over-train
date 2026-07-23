@@ -2,20 +2,18 @@ import { supabase } from "@/lib/supabase";
 import {
   calculateCurrentStreak,
   calculateWorkoutInsights,
+  rowToEntry,
+  type WorkoutHistoryEntry,
   type WorkoutInsights,
 } from "@/lib/workouts";
-import {
-  calculateOverallLevel,
-  calculateOverallStrength,
-  getHighestPersonalRecord,
-  type LevelProgress,
-  type PersonalRecord,
-} from "@/lib/progression";
+import { getHighestPersonalRecord, type PersonalRecord } from "@/lib/progression";
+import { calculateBodyPartLevel } from "@/lib/bodyPartProgression";
+import type { BodyPartLevelProgress } from "@/lib/bodyPartProgression";
 import { rowToPublicProfile, type PublicProfile } from "@/lib/friends";
 
 /**
  * Read-only public profile data, built entirely from the existing
- * Progressive Overload primitives (lib/workouts.ts, lib/progression.ts) -
+ * Progressive Overload primitives (lib/workouts.ts, lib/bodyPartProgression.ts) -
  * no level/streak/PR logic is duplicated here, only re-applied to a
  * friend's rows instead of the signed-in user's own rows.
  */
@@ -37,7 +35,7 @@ function rowToPersonalRecord(row: {
 }
 
 export type PublicStrengthSummary = {
-  level: LevelProgress;
+  level: BodyPartLevelProgress;
   highestPR: PersonalRecord | null;
   currentStreak: number;
   totalWorkouts: number;
@@ -62,7 +60,9 @@ export async function loadPublicStrengthSummaries(
   try {
     const [recordsRes, workoutsRes] = await Promise.all([
       supabase.from("personal_records").select("*").in("user_id", uniqueIds),
-      supabase.from("workouts").select("user_id, workout_date").in("user_id", uniqueIds),
+      // fatigue holds the full per-exercise snapshot (bodyPart/reps/weights)
+      // that the body-part level system needs - see rowToEntry in lib/workouts.ts.
+      supabase.from("workouts").select("id, user_id, workout_date, fatigue").in("user_id", uniqueIds),
     ]);
 
     if (recordsRes.error) return { summaries: new Map(), error: recordsRes.error.message };
@@ -75,25 +75,25 @@ export async function loadPublicStrengthSummaries(
       recordsByUser.set(row.user_id, list);
     }
 
-    const workoutsByUser = new Map<string, number[]>();
+    const historyByUser = new Map<string, WorkoutHistoryEntry[]>();
     for (const row of workoutsRes.data || []) {
-      const list = workoutsByUser.get(row.user_id) ?? [];
-      list.push(new Date(row.workout_date).getTime());
-      workoutsByUser.set(row.user_id, list);
+      const list = historyByUser.get(row.user_id) ?? [];
+      list.push(rowToEntry(row));
+      historyByUser.set(row.user_id, list);
     }
 
     const summaries = new Map<string, PublicStrengthSummary>();
 
     for (const userId of uniqueIds) {
       const records = recordsByUser.get(userId) ?? [];
-      const timestamps = (workoutsByUser.get(userId) ?? []).sort((a, b) => b - a);
+      const entries = (historyByUser.get(userId) ?? []).sort((a, b) => b.timestamp - a.timestamp);
 
       summaries.set(userId, {
-        level: calculateOverallLevel(records),
+        level: calculateBodyPartLevel(entries),
         highestPR: getHighestPersonalRecord(records),
-        currentStreak: calculateCurrentStreak(timestamps.map((timestamp) => ({ timestamp }))),
-        totalWorkouts: timestamps.length,
-        lastWorkoutDate: timestamps[0] ? new Date(timestamps[0]).toLocaleDateString() : null,
+        currentStreak: calculateCurrentStreak(entries),
+        totalWorkouts: entries.length,
+        lastWorkoutDate: entries[0]?.date ?? null,
       });
     }
 
@@ -110,8 +110,7 @@ export type PublicFriendProfile = {
   profile: PublicProfile;
   /** False when the viewer isn't a confirmed friend (or the profile owner) - in that case every stat field below is null/empty rather than a misleading default. */
   canViewStats: boolean;
-  level: LevelProgress | null;
-  overallStrength: number | null;
+  level: BodyPartLevelProgress | null;
   highestPR: PersonalRecord | null;
   currentStreak: number | null;
   totalWorkouts: number | null;
@@ -147,7 +146,6 @@ export async function loadPublicFriendProfile(
           profile: rowToPublicProfile(profileRes.data),
           canViewStats: false,
           level: null,
-          overallStrength: null,
           highestPR: null,
           currentStreak: null,
           totalWorkouts: null,
@@ -163,7 +161,7 @@ export async function loadPublicFriendProfile(
       supabase.from("personal_records").select("*").eq("user_id", userId),
       supabase
         .from("workouts")
-        .select("workout_date, duration_minutes, total_sets, total_reps, workout_score, body_parts")
+        .select("id, workout_date, duration_minutes, total_sets, total_reps, workout_score, body_parts, fatigue")
         .eq("user_id", userId)
         .order("workout_date", { ascending: false }),
     ]);
@@ -172,19 +170,7 @@ export async function loadPublicFriendProfile(
     if (workoutsRes.error) return { profile: null, error: workoutsRes.error.message };
 
     const records = (recordsRes.data || []).map(rowToPersonalRecord);
-    const workoutRows = workoutsRes.data || [];
-
-    const workoutsForStreak = workoutRows.map((row) => ({
-      timestamp: new Date(row.workout_date).getTime(),
-    }));
-
-    const workoutsForInsights = workoutRows.map((row) => ({
-      bodyParts: Array.isArray(row.body_parts) ? row.body_parts : [],
-      score: row.workout_score ?? 0,
-      durationMinutes: row.duration_minutes ?? 0,
-      reps: row.total_reps ?? 0,
-      sets: row.total_sets ?? 0,
-    }));
+    const entries = (workoutsRes.data || []).map(rowToEntry);
 
     const recentPersonalRecords = [...records]
       .sort((a, b) => new Date(b.achievedAt).getTime() - new Date(a.achievedAt).getTime())
@@ -194,16 +180,13 @@ export async function loadPublicFriendProfile(
       profile: {
         profile: rowToPublicProfile(profileRes.data),
         canViewStats: true,
-        level: calculateOverallLevel(records),
-        overallStrength: Math.round(calculateOverallStrength(records).score),
+        level: calculateBodyPartLevel(entries),
         highestPR: getHighestPersonalRecord(records),
-        currentStreak: calculateCurrentStreak(workoutsForStreak),
-        totalWorkouts: workoutRows.length,
-        lastWorkoutDate: workoutRows[0]
-          ? new Date(workoutRows[0].workout_date).toLocaleDateString()
-          : null,
+        currentStreak: calculateCurrentStreak(entries),
+        totalWorkouts: entries.length,
+        lastWorkoutDate: entries[0]?.date ?? null,
         recentPersonalRecords,
-        insights: calculateWorkoutInsights(workoutsForInsights),
+        insights: calculateWorkoutInsights(entries),
       },
       error: null,
     };

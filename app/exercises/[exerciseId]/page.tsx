@@ -237,39 +237,6 @@ export default function ExerciseDetailPage() {
           )}
         </div>
 
-        {analytics.categoryLevel && (
-          <div
-            className="card-surface mt-5 p-4"
-            style={{
-              background:
-                "linear-gradient(135deg, rgba(17,17,17,1) 0%, rgba(17,17,17,1) 60%, rgba(57,255,20,0.06) 100%)",
-            }}
-          >
-            <div className="flex items-center justify-between gap-3 text-sm">
-              <span className="text-zinc-400">Current Level Contribution</span>
-              <span className="font-semibold" style={{ color: analytics.categoryLevel.color }}>
-                Level {analytics.categoryLevel.level} • {analytics.categoryLevel.title}
-              </span>
-            </div>
-            <div
-              className="mt-3 h-2 w-full overflow-hidden rounded-full bg-zinc-800"
-              role="progressbar"
-              aria-valuenow={analytics.categoryLevel.progressPercent}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-label={`Progress toward ${analytics.categoryLevel.nextLevel?.title ?? "max level"}`}
-            >
-              <div
-                className="h-full rounded-full transition-all duration-500"
-                style={{
-                  width: `${analytics.categoryLevel.progressPercent}%`,
-                  backgroundColor: analytics.categoryLevel.color,
-                }}
-              />
-            </div>
-          </div>
-        )}
-
         {analytics.stats.totalSessions === 0 ? (
           <div className="mt-8 flex flex-col items-center rounded-3xl border border-zinc-800 bg-linear-to-b from-[#111111] to-black px-6 py-12 text-center animate-[fade-in_250ms_ease-out]">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-lime-400/10 text-lime-400 ring-1 ring-lime-400/30">

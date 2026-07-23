@@ -11,11 +11,8 @@ import {
   type WorkoutHistoryEntry,
 } from "@/lib/workouts";
 import { loadPersonalRecords } from "@/lib/personalRecords";
-import {
-  calculateOverallLevel,
-  getHighestPersonalRecord,
-  type PersonalRecord,
-} from "@/lib/progression";
+import { getHighestPersonalRecord, type PersonalRecord } from "@/lib/progression";
+import { calculateBodyPartLevel } from "@/lib/bodyPartProgression";
 import { getFriendCount } from "@/lib/friendService";
 import { exerciseHref } from "@/lib/exerciseAnalytics";
 import { buildLevelShareCard } from "@/lib/shareCard";
@@ -33,6 +30,8 @@ import {
   Users,
   ChevronRight,
   Share2,
+  CheckCircle2,
+  Circle,
 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import LoadingCard from "@/components/ui/LoadingCard";
@@ -48,7 +47,6 @@ export default function ProfilePage() {
   const [avatarError, setAvatarError] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [personalRecords, setPersonalRecords] = useState<PersonalRecord[]>([]);
-  const [loadingRecords, setLoadingRecords] = useState(true);
   const [friendCount, setFriendCount] = useState(0);
   const [showShareCard, setShowShareCard] = useState(false);
 
@@ -119,7 +117,6 @@ export default function ProfilePage() {
     loadPersonalRecords().then((result) => {
       if (!active) return;
       setPersonalRecords(result.records);
-      setLoadingRecords(false);
     });
 
     return () => {
@@ -199,8 +196,8 @@ export default function ProfilePage() {
   const currentStreak = calculateCurrentStreak(history);
   const insights = calculateWorkoutInsights(filteredHistory);
 
-  const overallLevel = calculateOverallLevel(personalRecords);
   const highestPR = getHighestPersonalRecord(personalRecords);
+  const bodyPartLevel = calculateBodyPartLevel(history);
 
   const googleAvatarUrl =
     user?.user_metadata?.avatar_url || user?.user_metadata?.picture || null;
@@ -342,11 +339,11 @@ export default function ProfilePage() {
 
         </div>
 
-        {/* Progressive Overload Level */}
+        {/* Level */}
 
-        {loadingRecords ? (
+        {loadingHistory ? (
           <div className="mt-6" aria-busy="true">
-            <LoadingCard rows={2} />
+            <LoadingCard rows={3} />
           </div>
         ) : (
           <div
@@ -363,15 +360,15 @@ export default function ProfilePage() {
                 </span>
                 <span
                   className="text-2xl font-bold"
-                  style={{ color: overallLevel.color }}
+                  style={{ color: bodyPartLevel.color }}
                 >
-                  Level {overallLevel.level}
+                  Level {bodyPartLevel.level}
                 </span>
               </div>
 
               <div className="flex items-center gap-2">
                 <span className="text-sm font-semibold text-zinc-400">
-                  {overallLevel.title}
+                  {bodyPartLevel.title}
                 </span>
 
                 <button
@@ -385,23 +382,59 @@ export default function ProfilePage() {
               </div>
             </div>
 
+            <p className="mt-1 text-xs text-zinc-500">
+              Based on your heaviest 8+ rep sets across every muscle group.
+            </p>
+
             <div className="mt-4 h-2.5 w-full overflow-hidden rounded-full bg-zinc-800">
               <div
                 className="h-full rounded-full transition-all duration-500"
                 style={{
-                  width: `${overallLevel.progressPercent}%`,
-                  backgroundColor: overallLevel.color,
+                  width: `${bodyPartLevel.progressPercent}%`,
+                  backgroundColor: bodyPartLevel.color,
                 }}
               />
             </div>
 
             <div className="mt-2 flex items-center justify-between text-xs text-zinc-500">
-              <span>{overallLevel.progressPercent}%</span>
+              <span>{bodyPartLevel.progressPercent}%</span>
               <span>
-                {overallLevel.nextLevel
-                  ? `Next: ${overallLevel.nextLevel.title}`
+                {bodyPartLevel.nextLevel
+                  ? `Next: ${bodyPartLevel.nextLevel.title}`
                   : "Max Level"}
               </span>
+            </div>
+
+            <div className="mt-5 space-y-2">
+              {bodyPartLevel.checklist.map((item) => (
+                <div
+                  key={item.bodyPart}
+                  className="flex items-center justify-between gap-3 rounded-xl bg-[#191919] px-3 py-2.5"
+                >
+                  <div className="flex min-w-0 items-center gap-2.5">
+                    {item.met ? (
+                      <CheckCircle2
+                        size={16}
+                        className="shrink-0 text-lime-400"
+                        aria-hidden="true"
+                      />
+                    ) : (
+                      <Circle
+                        size={16}
+                        className="shrink-0 text-zinc-600"
+                        aria-hidden="true"
+                      />
+                    )}
+                    <span className="truncate text-sm text-white">{item.bodyPart}</span>
+                  </div>
+
+                  <span
+                    className={`shrink-0 text-sm font-medium ${item.met ? "text-lime-400" : "text-zinc-500"}`}
+                  >
+                    {item.currentWeight} / {item.requiredWeight} kg
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -652,7 +685,7 @@ export default function ProfilePage() {
 
       {showShareCard && (
         <ShareCardModal
-          data={buildLevelShareCard(overallLevel, highestPR, currentStreak)}
+          data={buildLevelShareCard(bodyPartLevel, highestPR, currentStreak)}
           onClose={() => setShowShareCard(false)}
         />
       )}

@@ -1,9 +1,7 @@
 import type { WorkoutHistoryEntry } from "@/lib/workouts";
 import {
-  calculateCategoryLevel,
   getExerciseCategory,
   type ExerciseCategory,
-  type LevelProgress,
   type PersonalRecord,
 } from "@/lib/progression";
 
@@ -114,7 +112,6 @@ export type ExerciseAnalytics = {
   exerciseName: string;
   bodyPart: string | null;
   category: ExerciseCategory;
-  categoryLevel: LevelProgress | null;
   stats: ExerciseStats;
   /** Newest first - use for the Recent Sessions list. */
   sessions: ExerciseSession[];
@@ -418,7 +415,6 @@ export function buildExerciseAnalytics(
 
   const highestFromSessions = sessions.reduce((max, s) => Math.max(max, s.weight), 0);
   const currentPR = matchingRecord?.weight ?? (highestFromSessions > 0 ? highestFromSessions : null);
-  const categoryLevel = currentPR != null ? calculateCategoryLevel(category, currentPR) : null;
 
   const totalSessions = sessions.length;
 
@@ -438,7 +434,6 @@ export function buildExerciseAnalytics(
     exerciseName,
     bodyPart,
     category,
-    categoryLevel,
     stats,
     sessions,
     milestones: buildMilestones(chronological),

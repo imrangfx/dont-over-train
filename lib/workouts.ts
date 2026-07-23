@@ -216,7 +216,7 @@ function readLocalHistory(): WorkoutHistoryEntry[] {
 }
 
 /** Raw shape of a `workouts` table row as returned by the Supabase client. */
-type WorkoutRow = {
+export type WorkoutRow = {
   id: string;
   workout_date: string;
   total_sets?: number | null;
@@ -227,7 +227,12 @@ type WorkoutRow = {
   fatigue?: Partial<WorkoutHistoryEntry> | null;
 };
 
-function rowToEntry(row: WorkoutRow): WorkoutHistoryEntry {
+/**
+ * Exported so any caller reading raw `workouts` rows (e.g. lib/profilePublic.ts
+ * for a friend's history) can reuse this exact row->entry mapping instead of
+ * duplicating it.
+ */
+export function rowToEntry(row: WorkoutRow): WorkoutHistoryEntry {
   const snapshot = row.fatigue && typeof row.fatigue === "object" ? row.fatigue : {};
 
   return {

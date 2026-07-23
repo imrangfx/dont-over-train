@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Share2 } from "lucide-react";
 import { calculateCurrentStreak, getCurrentUserId, loadWorkoutHistory, saveWorkoutHistoryEntry } from "@/lib/workouts";
 import { recordWorkoutPersonalRecords } from "@/lib/personalRecords";
-import { calculateOverallLevel } from "@/lib/progression";
+import { calculateBodyPartLevel } from "@/lib/bodyPartProgression";
 import { buildPersonalRecordShareCard, type ShareCardData } from "@/lib/shareCard";
 import { type InProgressWorkoutItem } from "@/lib/workouts";
 import { useToast } from "@/components/ui/Toast";
@@ -170,8 +170,16 @@ export default function CompletePage() {
       const result = await recordWorkoutPersonalRecords(performed);
       if (result.error) return;
 
-      const previousLevel = calculateOverallLevel(result.previousRecords);
-      const newLevel = calculateOverallLevel(result.records);
+      // Compare body-part levels before/after this workout. Excluding this
+      // workout's id from "previous" (rather than relying on load timing
+      // relative to the history save above) keeps the comparison correct
+      // no matter which of the two independent async operations finishes first.
+      const { history: existingHistory } = await loadWorkoutHistory();
+      const previousHistory = existingHistory.filter((entry) => entry.id !== historyEntry.id);
+      const newHistory = [historyEntry, ...previousHistory];
+
+      const previousLevel = calculateBodyPartLevel(previousHistory);
+      const newLevel = calculateBodyPartLevel(newHistory);
 
       result.brokenRecords.forEach(({ record, previousWeight }) => {
         const delta =
@@ -198,8 +206,7 @@ export default function CompletePage() {
         const topBroken = result.brokenRecords.reduce((best, current) =>
           current.record.weight > best.record.weight ? current : best
         );
-        const { history } = await loadWorkoutHistory();
-        const currentStreak = calculateCurrentStreak(history);
+        const currentStreak = calculateCurrentStreak(newHistory);
 
         setShareData(
           buildPersonalRecordShareCard(

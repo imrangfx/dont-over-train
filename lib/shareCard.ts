@@ -1,4 +1,5 @@
-import type { LevelProgress, PersonalRecord } from "@/lib/progression";
+import type { BodyPartLevelProgress } from "@/lib/bodyPartProgression";
+import type { PersonalRecord } from "@/lib/progression";
 
 /**
  * Pure data model for the Workout Share Card. No DOM/canvas access here -
@@ -10,14 +11,14 @@ export type ShareCardData = {
   exerciseName: string | null;
   weight: number | null;
   deltaWeight: number | null;
-  level: LevelProgress;
+  level: BodyPartLevelProgress;
   currentStreak: number;
 };
 
 export function buildPersonalRecordShareCard(
   record: PersonalRecord,
   previousWeight: number | null,
-  level: LevelProgress,
+  level: BodyPartLevelProgress,
   currentStreak: number
 ): ShareCardData {
   return {
@@ -31,7 +32,7 @@ export function buildPersonalRecordShareCard(
 }
 
 export function buildLevelShareCard(
-  level: LevelProgress,
+  level: BodyPartLevelProgress,
   highestPR: PersonalRecord | null,
   currentStreak: number
 ): ShareCardData {
