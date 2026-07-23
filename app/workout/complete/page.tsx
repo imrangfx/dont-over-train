@@ -284,61 +284,6 @@ export default function CompletePage() {
       .replace(/^./, (s) => s.toUpperCase()),
     value: Math.min(Number(value), 100),
   }));
-  const downloadSummary = () => {
-    const bodyPartsTrained = new Set(
-      workouts.map((item) => item.bodyPart).filter(Boolean)
-    ).size;
-
-    const summary = `
-DON'T OVER TRAIN
-Workout Report
-----------------
-
-Date: ${new Date().toLocaleDateString()}
-
-Exercises:
-${workouts
-        .map(
-          (item) =>
-            `- ${item.exercise}: ${item.sets} x ${item.reps}`
-        )
-        .join("\n")}
-
-Total Sets: ${totalSets}
-Total Reps: ${totalReps}
-Body Parts Trained: ${bodyPartsTrained}
-
-Fatigue:
-${fatigueArray
-        .map((muscle) => {
-          const status =
-            muscle.value <= 30
-              ? "Low"
-              : muscle.value <= 60
-                ? "Moderate"
-                : muscle.value <= 80
-                  ? "High"
-                  : "Very High";
-
-          return `${muscle.name} -> ${status}`;
-        })
-        .join("\n")}
-`;
-
-    const blob = new Blob([summary], {
-      type: "text/plain",
-    });
-
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "workout-summary.txt";
-    a.click();
-
-    URL.revokeObjectURL(url);
-  };
-
   return (
     <main className="min-h-screen bg-black text-white px-6 py-8 pb-[max(2rem,env(safe-area-inset-bottom))]">
       <div className="mx-auto flex w-full max-w-[430px] flex-col items-center gap-6">
@@ -526,25 +471,16 @@ ${fatigueArray
 
         </div>
 
-        {/* Download Button */}
-        <button
-          type="button"
-          onClick={downloadSummary}
-          className="btn-base w-full rounded-2xl border border-lime-400 py-4 text-xl text-lime-400 hover:bg-lime-400/10"
-        >
-          Download Summary
-        </button>
-
-        {/* Start New Workout */}
+        {/* View Progress */}
         <button
           type="button"
           onClick={() => {
             localStorage.removeItem("currentWorkout");
-            window.location.href = "/home";
+            window.location.href = "/profile";
           }}
           className="btn-base w-full rounded-2xl bg-lime-400 py-5 text-2xl font-semibold text-black hover:brightness-110"
         >
-          Start New Workout
+          View Progress
         </button>
 
       </div>
