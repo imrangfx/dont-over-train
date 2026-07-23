@@ -2,7 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { Share2 } from "lucide-react";
-import { calculateCurrentStreak, getCurrentUserId, loadWorkoutHistory, saveWorkoutHistoryEntry } from "@/lib/workouts";
+import {
+  calculateCurrentStreak,
+  getCurrentUserId,
+  loadWorkoutHistory,
+  saveWorkoutHistoryEntry,
+  saveWorkoutHistoryEntryLocally,
+} from "@/lib/workouts";
 import { recordWorkoutPersonalRecords } from "@/lib/personalRecords";
 import { calculateBodyPartLevel } from "@/lib/bodyPartProgression";
 import { buildPersonalRecordShareCard, type ShareCardData } from "@/lib/shareCard";
@@ -131,7 +137,16 @@ export default function CompletePage() {
 
       if (userId) {
         const { error } = await saveWorkoutHistoryEntry(historyEntry, userId);
-        if (error) setSyncError(error);
+        if (error) {
+          // Never lose the workout: keep a local copy so it syncs
+          // automatically next time there's a valid session (see
+          // migrateGuestHistoryToCloud), and show a friendly message instead
+          // of the raw Supabase/PostgREST error (e.g. "JWT expired").
+          saveWorkoutHistoryEntryLocally(historyEntry);
+          setSyncError(
+            "Workout saved locally. Cloud sync will resume after you sign in again."
+          );
+        }
         return;
       }
 

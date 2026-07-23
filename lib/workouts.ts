@@ -265,6 +265,53 @@ export async function getCurrentUserId(): Promise<string | null> {
 }
 
 /**
+ * Detects Supabase/PostgREST errors caused by an expired or invalid session
+ * (JWT/refresh token), as opposed to unrelated failures (network, RLS,
+ * validation, offline). Used to decide whether a session refresh + retry
+ * can recover a failed write, and whether a failure should be reported to
+ * the user as "signed out" rather than a generic sync error.
+ */
+function isAuthSessionError(message: string | null | undefined): boolean {
+  if (!message) return false;
+  const lower = message.toLowerCase();
+  return (
+    lower.includes("jwt") ||
+    lower.includes("refresh token") ||
+    lower.includes("refresh_token") ||
+    lower.includes("session missing") ||
+    lower.includes("session not found") ||
+    lower.includes("session_not_found") ||
+    lower.includes("not authenticated") ||
+    lower.includes("invalid token") ||
+    lower.includes("token is expired")
+  );
+}
+
+/**
+ * Makes sure the current session's access token is fresh before a Supabase
+ * write. supabase-js already refreshes proactively inside getSession(), but
+ * a workout screen can sit open (long set rest, backgrounded tab) long
+ * enough that the token is already past its expiry margin by the time we're
+ * ready to sync - this closes that gap by refreshing explicitly first.
+ * Returns false only when the user is no longer authenticated (missing or
+ * invalid refresh token), so callers can fail gracefully instead of firing a
+ * write that's guaranteed to hit an expired-JWT error.
+ */
+export async function ensureFreshSession(): Promise<boolean> {
+  const { data, error } = await supabase.auth.getSession();
+  if (error || !data.session) return false;
+
+  const expiresAt = data.session.expires_at;
+  const expiringSoon =
+    typeof expiresAt === "number" && expiresAt * 1000 - Date.now() < 60_000;
+
+  if (!expiringSoon) return true;
+
+  const { data: refreshed, error: refreshError } = await supabase.auth.refreshSession();
+  return !refreshError && !!refreshed.session;
+}
+
+/**
  * Ensures a public.profiles row exists for this user before anything that
  * depends on the workouts.user_id -> profiles.id foreign key runs (workout
  * inserts, guest migration). Safe to call repeatedly - it upserts by id and
@@ -291,40 +338,79 @@ export async function ensureProfileExists(
   }
 }
 
-/** Cloud-only save. Guest/localStorage saving stays inline where it already lives. */
+/**
+ * Cloud-only save. Guest/localStorage saving stays inline where it already
+ * lives. `authExpired` is set when the failure is due to the user no longer
+ * having a valid session (as opposed to e.g. a network/offline error), so
+ * callers can show a "sign in again" message instead of a generic one.
+ */
 export async function saveWorkoutHistoryEntry(
   entry: WorkoutHistoryEntry,
   userId: string
-): Promise<{ error: string | null }> {
+): Promise<{ error: string | null; authExpired?: boolean }> {
   try {
+    if (!(await ensureFreshSession())) {
+      return { error: "Your session has expired.", authExpired: true };
+    }
+
     // The workouts.user_id -> profiles.id foreign key requires the profile
     // row to exist first. This is normally already created at login, but we
     // guard here too so a save never fails purely due to a missing profile.
     const { error: profileError } = await ensureProfileExists(userId);
     if (profileError) {
-      return { error: profileError };
+      return { error: profileError, authExpired: isAuthSessionError(profileError) };
     }
 
-    const { error } = await supabase.from("workouts").upsert(
-      {
-        id: entry.id,
-        user_id: userId,
-        workout_date: new Date(entry.timestamp || Date.now()).toISOString(),
-        body_parts: entry.bodyParts,
-        duration_minutes: entry.durationMinutes,
-        total_sets: entry.sets,
-        total_reps: entry.reps,
-        workout_score: entry.score,
-        fatigue: entry,
-      },
-      { onConflict: "id" }
-    );
+    const payload = {
+      id: entry.id,
+      user_id: userId,
+      workout_date: new Date(entry.timestamp || Date.now()).toISOString(),
+      body_parts: entry.bodyParts,
+      duration_minutes: entry.durationMinutes,
+      total_sets: entry.sets,
+      total_reps: entry.reps,
+      workout_score: entry.score,
+      fatigue: entry,
+    };
 
-    if (!error) markLastSynced();
-    return { error: error?.message ?? null };
+    let { error } = await supabase.from("workouts").upsert(payload, { onConflict: "id" });
+
+    // Reactive fallback: if the access token expired in the gap between the
+    // proactive check above and this request actually reaching the server,
+    // refresh once more and retry the exact same write before giving up.
+    if (error && isAuthSessionError(error.message)) {
+      const refreshed = await ensureFreshSession();
+      if (refreshed) {
+        ({ error } = await supabase.from("workouts").upsert(payload, { onConflict: "id" }));
+      }
+    }
+
+    if (error) {
+      return { error: error.message, authExpired: isAuthSessionError(error.message) };
+    }
+
+    markLastSynced();
+    return { error: null };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to sync workout." };
+    const message = err instanceof Error ? err.message : "Failed to sync workout.";
+    return { error: message, authExpired: isAuthSessionError(message) };
   }
+}
+
+/**
+ * Appends a workout to the local guest history store. Used both for guests
+ * and as an offline/session-expired fallback for signed-in users so a
+ * workout is never lost when cloud sync fails - migrateGuestHistoryToCloud()
+ * picks it up and syncs it automatically the next time there's a valid
+ * session.
+ */
+export function saveWorkoutHistoryEntryLocally(entry: WorkoutHistoryEntry): void {
+  if (typeof window === "undefined") return;
+
+  const history = readLocalHistory();
+  if (history.some((item) => item.id === entry.id)) return;
+
+  localStorage.setItem(LOCAL_KEY, JSON.stringify([entry, ...history]));
 }
 
 /**

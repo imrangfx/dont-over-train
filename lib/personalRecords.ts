@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { getCurrentUserId, ensureProfileExists } from "@/lib/workouts";
+import { getCurrentUserId, ensureProfileExists, ensureFreshSession } from "@/lib/workouts";
 import {
   updatePersonalRecords,
   type ExerciseCategory,
@@ -112,6 +112,15 @@ export async function recordWorkoutPersonalRecords(
 
     if (brokenRecords.length === 0) {
       return { records, brokenRecords, previousRecords: existing, error: null };
+    }
+
+    if (!(await ensureFreshSession())) {
+      return {
+        records: existing,
+        brokenRecords: [],
+        previousRecords: existing,
+        error: "Your session has expired.",
+      };
     }
 
     const { error: profileError } = await ensureProfileExists(userId);
