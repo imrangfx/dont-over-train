@@ -435,6 +435,14 @@ export default function ProfilePage() {
                 </div>
               ))}
             </div>
+
+            <Link
+              href="/level"
+              className="btn-base mt-4 inline-flex items-center gap-1 text-sm text-lime-400 hover:underline"
+            >
+              View Details
+              <ChevronRight size={14} aria-hidden="true" />
+            </Link>
           </div>
         )}
 
