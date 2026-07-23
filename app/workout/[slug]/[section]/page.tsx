@@ -119,6 +119,15 @@ export default function SectionPage() {
       exercise.name.toLowerCase().includes(search.toLowerCase())
     );
 
+  // Computed once and reused both for "Most Performed" sorting and for the
+  // "Completed X times" label on each card, so history is never scanned twice.
+  const performanceCountByName = new Map(
+    recommendedExercises.map(([, exercise]) => [
+      exercise.name,
+      countExercisePerformances(exercise.name, history),
+    ])
+  );
+
   let filteredExercises = recommendedExercises;
 
   if (sortOption === "az") {
@@ -130,7 +139,7 @@ export default function SectionPage() {
       .map((entry, index) => ({
         entry,
         index,
-        count: countExercisePerformances(entry[1].name, history),
+        count: performanceCountByName.get(entry[1].name) ?? 0,
       }))
       // Ties fall back to the Recommended order (original index).
       .sort((a, b) => b.count - a.count || a.index - b.index)
@@ -220,6 +229,7 @@ export default function SectionPage() {
 
               const primary = muscles[0];
               const secondary = muscles[1];
+              const timesCompleted = performanceCountByName.get(exercise.name) ?? 0;
 
               return (
                 <Link
@@ -232,6 +242,12 @@ export default function SectionPage() {
                       <h3 className="text-lg font-medium">
                         {exercise.name}
                       </h3>
+
+                      <p className="mt-1 text-xs text-zinc-500">
+                        {timesCompleted === 0
+                          ? "Never performed"
+                          : `Completed ${timesCompleted} time${timesCompleted !== 1 ? "s" : ""}`}
+                      </p>
 
                       <div className="mt-3">
                         <div className="mt-3 flex flex-wrap gap-2">
