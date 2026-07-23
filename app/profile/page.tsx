@@ -29,8 +29,6 @@ import {
   Users,
   ChevronRight,
   Share2,
-  CheckCircle2,
-  Circle,
 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import LoadingCard from "@/components/ui/LoadingCard";
@@ -402,38 +400,6 @@ export default function ProfilePage() {
                   ? `Next: ${bodyPartLevel.nextLevel.title}`
                   : "Max Level"}
               </span>
-            </div>
-
-            <div className="mt-5 space-y-2">
-              {bodyPartLevel.checklist.map((item) => (
-                <div
-                  key={item.bodyPart}
-                  className="flex items-center justify-between gap-3 rounded-xl bg-[#191919] px-3 py-2.5"
-                >
-                  <div className="flex min-w-0 items-center gap-2.5">
-                    {item.met ? (
-                      <CheckCircle2
-                        size={16}
-                        className="shrink-0 text-lime-400"
-                        aria-hidden="true"
-                      />
-                    ) : (
-                      <Circle
-                        size={16}
-                        className="shrink-0 text-zinc-600"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <span className="truncate text-sm text-white">{item.bodyPart}</span>
-                  </div>
-
-                  <span
-                    className={`shrink-0 text-sm font-medium ${item.met ? "text-lime-400" : "text-zinc-500"}`}
-                  >
-                    {item.currentWeight} / {item.requiredWeight} kg
-                  </span>
-                </div>
-              ))}
             </div>
 
             <Link
