@@ -14,7 +14,6 @@ import { loadPersonalRecords } from "@/lib/personalRecords";
 import { getHighestPersonalRecord, type PersonalRecord } from "@/lib/progression";
 import { calculateBodyPartLevel } from "@/lib/bodyPartProgression";
 import { getFriendCount } from "@/lib/friendService";
-import { exerciseHref } from "@/lib/exerciseAnalytics";
 import { buildLevelShareCard } from "@/lib/shareCard";
 import {
   CircleUserRound,
@@ -474,15 +473,6 @@ export default function ProfilePage() {
               title="Current Streak"
               value={`${currentStreak} Days`}
             />
-
-            <div className="col-span-2">
-              <StatCard
-                icon={<span aria-hidden="true">🏋</span>}
-                title={highestPR ? `Highest PR • ${highestPR.exerciseName}` : "Highest PR"}
-                value={highestPR ? `${highestPR.weight} kg` : "-"}
-                href={highestPR ? exerciseHref(highestPR.exerciseName) : undefined}
-              />
-            </div>
 
           </div>
         )}
