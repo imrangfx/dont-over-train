@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Share2 } from "lucide-react";
 import {
   calculateCurrentStreak,
@@ -8,11 +9,19 @@ import {
   loadWorkoutHistory,
   saveWorkoutHistoryEntry,
   saveWorkoutHistoryEntryLocally,
+  type WorkoutHistoryEntry,
 } from "@/lib/workouts";
 import { recordWorkoutPersonalRecords } from "@/lib/personalRecords";
 import { calculateBodyPartLevel } from "@/lib/bodyPartProgression";
 import { buildPersonalRecordShareCard, type ShareCardData } from "@/lib/shareCard";
 import { type InProgressWorkoutItem } from "@/lib/workouts";
+import {
+  clearCompletedWorkoutSummary,
+  completeWorkoutSession,
+  getActiveWorkoutSession,
+  getCompletedWorkoutSummary,
+  getSessionDurationMinutes,
+} from "@/lib/workoutSession";
 import { useToast } from "@/components/ui/Toast";
 import LevelUpCelebration from "@/components/LevelUpCelebration";
 import ShareCardModal from "@/components/ShareCardModal";
@@ -27,7 +36,13 @@ function maxWeightLifted(item: InProgressWorkoutItem): number {
   return typeof item.weight === "number" ? item.weight : 0;
 }
 
+function leaveWorkoutFlow(path = "/home") {
+  clearCompletedWorkoutSummary();
+  window.location.href = path;
+}
+
 export default function CompletePage() {
+  const router = useRouter();
   const { toast } = useToast();
   const [workouts, setWorkouts] = useState<InProgressWorkoutItem[]>([]);
   const [isPR, setIsPR] = useState(false);
@@ -39,19 +54,40 @@ export default function CompletePage() {
   } | null>(null);
   const [shareData, setShareData] = useState<ShareCardData | null>(null);
   const [showShareCard, setShowShareCard] = useState(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const saved = JSON.parse(
-      localStorage.getItem("currentWorkout") || "[]"
-    );
-
-    const formatted: InProgressWorkoutItem[] = Array.isArray(saved)
+    const existingSession = getActiveWorkoutSession();
+    const saved = JSON.parse(localStorage.getItem("currentWorkout") || "[]");
+    const fromStorage: InProgressWorkoutItem[] = Array.isArray(saved)
       ? saved
       : [saved];
 
-    // Deferred to a microtask so this effect never calls setState
-    // synchronously in its own body (avoids cascading renders).
-    queueMicrotask(() => setWorkouts(formatted));
+    // Already finished (session cleared) — restore summary draft if present.
+    // Never send the user back to Start Workout for a completed session.
+    if (!existingSession) {
+      const draft = getCompletedWorkoutSummary();
+      if (draft && Array.isArray(draft.exercises) && draft.exercises.length > 0) {
+        queueMicrotask(() => {
+          setWorkouts(draft.exercises as InProgressWorkoutItem[]);
+          setReady(true);
+        });
+        return;
+      }
+
+      router.replace("/home");
+      return;
+    }
+
+    const formatted = fromStorage.filter(Boolean);
+    if (formatted.length === 0) {
+      router.replace("/home");
+      return;
+    }
+
+    const endedAt = Date.now();
+    const startedAt = existingSession.startedAt;
+    const durationMinutes = getSessionDurationMinutes(startedAt, endedAt);
 
     const totalSetsHistory = formatted.reduce(
       (acc, item) => acc + item.sets,
@@ -87,12 +123,12 @@ export default function CompletePage() {
       );
     });
 
-    const historyEntry = {
+    const historyEntry: WorkoutHistoryEntry = {
       id: crypto.randomUUID(),
 
       date: new Date().toLocaleDateString(),
 
-      timestamp: Date.now(),
+      timestamp: endedAt,
 
       exercises: formatted.length,
 
@@ -100,8 +136,9 @@ export default function CompletePage() {
 
       reps: totalRepsHistory,
 
-      // Fixed estimate until per-set duration is tracked.
-      durationMinutes: formatted.length * 8,
+      durationMinutes,
+      startedAt,
+      endedAt,
 
       score,
 
@@ -131,6 +168,20 @@ export default function CompletePage() {
       })),
       fatigueBreakdown: fatigueTotals,
     };
+
+    // Mark session completed: stash summary, clear active session + exercises
+    // so Back / Start can never reopen this workout.
+    completeWorkoutSession({
+      exercises: formatted,
+      startedAt,
+      endedAt,
+      durationMinutes,
+    });
+
+    queueMicrotask(() => {
+      setWorkouts(formatted);
+      setReady(true);
+    });
 
     (async () => {
       const userId = await getCurrentUserId();
@@ -265,7 +316,19 @@ export default function CompletePage() {
     }
     // `toast` is a stable useCallback reference (see components/ui/Toast.tsx)
     // so including it here does not cause this mount-only effect to re-run.
-  }, [toast]);
+  }, [toast, router]);
+
+  if (!ready) {
+    return (
+      <main
+        role="status"
+        aria-label="Loading"
+        className="flex min-h-screen items-center justify-center bg-black"
+      >
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-lime-400" />
+      </main>
+    );
+  }
 
   const totalSets = workouts.reduce(
     (acc, item) => acc + item.sets,
@@ -489,13 +552,18 @@ export default function CompletePage() {
         {/* View Progress */}
         <button
           type="button"
-          onClick={() => {
-            localStorage.removeItem("currentWorkout");
-            window.location.href = "/profile";
-          }}
+          onClick={() => leaveWorkoutFlow("/profile")}
           className="btn-base w-full rounded-2xl bg-lime-400 py-5 text-2xl font-semibold text-black hover:brightness-110"
         >
           View Progress
+        </button>
+
+        <button
+          type="button"
+          onClick={() => leaveWorkoutFlow("/home")}
+          className="btn-base w-full rounded-2xl border border-[#333] bg-transparent py-4 text-lg text-zinc-400 hover:text-white"
+        >
+          Back to Home
         </button>
 
       </div>

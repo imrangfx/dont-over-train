@@ -39,7 +39,12 @@ export type WorkoutHistoryEntry = {
   exercises: number;
   sets: number;
   reps: number;
+  /** Real session duration in whole minutes (from workout session timer). */
   durationMinutes: number;
+  /** Unix ms when Start Workout was tapped. Optional for older history entries. */
+  startedAt?: number;
+  /** Unix ms when Finish Workout completed the session. */
+  endedAt?: number;
   score: number;
   bodyParts: string[];
   sections: string[];
@@ -245,7 +250,9 @@ export function rowToEntry(row: WorkoutRow): WorkoutHistoryEntry {
         : snapshot.exerciseList?.length ?? 0,
     sets: row.total_sets ?? 0,
     reps: row.total_reps ?? 0,
-    durationMinutes: row.duration_minutes ?? 0,
+    durationMinutes: row.duration_minutes ?? snapshot.durationMinutes ?? 0,
+    startedAt: typeof snapshot.startedAt === "number" ? snapshot.startedAt : undefined,
+    endedAt: typeof snapshot.endedAt === "number" ? snapshot.endedAt : undefined,
     score: row.workout_score ?? 0,
     bodyParts: Array.isArray(row.body_parts)
       ? row.body_parts

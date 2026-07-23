@@ -15,6 +15,14 @@ import { getHighestPersonalRecord, type PersonalRecord } from "@/lib/progression
 import { calculateBodyPartLevel } from "@/lib/bodyPartProgression";
 import { getFriendCount } from "@/lib/friendService";
 import { buildLevelShareCard } from "@/lib/shareCard";
+import { formatDurationMinutes } from "@/lib/workoutSession";
+import {
+  analyzeWorkout,
+  rateCurrentStreak,
+  rateExercisesCompleted,
+  rateTrainingTime,
+  rateWorkoutScore,
+} from "@/lib/workoutAnalysis";
 import {
   CircleUserRound,
   Trophy,
@@ -182,9 +190,6 @@ export default function ProfilePage() {
     0
   );
 
-  const trainingHours = Math.floor(trainingMinutes / 60);
-  const remainingMinutes = trainingMinutes % 60;
-
   const lastWorkout =
     filteredHistory.length > 0
       ? filteredHistory[0]
@@ -192,6 +197,16 @@ export default function ProfilePage() {
 
   const currentStreak = calculateCurrentStreak(history);
   const insights = calculateWorkoutInsights(filteredHistory);
+
+  const trainingTimeQuality = rateTrainingTime(filteredHistory);
+  const exercisesQuality = rateExercisesCompleted(totalExercises, totalWorkouts);
+  const streakQuality = rateCurrentStreak(currentStreak);
+  const bestScoreValue = Number(insights.bestWorkoutScore) || 0;
+  const workoutScoreQuality = rateWorkoutScore(bestScoreValue);
+
+  const workoutAnalysis = lastWorkout
+    ? analyzeWorkout(lastWorkout, history)
+    : null;
 
   const highestPR = getHighestPersonalRecord(personalRecords);
   const bodyPartLevel = calculateBodyPartLevel(history);
@@ -434,18 +449,24 @@ export default function ProfilePage() {
               icon={<Trophy size={20} />}
               title="Exercises Completed"
               value={String(totalExercises)}
+              ratingEmoji={exercisesQuality.emoji}
+              ratingLabel={exercisesQuality.label}
             />
 
             <StatCard
               icon={<Clock3 size={20} />}
               title="Training Time"
-              value={`${trainingHours}h ${remainingMinutes}m`}
+              value={formatDurationMinutes(trainingMinutes)}
+              ratingEmoji={trainingTimeQuality.emoji}
+              ratingLabel={trainingTimeQuality.label}
             />
 
             <StatCard
               icon={<Flame size={20} />}
               title="Current Streak"
               value={`${currentStreak} Days`}
+              ratingEmoji={streakQuality.emoji}
+              ratingLabel={streakQuality.label}
             />
 
           </div>
@@ -482,7 +503,8 @@ export default function ProfilePage() {
               </div>
 
               <div className="mt-2 text-sm text-zinc-500">
-                {lastWorkout.exercises} Exercises • {lastWorkout.durationMinutes || 0} Minutes
+                {lastWorkout.exercises} Exercises •{" "}
+                {formatDurationMinutes(lastWorkout.durationMinutes || 0)}
               </div>
 
               <div className="mt-4 inline-flex rounded-full bg-lime-400/15 px-3 py-1 text-sm text-lime-400">
@@ -561,6 +583,16 @@ export default function ProfilePage() {
                   ? "-"
                   : `${insights.bestWorkoutScore} Points`
               }
+              ratingEmoji={
+                insights.bestWorkoutScore === "-"
+                  ? undefined
+                  : workoutScoreQuality.emoji
+              }
+              ratingLabel={
+                insights.bestWorkoutScore === "-"
+                  ? undefined
+                  : workoutScoreQuality.label
+              }
             />
 
             <InsightRow
@@ -597,6 +629,29 @@ export default function ProfilePage() {
           )}
 
         </div>
+
+        {/* Workout Analysis — single focus improvement from the latest workout */}
+
+        {!loadingHistory && workoutAnalysis && (
+          <div className="card-surface mt-8 p-5">
+            <h2 className="text-lg font-semibold">Workout Analysis</h2>
+
+            <div className="mt-4">
+              <p className="flex items-center gap-2 text-sm font-semibold text-lime-400">
+                <span aria-hidden="true">{workoutAnalysis.emoji}</span>
+                {workoutAnalysis.title}
+              </p>
+
+              <div className="mt-3 space-y-1.5">
+                {workoutAnalysis.lines.map((line, index) => (
+                  <p key={index} className="text-sm leading-relaxed text-zinc-400">
+                    {line}
+                  </p>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Friends */}
 
@@ -664,16 +719,32 @@ function StatCard({
   value,
   icon,
   href,
+  ratingEmoji,
+  ratingLabel,
 }: {
   title: string;
   value: string;
   icon: React.ReactNode;
   href?: string;
+  ratingEmoji?: string;
+  ratingLabel?: string;
 }) {
   const content = (
     <>
-      <div className="text-lime-400" aria-hidden="true">
-        {icon}
+      <div className="flex items-start justify-between gap-2">
+        <div className="text-lime-400" aria-hidden="true">
+          {icon}
+        </div>
+
+        {ratingEmoji && (
+          <span
+            className="text-sm leading-none opacity-80"
+            title={ratingLabel}
+            aria-label={ratingLabel ? `Rated ${ratingLabel}` : undefined}
+          >
+            {ratingEmoji}
+          </span>
+        )}
       </div>
 
       <div className="mt-4 text-2xl font-bold">
@@ -701,10 +772,14 @@ function InsightRow({
   icon,
   label,
   value,
+  ratingEmoji,
+  ratingLabel,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string;
+  ratingEmoji?: string;
+  ratingLabel?: string;
 }) {
   return (
     <div className="flex items-center justify-between gap-3">
@@ -717,9 +792,20 @@ function InsightRow({
         </span>
       </div>
 
-      <span className="shrink-0 text-right font-semibold text-white">
-        {value}
-      </span>
+      <div className="flex shrink-0 items-center gap-2">
+        {ratingEmoji && (
+          <span
+            className="text-sm leading-none opacity-80"
+            title={ratingLabel}
+            aria-label={ratingLabel ? `Rated ${ratingLabel}` : undefined}
+          >
+            {ratingEmoji}
+          </span>
+        )}
+        <span className="text-right font-semibold text-white">
+          {value}
+        </span>
+      </div>
     </div>
   );
 }

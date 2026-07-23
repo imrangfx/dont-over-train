@@ -11,26 +11,67 @@ import { shoulders } from "@/app/Data/shoulders";
 import { legs } from "@/app/Data/legs";
 import { abs } from "@/app/Data/abs";
 import { recoveryHoursForFatigue, type InProgressWorkoutItem } from "@/lib/workouts";
+import {
+  formatElapsedClock,
+  getActiveWorkoutSession,
+  getLiveElapsedMs,
+  clearWorkoutSession,
+  type ActiveWorkoutSession,
+} from "@/lib/workoutSession";
 
 export default function SessionPage() {
   const router = useRouter();
   const [workout, setWorkout] = useState<InProgressWorkoutItem[]>([]);
   const muscleFatigue: Record<string, number> = {};
   const [loaded, setLoaded] = useState(false);
+  const [session, setSession] = useState<ActiveWorkoutSession | null>(null);
+  const [elapsedMs, setElapsedMs] = useState(0);
 
   useEffect(() => {
     const saved = localStorage.getItem("currentWorkout");
     const parsed = saved ? JSON.parse(saved) : null;
+    const list: InProgressWorkoutItem[] = parsed
+      ? Array.isArray(parsed)
+        ? parsed
+        : [parsed]
+      : [];
+    const active = getActiveWorkoutSession();
 
     // Deferred to a microtask so this effect never calls setState
     // synchronously in its own body (avoids cascading renders).
     queueMicrotask(() => {
-      if (parsed) {
-        setWorkout(Array.isArray(parsed) ? parsed : [parsed]);
+      // Finished workouts clear currentWorkout — leave the flow entirely.
+      if (list.length === 0) {
+        if (active) clearWorkoutSession();
+        router.replace("/home");
+        return;
       }
+
+      setWorkout(list);
+      setSession(active);
       setLoaded(true);
     });
-  }, []);
+  }, [router]);
+
+  // Live timer — always derived from persisted sessionStartTime in storage.
+  useEffect(() => {
+    if (!session) return;
+
+    const tick = () => {
+      const active = getActiveWorkoutSession();
+      if (!active) {
+        setSession(null);
+        return;
+      }
+      setElapsedMs(getLiveElapsedMs());
+    };
+
+    queueMicrotask(tick);
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [session]);
+
+  const displayElapsedMs = session ? elapsedMs : 0;
 
   workout.forEach((item) => {
     const exercises = {
@@ -100,14 +141,33 @@ export default function SessionPage() {
           ← Back
         </Link>
 
-        <h1 className="text-4xl font-bold mb-1 mt-3">
-          Today&apos;s Workout
-        </h1>
+        <div className="mt-3 mb-5 flex items-start justify-between gap-3">
+          <div>
+            <h1 className="text-4xl font-bold mb-1">
+              Today&apos;s Workout
+            </h1>
 
-        <p className="text-zinc-400 mb-5">
-          {workout.length} Exercise
-          {workout.length !== 1 ? "s" : ""}
-        </p>
+            <p className="text-zinc-400">
+              {workout.length} Exercise
+              {workout.length !== 1 ? "s" : ""}
+            </p>
+          </div>
+
+          {session && (
+            <div
+              className="shrink-0 rounded-2xl border border-lime-400/40 bg-lime-400/10 px-3 py-2 text-right"
+              aria-live="polite"
+              aria-label="Workout timer"
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-lime-400/80">
+                Time
+              </p>
+              <p className="font-mono text-lg font-semibold tabular-nums text-lime-400">
+                {formatElapsedClock(displayElapsedMs)}
+              </p>
+            </div>
+          )}
+        </div>
 
         {/* Currently Training */}
         <div className="border border-lime-400 rounded-3xl p-5 mb-5 bg-[#111]">
@@ -171,6 +231,8 @@ export default function SessionPage() {
                     );
 
                     if (updated.length === 0) {
+                      clearWorkoutSession();
+                      setSession(null);
                       router.push(workout[index].sourcePath);
                     }
                   }}
@@ -298,13 +360,23 @@ export default function SessionPage() {
           Choose Another Body Part
         </button>
 
-        <button
-          type="button"
-          onClick={() => router.push("/workout/complete")}
-          className="btn-base w-full border border-lime-400 text-lime-400 py-4 rounded-2xl text-xl"
-        >
-          Finish Workout
-        </button>
+        {session ? (
+          <button
+            type="button"
+            onClick={() => router.replace("/workout/complete")}
+            className="btn-base w-full border border-lime-400 text-lime-400 py-4 rounded-2xl text-xl"
+          >
+            Finish Workout
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => router.replace("/workout/start")}
+            className="btn-base w-full border border-lime-400 bg-lime-400/10 text-lime-400 py-4 rounded-2xl text-xl font-semibold"
+          >
+            Start Workout
+          </button>
+        )}
 
       </div>
     </main>
