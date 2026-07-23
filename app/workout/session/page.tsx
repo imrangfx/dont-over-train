@@ -360,21 +360,13 @@ export default function SessionPage() {
           Choose Another Body Part
         </button>
 
-        {session ? (
+        {session && (
           <button
             type="button"
             onClick={() => router.replace("/workout/complete")}
             className="btn-base w-full border border-lime-400 text-lime-400 py-4 rounded-2xl text-xl"
           >
             Finish Workout
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={() => router.replace("/workout/start")}
-            className="btn-base w-full border border-lime-400 bg-lime-400/10 text-lime-400 py-4 rounded-2xl text-xl font-semibold"
-          >
-            Start Workout
           </button>
         )}
 
