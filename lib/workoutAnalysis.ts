@@ -13,6 +13,7 @@ export type QualityRating = "great" | "good" | "average" | "poor";
 
 export type MetricQuality = {
   rating: QualityRating;
+  /** @deprecated Prefer Lucide icons in UI — kept for analysis copy compatibility. */
   emoji: string;
   label: string;
 };
@@ -21,10 +22,10 @@ const RATING_META: Record<
   QualityRating,
   { emoji: string; label: string }
 > = {
-  great: { emoji: "😄", label: "Great" },
-  good: { emoji: "🙂", label: "Good" },
-  average: { emoji: "😐", label: "Average" },
-  poor: { emoji: "☹️", label: "Poor" },
+  great: { emoji: "", label: "Excellent" },
+  good: { emoji: "", label: "Good" },
+  average: { emoji: "", label: "Average" },
+  poor: { emoji: "", label: "Poor" },
 };
 
 function quality(rating: QualityRating): MetricQuality {
@@ -136,6 +137,17 @@ export function rateExercisesCompleted(
   if (perWorkout >= 6) return quality("great");
   if (perWorkout >= 4) return quality("good");
   if (perWorkout >= 2.5) return quality("average");
+  return quality("poor");
+}
+
+/** Rates total workout count in the current filter window from real history. */
+export function rateTotalWorkouts(workoutCount: number): MetricQuality {
+  const value = Math.max(0, Number(workoutCount) || 0);
+
+  if (value <= 0) return quality("poor");
+  if (value >= 12) return quality("great");
+  if (value >= 6) return quality("good");
+  if (value >= 3) return quality("average");
   return quality("poor");
 }
 

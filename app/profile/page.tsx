@@ -20,8 +20,10 @@ import {
   analyzeWorkout,
   rateCurrentStreak,
   rateExercisesCompleted,
+  rateTotalWorkouts,
   rateTrainingTime,
   rateWorkoutScore,
+  type QualityRating,
 } from "@/lib/workoutAnalysis";
 import {
   CircleUserRound,
@@ -37,6 +39,8 @@ import {
   Users,
   ChevronRight,
   Share2,
+  ThumbsUp,
+  ThumbsDown,
 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import LoadingCard from "@/components/ui/LoadingCard";
@@ -201,6 +205,7 @@ export default function ProfilePage() {
   const trainingTimeQuality = rateTrainingTime(filteredHistory);
   const exercisesQuality = rateExercisesCompleted(totalExercises, totalWorkouts);
   const streakQuality = rateCurrentStreak(currentStreak);
+  const totalWorkoutsQuality = rateTotalWorkouts(totalWorkouts);
   const bestScoreValue = Number(insights.bestWorkoutScore) || 0;
   const workoutScoreQuality = rateWorkoutScore(bestScoreValue);
 
@@ -443,13 +448,15 @@ export default function ProfilePage() {
               icon={<Dumbbell size={20} />}
               title="Total Workouts"
               value={String(totalWorkouts)}
+              rating={totalWorkoutsQuality.rating}
+              ratingLabel={totalWorkoutsQuality.label}
             />
 
             <StatCard
               icon={<Trophy size={20} />}
               title="Exercises Completed"
               value={String(totalExercises)}
-              ratingEmoji={exercisesQuality.emoji}
+              rating={exercisesQuality.rating}
               ratingLabel={exercisesQuality.label}
             />
 
@@ -457,7 +464,7 @@ export default function ProfilePage() {
               icon={<Clock3 size={20} />}
               title="Training Time"
               value={formatDurationMinutes(trainingMinutes)}
-              ratingEmoji={trainingTimeQuality.emoji}
+              rating={trainingTimeQuality.rating}
               ratingLabel={trainingTimeQuality.label}
             />
 
@@ -465,7 +472,7 @@ export default function ProfilePage() {
               icon={<Flame size={20} />}
               title="Current Streak"
               value={`${currentStreak} Days`}
-              ratingEmoji={streakQuality.emoji}
+              rating={streakQuality.rating}
               ratingLabel={streakQuality.label}
             />
 
@@ -583,10 +590,10 @@ export default function ProfilePage() {
                   ? "-"
                   : `${insights.bestWorkoutScore} Points`
               }
-              ratingEmoji={
+              rating={
                 insights.bestWorkoutScore === "-"
                   ? undefined
-                  : workoutScoreQuality.emoji
+                  : workoutScoreQuality.rating
               }
               ratingLabel={
                 insights.bestWorkoutScore === "-"
@@ -714,21 +721,54 @@ export default function ProfilePage() {
   );
 }
 
+function RatingIndicator({
+  rating,
+  label,
+}: {
+  rating: QualityRating;
+  label?: string;
+}) {
+  const isPoor = rating === "poor";
+  const isAverage = rating === "average";
+
+  return (
+    <span
+      className={
+        isPoor
+          ? "text-red-500"
+          : isAverage
+            ? "text-amber-400/55"
+            : "text-lime-400"
+      }
+      title={label}
+      aria-label={label ? `Rated ${label}` : undefined}
+    >
+      {isPoor ? (
+        <ThumbsDown size={16} aria-hidden="true" />
+      ) : (
+        <ThumbsUp size={16} aria-hidden="true" />
+      )}
+    </span>
+  );
+}
+
 function StatCard({
   title,
   value,
   icon,
   href,
-  ratingEmoji,
+  rating,
   ratingLabel,
 }: {
   title: string;
   value: string;
   icon: React.ReactNode;
   href?: string;
-  ratingEmoji?: string;
+  rating?: QualityRating;
   ratingLabel?: string;
 }) {
+  const isPoor = rating === "poor";
+
   const content = (
     <>
       <div className="flex items-start justify-between gap-2">
@@ -736,15 +776,7 @@ function StatCard({
           {icon}
         </div>
 
-        {ratingEmoji && (
-          <span
-            className="text-sm leading-none opacity-80"
-            title={ratingLabel}
-            aria-label={ratingLabel ? `Rated ${ratingLabel}` : undefined}
-          >
-            {ratingEmoji}
-          </span>
-        )}
+        {rating && <RatingIndicator rating={rating} label={ratingLabel} />}
       </div>
 
       <div className="mt-4 text-2xl font-bold">
@@ -757,28 +789,38 @@ function StatCard({
     </>
   );
 
+  const className = [
+    "card-surface p-4",
+    isPoor ? "border-red-500/30 animate-poor-stat-glow" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   if (href) {
     return (
-      <Link href={href} className="btn-base card-surface block p-4 hover:border-lime-400/40">
+      <Link
+        href={href}
+        className={`btn-base block ${className} hover:border-lime-400/40`}
+      >
         {content}
       </Link>
     );
   }
 
-  return <div className="card-surface p-4">{content}</div>;
+  return <div className={className}>{content}</div>;
 }
 
 function InsightRow({
   icon,
   label,
   value,
-  ratingEmoji,
+  rating,
   ratingLabel,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string;
-  ratingEmoji?: string;
+  rating?: QualityRating;
   ratingLabel?: string;
 }) {
   return (
@@ -793,15 +835,7 @@ function InsightRow({
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
-        {ratingEmoji && (
-          <span
-            className="text-sm leading-none opacity-80"
-            title={ratingLabel}
-            aria-label={ratingLabel ? `Rated ${ratingLabel}` : undefined}
-          >
-            {ratingEmoji}
-          </span>
-        )}
+        {rating && <RatingIndicator rating={rating} label={ratingLabel} />}
         <span className="text-right font-semibold text-white">
           {value}
         </span>

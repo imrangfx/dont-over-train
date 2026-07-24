@@ -135,6 +135,23 @@ body {
   animation-play-state: paused;
 }
 
+@keyframes poorStatGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(239, 68, 68, 0);
+    border-color: rgba(239, 68, 68, 0.28);
+  }
+
+  50% {
+    box-shadow: 0 0 12px 1px rgba(239, 68, 68, 0.28);
+    border-color: rgba(239, 68, 68, 0.55);
+  }
+}
+
+.animate-poor-stat-glow {
+  animation: poorStatGlow 2.8s ease-in-out infinite;
+}
+
 @keyframes level-up-pop {
   from {
     opacity: 0;
@@ -161,6 +178,10 @@ body {
   }
 
   .animate-last-trained-glow {
+    animation: none;
+  }
+
+  .animate-poor-stat-glow {
     animation: none;
   }
 }
