@@ -30,24 +30,26 @@ import {
 } from "@/components/ui/SettingRow";
 import { useToast } from "@/components/ui/Toast";
 
-const CONTACT_SUPPORT_MAILTO =
-  "mailto:imran.mgfx@gmail.com" +
-  `?subject=${encodeURIComponent("Dont Over Train Support")}` +
-  `&body=${encodeURIComponent(
-    [
-      "Hi,",
-      "",
-      "I need help with Dont Over Train.",
-      "",
-      "Issue:",
-      "(Describe your problem here)",
-      "",
-      "Device:",
-      "Browser:",
-      "",
-      "Thank you.",
-    ].join("\n")
-  )}`;
+const CONTACT_SUPPORT_BODY = [
+  "Hi,",
+  "",
+  "I need help with Dont Over Train.",
+  "",
+  "Issue:",
+  "(Describe your problem here)",
+  "",
+  "Device:",
+  "Browser:",
+  "",
+  "Thank you.",
+].join("\n");
+
+/** Gmail compose URL — more reliable than mailto+body with the Gmail handler. */
+const CONTACT_SUPPORT_URL =
+  "https://mail.google.com/mail/?view=cm&fs=1" +
+  `&to=${encodeURIComponent("imran.mgfx@gmail.com")}` +
+  `&su=${encodeURIComponent("Dont Over Train Support")}` +
+  `&body=${encodeURIComponent(CONTACT_SUPPORT_BODY)}`;
 
 function formatLastSynced(iso: string | null): string {
   if (!iso) return "Never";
@@ -275,7 +277,7 @@ export default function SettingsPage() {
             <SettingLink
               icon={<Mail size={18} />}
               label="Contact Support"
-              href={CONTACT_SUPPORT_MAILTO}
+              href={CONTACT_SUPPORT_URL}
             />
           </div>
         </section>
