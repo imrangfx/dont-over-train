@@ -271,21 +271,6 @@ export const chest = {
     },
   },
 
-  "decline-machine-press": {
-    name: "Decline Machine Press",
-    bodyPart: "Chest",
-    section: "lower-chest",
-    fatigue: {
-      upperChest: 1,
-      midChest: 6,
-      lowerChest: 16,
-      frontDelts: 2,
-      "Lateral Head Triceps": 4,
-      "Medial Head Triceps": 3,
-      "Long Head Triceps": 1,
-    },
-  },
-
   "high-to-low-cable-fly": {
     name: "High To Low Cable Fly",
     bodyPart: "Chest",
