@@ -255,8 +255,10 @@ export default function SettingsPage() {
             />
             <SettingLink
               icon={<Mail size={18} />}
-              label="Contact"
-              href="mailto:support@dontovertrain.app"
+              label="Contact Support"
+              href={`mailto:imran.mgfx@gmail.com?subject=${encodeURIComponent("Dont Over Train Support")}&body=${encodeURIComponent(
+                "Hi,\n\nI need help with Dont Over Train.\n\nIssue:\n(Describe your problem here)\n\nDevice:\nBrowser:\n\nThank you."
+              )}`}
             />
           </div>
         </section>
