@@ -79,6 +79,13 @@ export function SettingLink({ icon, label, href }: SettingLinkProps) {
   return (
     <a
       href={href}
+      onClick={(event) => {
+        // Keep this inside the same user gesture. Programmatic <a>.click()
+        // after preventDefault can be blocked by browsers for mailto:.
+        if (!/^mailto:/i.test(href)) return;
+        event.preventDefault();
+        window.location.href = href;
+      }}
       className="flex w-full items-center justify-between gap-3 px-4 py-4 transition hover:bg-zinc-900/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#39ff14] focus-visible:ring-inset active:scale-[0.99]"
     >
       <div className="flex min-w-0 items-center gap-3">

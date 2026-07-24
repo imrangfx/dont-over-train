@@ -30,6 +30,25 @@ import {
 } from "@/components/ui/SettingRow";
 import { useToast } from "@/components/ui/Toast";
 
+const CONTACT_SUPPORT_MAILTO =
+  "mailto:imran.mgfx@gmail.com" +
+  `?subject=${encodeURIComponent("Dont Over Train Support")}` +
+  `&body=${encodeURIComponent(
+    [
+      "Hi,",
+      "",
+      "I need help with Dont Over Train.",
+      "",
+      "Issue:",
+      "(Describe your problem here)",
+      "",
+      "Device:",
+      "Browser:",
+      "",
+      "Thank you.",
+    ].join("\n")
+  )}`;
+
 function formatLastSynced(iso: string | null): string {
   if (!iso) return "Never";
 
@@ -256,9 +275,7 @@ export default function SettingsPage() {
             <SettingLink
               icon={<Mail size={18} />}
               label="Contact Support"
-              href={`mailto:imran.mgfx@gmail.com?subject=${encodeURIComponent("Dont Over Train Support")}&body=${encodeURIComponent(
-                "Hi,\n\nI need help with Dont Over Train.\n\nIssue:\n(Describe your problem here)\n\nDevice:\nBrowser:\n\nThank you."
-              )}`}
+              href={CONTACT_SUPPORT_MAILTO}
             />
           </div>
         </section>
