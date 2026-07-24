@@ -22,7 +22,6 @@ import {
   rateExercisesCompleted,
   rateTotalWorkouts,
   rateTrainingTime,
-  rateWorkoutScore,
   type QualityRating,
 } from "@/lib/workoutAnalysis";
 import {
@@ -206,8 +205,6 @@ export default function ProfilePage() {
   const exercisesQuality = rateExercisesCompleted(totalExercises, totalWorkouts);
   const streakQuality = rateCurrentStreak(currentStreak);
   const totalWorkoutsQuality = rateTotalWorkouts(totalWorkouts);
-  const bestScoreValue = Number(insights.bestWorkoutScore) || 0;
-  const workoutScoreQuality = rateWorkoutScore(bestScoreValue);
 
   const workoutAnalysis = analyzeWorkout(filteredHistory);
 
@@ -512,10 +509,6 @@ export default function ProfilePage() {
                 {formatDurationMinutes(lastWorkout.durationMinutes || 0)}
               </div>
 
-              <div className="mt-4 inline-flex rounded-full bg-lime-400/15 px-3 py-1 text-sm text-lime-400">
-                Score {lastWorkout.score}
-              </div>
-
               <Link
                 href={`/history/${lastWorkout.id}`}
                 className="btn-base mt-6 block w-full rounded-xl bg-[#191919] py-3 text-center font-medium hover:bg-[#222]"
@@ -578,17 +571,6 @@ export default function ProfilePage() {
               icon={<Activity size={18} />}
               label="Most Trained Muscle"
               value={insights.mostTrainedMuscle}
-            />
-
-            <InsightRow
-              icon={<Trophy size={18} />}
-              label="Best Workout Score"
-              value={
-                insights.bestWorkoutScore === "-"
-                  ? "-"
-                  : `${insights.bestWorkoutScore}/100`
-              }
-    
             />
 
             <InsightRow

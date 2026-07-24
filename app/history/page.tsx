@@ -79,11 +79,7 @@ export default function HistoryPage() {
                   {workout.exercises} Exercises • {workout.durationMinutes} min
                 </p>
 
-                <div className="mt-5 flex items-center justify-between gap-3">
-                  <span className="rounded-full bg-lime-400/15 px-3 py-1 text-sm text-lime-400">
-                    Score {workout.score}
-                  </span>
-
+                <div className="mt-5 flex items-center justify-end gap-3">
                   <Link
                     href={`/history/${workout.id}`}
                     className="btn-base inline-flex items-center gap-2 rounded-lg text-zinc-300 hover:text-white"

@@ -161,7 +161,7 @@ export async function loadPublicFriendProfile(
       supabase.from("personal_records").select("*").eq("user_id", userId),
       supabase
         .from("workouts")
-        .select("id, workout_date, duration_minutes, total_sets, total_reps, workout_score, body_parts, fatigue")
+        .select("id, workout_date, duration_minutes, total_sets, total_reps, body_parts, fatigue")
         .eq("user_id", userId)
         .order("workout_date", { ascending: false }),
     ]);

@@ -331,12 +331,6 @@ export default function FriendProfilePage() {
                   <span className="font-semibold text-white">{profile.insights?.mostTrainedMuscle}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-zinc-400">Best Workout Score</span>
-                  <span className="font-semibold text-white">
-                    {profile.insights?.bestWorkoutScore === "-" ? "-" : `${profile.insights?.bestWorkoutScore} Points`}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
                   <span className="text-zinc-400">Total Sets</span>
                   <span className="font-semibold text-white">{profile.insights?.totalSets}</span>
                 </div>

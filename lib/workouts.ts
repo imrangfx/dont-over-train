@@ -129,7 +129,6 @@ export function calculateCurrentStreak(
 
 export type WorkoutInsights = {
   mostTrainedMuscle: string;
-  bestWorkoutScore: string;
   averageWorkoutTime: string;
   totalReps: string;
   totalSets: string;
@@ -137,7 +136,6 @@ export type WorkoutInsights = {
 
 const EMPTY_INSIGHTS: WorkoutInsights = {
   mostTrainedMuscle: "-",
-  bestWorkoutScore: "-",
   averageWorkoutTime: "-",
   totalReps: "-",
   totalSets: "-",
@@ -147,7 +145,6 @@ const EMPTY_INSIGHTS: WorkoutInsights = {
 export function calculateWorkoutInsights(
   workouts: Array<{
     bodyParts?: string[];
-    score?: number;
     durationMinutes?: number;
     reps?: number;
     sets?: number;
@@ -158,7 +155,6 @@ export function calculateWorkoutInsights(
   }
 
   const muscleCounts: Record<string, number> = {};
-  let bestScore = 0;
   let totalDuration = 0;
   let totalReps = 0;
   let totalSets = 0;
@@ -168,9 +164,6 @@ export function calculateWorkoutInsights(
       if (!muscle) continue;
       muscleCounts[muscle] = (muscleCounts[muscle] || 0) + 1;
     }
-
-    const score = Number(workout.score) || 0;
-    if (score > bestScore) bestScore = score;
 
     totalDuration += Number(workout.durationMinutes) || 0;
     totalReps += Number(workout.reps) || 0;
@@ -190,7 +183,6 @@ export function calculateWorkoutInsights(
 
   return {
     mostTrainedMuscle,
-    bestWorkoutScore: bestScore > 0 ? String(bestScore) : "-",
     averageWorkoutTime: avgMinutes > 0 ? String(avgMinutes) : "-",
     totalReps: totalReps > 0 ? totalReps.toLocaleString() : "-",
     totalSets: totalSets > 0 ? totalSets.toLocaleString() : "-",

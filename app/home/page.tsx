@@ -395,10 +395,6 @@ function ContinueWorkoutCard({
             {workout.exercises !== 1 ? "s" : ""} • {workout.sets} Sets
           </p>
 
-          <div className="mt-3 inline-flex rounded-full bg-lime-400/15 px-3 py-1 text-sm text-lime-400">
-            Score {workout.score}
-          </div>
-
           <div className="mt-5 flex gap-3">
             <Link
               href={`/workout/${bodyPartSlug}`}

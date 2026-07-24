@@ -49,7 +49,6 @@ function exportHistoryAsCsv(history: WorkoutHistoryEntry[]) {
     "sets",
     "reps",
     "duration_minutes",
-    "score",
   ];
 
   const rows = history.map((workout) =>
@@ -61,7 +60,6 @@ function exportHistoryAsCsv(history: WorkoutHistoryEntry[]) {
       workout.sets,
       workout.reps,
       workout.durationMinutes,
-      workout.score,
     ]
       .map((cell) => `"${String(cell ?? "").replace(/"/g, '""')}"`)
       .join(",")

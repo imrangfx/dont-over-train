@@ -50,7 +50,6 @@ export function evaluateTimeEfficiency(input: {
   exercises: number;
   sets: number;
   reps: number;
-  score: number;
 }): TimeEfficiencyResult {
   const duration = Math.max(0, Number(input.durationMinutes) || 0);
   const sets = Math.max(0, Number(input.sets) || 0);
@@ -106,7 +105,6 @@ export function rateTrainingTime(
     exercises?: number;
     sets?: number;
     reps?: number;
-    score?: number;
   }>
 ): MetricQuality {
   if (!workouts.length) return quality("average");
@@ -120,7 +118,6 @@ export function rateTrainingTime(
       workouts.length,
     sets: workouts.reduce((s, w) => s + (Number(w.sets) || 0), 0) / workouts.length,
     reps: workouts.reduce((s, w) => s + (Number(w.reps) || 0), 0) / workouts.length,
-    score: workouts.reduce((s, w) => s + (Number(w.score) || 0), 0) / workouts.length,
   };
 
   return quality(evaluateTimeEfficiency(avg).rating);
@@ -151,15 +148,6 @@ export function rateTotalWorkouts(workoutCount: number): MetricQuality {
   return quality("poor");
 }
 
-export function rateWorkoutScore(score: number): MetricQuality {
-  const value = Number(score) || 0;
-
-  if (value >= 80) return quality("great");
-  if (value >= 60) return quality("good");
-  if (value >= 40) return quality("average");
-  return quality("poor");
-}
-
 export function rateCurrentStreak(days: number): MetricQuality {
   const value = Math.max(0, Number(days) || 0);
 
@@ -171,7 +159,6 @@ export function rateCurrentStreak(days: number): MetricQuality {
 
 export type WorkoutAnalysisKind =
   | "duration"
-  | "score"
   | "volume"
   | "exercise_selection"
   | "recovery"
@@ -193,9 +180,6 @@ const DURATION_MAX_IDEAL = 75;
 /** "Significantly" outside the ideal window (average duration). */
 const DURATION_TOO_SHORT = 30;
 const DURATION_TOO_LONG = 90;
-
-/** Average score below this triggers Workout Quality. */
-const SCORE_QUALITY_THRESHOLD = 65;
 
 /** Average sets below this triggers volume coaching. */
 const VOLUME_MIN_SETS = 12;
@@ -391,7 +375,7 @@ function findHighestAverageFatigue(
  * used by Workout Insights. Never analyzes only the latest workout —
  * always averages / trends across the provided list.
  *
- * Priority: duration → score → volume → selection → recovery → achievement.
+ * Priority: duration → volume → selection → recovery → achievement.
  */
 export function analyzeWorkout(
   filteredWorkouts: WorkoutHistoryEntry[]
@@ -402,10 +386,6 @@ export function analyzeWorkout(
   const avgDuration = averageOf(
     filteredWorkouts,
     (workout) => Math.max(0, Number(workout.durationMinutes) || 0)
-  );
-  const avgScore = averageOf(
-    filteredWorkouts,
-    (workout) => Math.max(0, Number(workout.score) || 0)
   );
   const avgSets = averageOf(
     filteredWorkouts,
@@ -440,20 +420,7 @@ export function analyzeWorkout(
     };
   }
 
-  // ── Priority #2 — Workout Score (average) ───────────────────────────────
-  if (avgScore < SCORE_QUALITY_THRESHOLD) {
-    return {
-      kind: "score",
-      emoji: "⚠️",
-      title: "Workout Quality",
-      lines: [
-        `Your average workout score was ${Math.round(avgScore)}/100 across ${periodLabel}.`,
-        "Focus on progressive overload and better exercise quality next session.",
-      ],
-    };
-  }
-
-  // ── Priority #3 — Workout Volume (average sets) ─────────────────────────
+  // ── Priority #2 — Workout Volume (average sets) ─────────────────────────
   if (avgSets > 0 && avgSets < VOLUME_MIN_SETS) {
     const setsDisplay = Number.isInteger(round1(avgSets))
       ? String(Math.round(avgSets))
@@ -470,7 +437,7 @@ export function analyzeWorkout(
     };
   }
 
-  // ── Priority #4 — Exercise Selection (period trend) ─────────────────────
+  // ── Priority #3 — Exercise Selection (period trend) ─────────────────────
   const narrowSelection = findNarrowExerciseSelectionInPeriod(filteredWorkouts);
   if (narrowSelection) {
     return {
@@ -484,7 +451,7 @@ export function analyzeWorkout(
     };
   }
 
-  // ── Priority #5 — Recovery / Fatigue (period average) ───────────────────
+  // ── Priority #4 — Recovery / Fatigue (period average) ───────────────────
   const peakFatigue = findHighestAverageFatigue(filteredWorkouts);
   if (peakFatigue && peakFatigue.value >= FATIGUE_HIGH_THRESHOLD) {
     const muscleLabel = formatMuscleLabel(peakFatigue.muscle);
@@ -499,7 +466,7 @@ export function analyzeWorkout(
     };
   }
 
-  // ── Priority #6 — Positive Achievement (within period) ──────────────────
+  // ── Priority #5 — Positive Achievement (within period) ──────────────────
   const brokenPR = findBestBrokenPRInPeriod(filteredWorkouts);
   if (brokenPR && brokenPR.previousWeight > 0) {
     return {
@@ -518,7 +485,7 @@ export function analyzeWorkout(
     emoji: "✅",
     title: "Excellent Workout",
     lines: [
-      `Great balance of duration, volume and workout quality across ${periodLabel}.`,
+      `Great balance of duration and volume across ${periodLabel}.`,
       "Keep it up.",
     ],
   };

@@ -123,10 +123,6 @@ export default function WorkoutDetailsPage() {
             {workout.durationMinutes || 0} Minutes
           </div>
 
-          <div className="mt-5 inline-flex rounded-full bg-lime-400/15 px-3 py-1 text-lime-400">
-            Workout Score {workout.score}
-          </div>
-
         </div>
 
         {/* Exercises */}

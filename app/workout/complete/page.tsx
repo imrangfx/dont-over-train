@@ -46,7 +46,6 @@ export default function CompletePage() {
   const router = useRouter();
   const { toast } = useToast();
   const [workouts, setWorkouts] = useState<InProgressWorkoutItem[]>([]);
-  const [isPR, setIsPR] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
   const [levelUp, setLevelUp] = useState<{
     level: number;
@@ -104,15 +103,6 @@ export default function CompletePage() {
       0
     );
 
-    const score = Math.min(
-      Math.round(
-        totalSetsHistory * 5 +
-        totalRepsHistory * 0.2 +
-        formatted.length * 10
-      ),
-      100
-    );
-
     const fatigueTotals: Record<string, number> = {};
 
     formatted.forEach((exercise) => {
@@ -144,7 +134,8 @@ export default function CompletePage() {
       startedAt,
       endedAt,
 
-      score,
+      // Kept for schema compatibility; Workout Score feature removed.
+      score: 0,
 
       bodyParts: Array.from(
         new Set(
@@ -235,8 +226,7 @@ export default function CompletePage() {
 
       const alreadySaved =
         history.length > 0 &&
-        history[history.length - 1].date === historyEntry.date &&
-        history[history.length - 1].score === historyEntry.score;
+        history[history.length - 1].id === historyEntry.id;
 
       if (!alreadySaved) {
         localStorage.setItem(
@@ -310,35 +300,6 @@ export default function CompletePage() {
       }
     })();
 
-    const previousBest = Number(
-      localStorage.getItem("bestWorkoutScore") || 0
-    );
-
-    const currentScore = Math.min(
-      Math.round(
-        formatted.reduce(
-          (acc, item) =>
-            acc + item.sets,
-          0
-        ) * 5 +
-        formatted.reduce(
-          (acc, item) =>
-            acc + item.sets * item.reps,
-          0
-        ) * 0.2 +
-        formatted.length * 10
-      ),
-      100
-    );
-
-    if (currentScore > previousBest) {
-      localStorage.setItem(
-        "bestWorkoutScore",
-        String(currentScore)
-      );
-
-      queueMicrotask(() => setIsPR(true));
-    }
     // `toast` is a stable useCallback reference (see components/ui/Toast.tsx)
     // so including it here does not cause this mount-only effect to re-run.
   }, [toast, router]);
@@ -451,18 +412,6 @@ export default function CompletePage() {
             </div>
 
           </div>
-
-          {isPR && (
-            <div className="mb-5 w-full rounded-2xl border border-yellow-500 bg-yellow-500/10 p-4 text-center">
-              <p className="font-semibold text-yellow-400">
-                🏆 Personal Record
-              </p>
-
-              <p className="mt-1 text-zinc-300">
-                Highest Workout Score Yet
-              </p>
-            </div>
-          )}
 
           {shareData && (
             <button
