@@ -266,9 +266,22 @@ export function rowToEntry(row: WorkoutRow): WorkoutHistoryEntry {
 }
 
 export async function getCurrentUserId(): Promise<string | null> {
-  const { data, error } = await supabase.auth.getSession();
-  if (error) return null;
-  return data.session?.user?.id ?? null;
+  // Prefer a validated user for write-path decisions. getSession() only reads
+  // local storage and can report a user id whose access token is already
+  // dead; getUser() hits Auth and refreshes when the library can.
+  const { data, error } = await supabase.auth.getUser();
+  if (!error && data.user?.id) return data.user.id;
+
+  // Common after a long backgrounded workout: access JWT expired, getUser
+  // failed, but the refresh token is still valid. Refresh silently.
+  const { data: refreshed, error: refreshError } = await supabase.auth.refreshSession();
+  if (!refreshError && refreshed.session?.user?.id) {
+    return refreshed.session.user.id;
+  }
+
+  // Last resort: local session (offline / Auth briefly unreachable).
+  const { data: sessionData } = await supabase.auth.getSession();
+  return sessionData.session?.user?.id ?? null;
 }
 
 /**
@@ -290,32 +303,65 @@ function isAuthSessionError(message: string | null | undefined): boolean {
     lower.includes("session_not_found") ||
     lower.includes("not authenticated") ||
     lower.includes("invalid token") ||
-    lower.includes("token is expired")
+    lower.includes("token is expired") ||
+    lower.includes("invalid claim") ||
+    lower.includes("unauthorized")
   );
 }
 
+function accessTokenMsRemaining(expiresAt: number | undefined): number {
+  if (typeof expiresAt !== "number" || !Number.isFinite(expiresAt)) return 0;
+  return expiresAt * 1000 - Date.now();
+}
+
 /**
- * Makes sure the current session's access token is fresh before a Supabase
- * write. supabase-js already refreshes proactively inside getSession(), but
- * a workout screen can sit open (long set rest, backgrounded tab) long
- * enough that the token is already past its expiry margin by the time we're
- * ready to sync - this closes that gap by refreshing explicitly first.
- * Returns false only when the user is no longer authenticated (missing or
- * invalid refresh token), so callers can fail gracefully instead of firing a
- * write that's guaranteed to hit an expired-JWT error.
+ * Ensures a usable access token before Supabase writes.
+ *
+ * Root-cause notes (production / long workouts):
+ * - Auto-refresh pauses while the tab is backgrounded; finishing a workout
+ *   after a long rest can hit PostgREST with an expired JWT.
+ * - A failed *proactive* refresh must NOT be treated as signed-out when the
+ *   access token is still inside its real expiry window.
+ *
+ * Returns false only when there is no recoverable authenticated session.
  */
 export async function ensureFreshSession(): Promise<boolean> {
   const { data, error } = await supabase.auth.getSession();
-  if (error || !data.session) return false;
+  const session = !error ? data.session : null;
 
-  const expiresAt = data.session.expires_at;
-  const expiringSoon =
-    typeof expiresAt === "number" && expiresAt * 1000 - Date.now() < 60_000;
+  if (!session) {
+    // Storage empty / getSession failed — one explicit refresh recovery.
+    const { data: recovered, error: recoverError } = await supabase.auth.refreshSession();
+    return !recoverError && !!recovered.session;
+  }
 
-  if (!expiringSoon) return true;
+  const msLeft = accessTokenMsRemaining(session.expires_at);
+
+  // Comfortable headroom — current token is fine for the upcoming write.
+  if (msLeft > 60_000) return true;
 
   const { data: refreshed, error: refreshError } = await supabase.auth.refreshSession();
-  return !refreshError && !!refreshed.session;
+  if (!refreshError && refreshed.session) return true;
+
+  // Proactive refresh failed (network / cooldown) but access token still valid.
+  if (msLeft > 0) return true;
+
+  // Access token already expired and refresh failed — last getSession check
+  // in case another tab rotated tokens into storage via BroadcastChannel.
+  const { data: latest } = await supabase.auth.getSession();
+  return accessTokenMsRemaining(latest.session?.expires_at) > 0;
+}
+
+/**
+ * Force-refresh the session (ignores the "still has headroom" short-circuit).
+ * Used after a write returns JWT expired so the retry uses a new access token.
+ */
+export async function forceRefreshSession(): Promise<boolean> {
+  const { data, error } = await supabase.auth.refreshSession();
+  if (!error && data.session) return true;
+
+  const { data: latest } = await supabase.auth.getSession();
+  return accessTokenMsRemaining(latest.session?.expires_at) > 0;
 }
 
 /**
@@ -382,12 +428,11 @@ export async function saveWorkoutHistoryEntry(
 
     let { error } = await supabase.from("workouts").upsert(payload, { onConflict: "id" });
 
-    // Reactive fallback: if the access token expired in the gap between the
-    // proactive check above and this request actually reaching the server,
-    // refresh once more and retry the exact same write before giving up.
+    // Reactive fallback: write used a JWT that expired in flight (common after
+    // a long backgrounded workout). Force-refresh and retry once — do not ask
+    // the user to sign in again when a refresh token is still available.
     if (error && isAuthSessionError(error.message)) {
-      const refreshed = await ensureFreshSession();
-      if (refreshed) {
+      if (await forceRefreshSession()) {
         ({ error } = await supabase.from("workouts").upsert(payload, { onConflict: "id" }));
       }
     }

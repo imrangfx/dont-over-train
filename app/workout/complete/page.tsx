@@ -187,16 +187,22 @@ export default function CompletePage() {
       const userId = await getCurrentUserId();
 
       if (userId) {
-        const { error } = await saveWorkoutHistoryEntry(historyEntry, userId);
+        const { error, authExpired } = await saveWorkoutHistoryEntry(
+          historyEntry,
+          userId
+        );
         if (error) {
           // Never lose the workout: keep a local copy so it syncs
           // automatically next time there's a valid session (see
-          // migrateGuestHistoryToCloud), and show a friendly message instead
-          // of the raw Supabase/PostgREST error (e.g. "JWT expired").
+          // migrateGuestHistoryToCloud).
           saveWorkoutHistoryEntryLocally(historyEntry);
-          setSyncError(
-            "Workout saved locally. Cloud sync will resume after you sign in again."
-          );
+          // Only warn about signing in when auth is actually gone — not for
+          // transient network / server failures while the user is signed in.
+          if (authExpired) {
+            setSyncError(
+              "Workout saved locally. Cloud sync will resume after you sign in again."
+            );
+          }
         }
         return;
       }

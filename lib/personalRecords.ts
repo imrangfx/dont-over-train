@@ -1,5 +1,10 @@
 import { supabase } from "@/lib/supabase";
-import { getCurrentUserId, ensureProfileExists, ensureFreshSession } from "@/lib/workouts";
+import {
+  getCurrentUserId,
+  ensureProfileExists,
+  ensureFreshSession,
+  forceRefreshSession,
+} from "@/lib/workouts";
 import {
   updatePersonalRecords,
   type ExerciseCategory,
@@ -137,9 +142,17 @@ export async function recordWorkoutPersonalRecords(
       achieved_at: record.achievedAt,
     }));
 
-    const { error } = await supabase
+    let { error } = await supabase
       .from("personal_records")
       .upsert(rows, { onConflict: "user_id,exercise_name" });
+
+    if (error && /jwt|token|unauthorized|not authenticated/i.test(error.message)) {
+      if (await forceRefreshSession()) {
+        ({ error } = await supabase
+          .from("personal_records")
+          .upsert(rows, { onConflict: "user_id,exercise_name" }));
+      }
+    }
 
     if (error) {
       return { records: existing, brokenRecords: [], previousRecords: existing, error: error.message };
