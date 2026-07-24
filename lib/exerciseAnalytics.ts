@@ -1,4 +1,5 @@
 import type { WorkoutHistoryEntry } from "@/lib/workouts";
+import { toLocalDayKey } from "@/lib/workouts";
 import {
   getExerciseCategory,
   type ExerciseCategory,
@@ -8,14 +9,22 @@ import {
 /**
  * Pure Exercise Detail analytics, built entirely from data the app already
  * loads (WorkoutHistoryEntry.exerciseList + PersonalRecord) - no new
- * database tables or types, no changes to the Progressive Overload /
- * Personal Record modules this reads from. UI components should call
+ * database tables or types. UI components should call
  * buildExerciseAnalytics() once (ideally memoized) and render the result;
  * no calculation should be duplicated in a component.
+ *
+ * Session model: one ExerciseSession per completed workout that included
+ * this exercise. Multiple exerciseList rows for the same exercise inside
+ * one workout are merged. Frequency / days-between metrics further collapse
+ * to one count per calendar day so same-day duplicates cannot invent
+ * impossible rates (e.g. 28 sessions/week).
  */
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
 const MIN_SESSIONS_FOR_TRENDS = 2;
+/** Matches level-system / in-workout qualifying PR (sets must hit this many reps). */
+export const QUALIFYING_PR_MIN_REPS = 8;
 
 export function exerciseHref(exerciseName: string): string {
   return `/exercises/${encodeURIComponent(exerciseName)}`;
@@ -26,35 +35,53 @@ export type QualifyingPersonalRecord = {
   reps: number;
 };
 
+type ExerciseListItem = WorkoutHistoryEntry["exerciseList"][number];
+
+function numericWeightsOf(item: ExerciseListItem): number[] {
+  return (item.weights || []).filter(
+    (w): w is number => typeof w === "number" && Number.isFinite(w) && w > 0
+  );
+}
+
+function itemVolume(item: ExerciseListItem): number {
+  const reps = Number(item.reps) || 0;
+  return numericWeightsOf(item).reduce((sum, w) => sum + w * reps, 0);
+}
+
 /**
  * Highest weight ever lifted for this exercise, counting only sets that hit
- * at least `minReps` reps (default 8). Reuses extractSessions() below so
- * this scans workout history exactly the same way the rest of Exercise
- * Analytics does - no separate/duplicate history scan.
+ * at least `minReps` reps (default 8). Scans raw exerciseList rows so
+ * qualification is not distorted by session merging.
  */
 export function getQualifyingPersonalRecord(
   exerciseName: string,
   history: WorkoutHistoryEntry[],
-  minReps = 8
+  minReps = QUALIFYING_PR_MIN_REPS
 ): QualifyingPersonalRecord | null {
-  const qualifying = extractSessions(exerciseName, history).filter(
-    (session) => session.reps >= minReps && session.weight > 0
-  );
+  const normalizedName = exerciseName.trim().toLowerCase();
+  let best: QualifyingPersonalRecord | null = null;
 
-  if (qualifying.length === 0) return null;
+  for (const workout of history || []) {
+    for (const item of workout.exerciseList || []) {
+      if (!item?.name || item.name.trim().toLowerCase() !== normalizedName) continue;
+      if ((Number(item.reps) || 0) < minReps) continue;
 
-  const best = qualifying.reduce((max, session) =>
-    session.weight > max.weight ? session : max
-  );
+      const weights = numericWeightsOf(item);
+      if (weights.length === 0) continue;
 
-  return { weight: best.weight, reps: best.reps };
+      const weight = Math.max(...weights);
+      if (!best || weight > best.weight) {
+        best = { weight, reps: Number(item.reps) || 0 };
+      }
+    }
+  }
+
+  return best;
 }
 
 /**
  * How many completed workout sessions included this exercise (one count per
- * workout, regardless of how many sets were performed in it). Reuses
- * extractSessions() below - one session is already generated per matching
- * workout - so this is just its length, not a separate history scan.
+ * workout, regardless of how many times the exercise appears in that workout).
  */
 export function countExercisePerformances(
   exerciseName: string,
@@ -83,9 +110,8 @@ export type MilestoneEventType = "firstWorkout" | "firstPR" | "biggestJump" | "h
 
 /**
  * A milestone tied to a specific session (timestamp + value), so both the
- * textual Milestones list (below) and the chart overlay markers (Sprint 2,
- * lib/chartAnalytics.ts) can be derived from the exact same computation
- * instead of re-scanning session history twice.
+ * textual Milestones list (below) and the chart overlay markers
+ * (lib/chartAnalytics.ts) can be derived from the exact same computation.
  */
 export type MilestoneEvent = {
   type: MilestoneEventType;
@@ -102,11 +128,15 @@ export type MilestoneEvents = {
   highestVolume: MilestoneEvent | null;
 };
 
+/**
+ * Insights tiles intentionally avoid repeating Trend Summary metrics
+ * (weekly growth, frequency, best month, consistency).
+ */
 export type ExerciseInsights = {
-  averageWeeklyImprovement: string;
-  averageTrainingFrequency: string;
-  bestPerformingMonth: string;
-  estimatedConsistency: string;
+  sessionsThisMonth: string;
+  averageVolumePerSession: string;
+  totalStrengthGain: string;
+  daysSinceLastSession: string;
 };
 
 export type ExerciseStats = {
@@ -138,42 +168,98 @@ function average(values: number[]): number | null {
   return values.reduce((sum, v) => sum + v, 0) / values.length;
 }
 
+function mergeExerciseItems(items: ExerciseListItem[]): {
+  weight: number;
+  sets: number;
+  reps: number;
+  volume: number;
+} {
+  let weight = 0;
+  let sets = 0;
+  let volume = 0;
+  let repsForHeaviest = 0;
+
+  for (const item of items) {
+    const weights = numericWeightsOf(item);
+    const itemMax = weights.length > 0 ? Math.max(...weights) : 0;
+    const itemReps = Number(item.reps) || 0;
+    const itemSets = Number(item.sets) || 0;
+
+    sets += itemSets;
+    volume += itemVolume(item);
+
+    if (itemMax > weight) {
+      weight = itemMax;
+      repsForHeaviest = itemReps;
+    } else if (itemMax === weight && itemMax > 0 && itemReps > repsForHeaviest) {
+      repsForHeaviest = itemReps;
+    }
+  }
+
+  return { weight, sets, reps: repsForHeaviest, volume };
+}
+
+/**
+ * One session per workout that included this exercise. Duplicate exerciseList
+ * rows inside the same workout are merged (max weight, summed sets/volume).
+ */
 function extractSessions(exerciseName: string, history: WorkoutHistoryEntry[]): ExerciseSession[] {
   const normalizedName = exerciseName.trim().toLowerCase();
   const sessions: ExerciseSession[] = [];
 
   for (const workout of history || []) {
-    for (const item of workout.exerciseList || []) {
-      if (!item?.name || item.name.trim().toLowerCase() !== normalizedName) continue;
+    const matches = (workout.exerciseList || []).filter(
+      (item) => item?.name && item.name.trim().toLowerCase() === normalizedName
+    );
+    if (matches.length === 0) continue;
 
-      const numericWeights = (item.weights || []).filter(
-        (w): w is number => typeof w === "number" && w > 0
-      );
-      const weight = numericWeights.length > 0 ? Math.max(...numericWeights) : 0;
-      const reps = Number(item.reps) || 0;
-      const volume = numericWeights.reduce((sum, w) => sum + w * reps, 0);
+    const merged = mergeExerciseItems(matches);
 
-      sessions.push({
-        workoutId: workout.id,
-        date: workout.date,
-        timestamp: workout.timestamp,
-        weight,
-        sets: Number(item.sets) || 0,
-        reps,
-        volume,
-      });
-    }
+    sessions.push({
+      workoutId: workout.id,
+      date: workout.date,
+      timestamp: workout.timestamp,
+      weight: merged.weight,
+      sets: merged.sets,
+      reps: merged.reps,
+      volume: merged.volume,
+    });
   }
 
   return sessions.sort((a, b) => b.timestamp - a.timestamp);
 }
 
 /**
+ * Collapse to one representative session per local calendar day (keeps the
+ * heaviest / highest-volume entry when multiple workouts share a day).
+ * Used only for rate metrics (frequency, days-between, weekly improvement).
+ */
+export function uniqueSessionsByDay(sessions: ExerciseSession[]): ExerciseSession[] {
+  const byDay = new Map<string, ExerciseSession>();
+
+  const chronological = [...sessions].sort((a, b) => a.timestamp - b.timestamp);
+  for (const session of chronological) {
+    const key = toLocalDayKey(session.timestamp);
+    const existing = byDay.get(key);
+    if (!existing) {
+      byDay.set(key, session);
+      continue;
+    }
+
+    const preferNew =
+      session.weight > existing.weight ||
+      (session.weight === existing.weight && session.volume > existing.volume);
+
+    if (preferNew) byDay.set(key, session);
+  }
+
+  return [...byDay.values()].sort((a, b) => a.timestamp - b.timestamp);
+}
+
+/**
  * Finds the four "key session" milestone events once. Shared by the
  * textual Milestones list here and by the chart milestone overlay in
- * lib/chartAnalytics.ts, so the detection logic (first performed, first
- * PR, biggest single jump, highest volume session) exists in exactly one
- * place.
+ * lib/chartAnalytics.ts.
  */
 export function findMilestoneEvents(chronological: ExerciseSession[]): MilestoneEvents {
   if (chronological.length === 0) {
@@ -199,14 +285,24 @@ export function findMilestoneEvents(chronological: ExerciseSession[]): Milestone
       }
     : null;
 
+  // Biggest increase between consecutive personal records (new running maxes),
+  // not between arbitrary consecutive sessions. The first weight is a PR
+  // baseline, not an "increase".
+  let runningPR = 0;
   let biggestDelta = 0;
   let biggestSession: ExerciseSession | null = null;
 
-  for (let i = 1; i < chronological.length; i++) {
-    const delta = chronological[i].weight - chronological[i - 1].weight;
-    if (delta > biggestDelta) {
-      biggestDelta = delta;
-      biggestSession = chronological[i];
+  for (const session of chronological) {
+    if (session.weight <= 0) continue;
+    if (session.weight > runningPR) {
+      if (runningPR > 0) {
+        const delta = session.weight - runningPR;
+        if (delta > biggestDelta) {
+          biggestDelta = delta;
+          biggestSession = session;
+        }
+      }
+      runningPR = session.weight;
     }
   }
 
@@ -260,39 +356,68 @@ export function calculateLongestImprovementStreak(chronological: ExerciseSession
   return longestStreak;
 }
 
-/** Sessions per week across the given (already-filtered, if desired) session list. */
+/**
+ * Sessions per week for this exercise. Counts at most one session per
+ * calendar day. Requires at least two distinct training days; short spans
+ * are not extrapolated below a 1-week denominator.
+ */
 export function calculateTrainingFrequency(sessions: ExerciseSession[]): number | null {
-  if (sessions.length < MIN_SESSIONS_FOR_TRENDS) return null;
+  const uniqueDays = uniqueSessionsByDay(sessions);
+  if (uniqueDays.length < MIN_SESSIONS_FOR_TRENDS) return null;
 
-  const timestamps = sessions.map((s) => s.timestamp);
-  const spanMs = Math.max(Math.max(...timestamps) - Math.min(...timestamps), 1);
-  const spanWeeks = Math.max(spanMs / WEEK_MS, 1 / 7);
+  const timestamps = uniqueDays.map((s) => s.timestamp);
+  const spanMs = Math.max(...timestamps) - Math.min(...timestamps);
+  if (spanMs < DAY_MS) return null;
 
-  return sessions.length / spanWeeks;
+  const spanWeeks = Math.max(spanMs / WEEK_MS, 1);
+  return uniqueDays.length / spanWeeks;
 }
 
-/** Average calendar days between consecutive sessions (chronological order assumed by caller not required - sorted internally). */
+/**
+ * Average calendar days between consecutive training days for this exercise.
+ * Same-day workouts count once, so gaps of 0 are never averaged in.
+ */
 export function calculateAverageDaysBetweenSessions(sessions: ExerciseSession[]): number | null {
-  if (sessions.length < MIN_SESSIONS_FOR_TRENDS) return null;
+  const uniqueDays = uniqueSessionsByDay(sessions);
+  if (uniqueDays.length < MIN_SESSIONS_FOR_TRENDS) return null;
 
-  const sorted = [...sessions].sort((a, b) => a.timestamp - b.timestamp);
   const gaps: number[] = [];
-
-  for (let i = 1; i < sorted.length; i++) {
-    gaps.push((sorted[i].timestamp - sorted[i - 1].timestamp) / (24 * 60 * 60 * 1000));
+  for (let i = 1; i < uniqueDays.length; i++) {
+    const gapDays =
+      (uniqueDays[i].timestamp - uniqueDays[i - 1].timestamp) / DAY_MS;
+    if (gapDays > 0) gaps.push(gapDays);
   }
 
   return average(gaps);
 }
 
+/**
+ * kg/week change based on one weight sample per training day (max weight
+ * that day). Avoids same-day duplicate inflation.
+ */
+export function calculateWeeklyWeightImprovement(sessions: ExerciseSession[]): number | null {
+  const uniqueDays = uniqueSessionsByDay(sessions).filter((s) => s.weight > 0);
+  if (uniqueDays.length < MIN_SESSIONS_FOR_TRENDS) return null;
+
+  const first = uniqueDays[0];
+  const last = uniqueDays[uniqueDays.length - 1];
+  const spanMs = last.timestamp - first.timestamp;
+  if (spanMs < DAY_MS) return null;
+
+  const spanWeeks = Math.max(spanMs / WEEK_MS, 1);
+  return (last.weight - first.weight) / spanWeeks;
+}
+
 /** 0-100: proportion of weeks within the session span that contain at least one session. */
 export function calculateConsistencyPercent(sessions: ExerciseSession[]): number | null {
-  if (sessions.length < MIN_SESSIONS_FOR_TRENDS) return null;
+  const uniqueDays = uniqueSessionsByDay(sessions);
+  if (uniqueDays.length < MIN_SESSIONS_FOR_TRENDS) return null;
 
-  const timestamps = sessions.map((s) => s.timestamp);
-  const spanMs = Math.max(Math.max(...timestamps) - Math.min(...timestamps), 1);
-  const spanWeeks = Math.max(spanMs / WEEK_MS, 1 / 7);
+  const timestamps = uniqueDays.map((s) => s.timestamp);
+  const spanMs = Math.max(...timestamps) - Math.min(...timestamps);
+  if (spanMs < DAY_MS) return null;
 
+  const spanWeeks = Math.max(spanMs / WEEK_MS, 1);
   const distinctWeeks = new Set(timestamps.map((t) => Math.floor(t / WEEK_MS)));
   const totalWeeksSpanned = Math.max(Math.ceil(spanWeeks), 1);
 
@@ -369,42 +494,55 @@ function buildMilestones(chronological: ExerciseSession[]): ExerciseMilestone[] 
   return milestones;
 }
 
-function buildInsights(chronological: ExerciseSession[]): ExerciseInsights {
+function buildInsights(
+  chronological: ExerciseSession[],
+  currentPR: number | null
+): ExerciseInsights {
   const fallback: ExerciseInsights = {
-    averageWeeklyImprovement: "-",
-    averageTrainingFrequency: "-",
-    bestPerformingMonth: "-",
-    estimatedConsistency: "-",
+    sessionsThisMonth: "-",
+    averageVolumePerSession: "-",
+    totalStrengthGain: "-",
+    daysSinceLastSession: "-",
   };
 
-  if (chronological.length < MIN_SESSIONS_FOR_TRENDS) return fallback;
+  if (chronological.length === 0) return fallback;
 
-  const first = chronological[0];
+  const now = Date.now();
+  const nowDate = new Date(now);
+  const sessionsThisMonth = chronological.filter((s) => {
+    const d = new Date(s.timestamp);
+    return d.getFullYear() === nowDate.getFullYear() && d.getMonth() === nowDate.getMonth();
+  }).length;
+
+  const avgVolume = average(chronological.map((s) => s.volume).filter((v) => v > 0));
+
+  const firstWeighted = chronological.find((s) => s.weight > 0);
+  const gainTarget = currentPR ?? chronological[chronological.length - 1]?.weight ?? null;
+  const totalGain =
+    firstWeighted && gainTarget != null && gainTarget >= firstWeighted.weight
+      ? gainTarget - firstWeighted.weight
+      : null;
+
   const last = chronological[chronological.length - 1];
-  const spanMs = Math.max(last.timestamp - first.timestamp, 1);
-  const spanWeeks = Math.max(spanMs / WEEK_MS, 1 / 7);
-
-  const weeklyImprovement = (last.weight - first.weight) / spanWeeks;
-  const frequency = calculateTrainingFrequency(chronological);
-  const bestMonth = calculateBestMonthByVolume(chronological);
-  const consistency = calculateConsistencyPercent(chronological);
+  const daysSince = Math.max(0, (now - last.timestamp) / DAY_MS);
 
   return {
-    averageWeeklyImprovement:
-      Math.abs(weeklyImprovement) < 0.05
-        ? "No change"
-        : `${weeklyImprovement > 0 ? "+" : ""}${weeklyImprovement.toFixed(1)} kg/week`,
-    averageTrainingFrequency: frequency != null ? `${frequency.toFixed(1)} sessions/week` : "-",
-    bestPerformingMonth: bestMonth?.label ?? "-",
-    estimatedConsistency: consistency != null ? `${consistency}% Consistent` : "-",
+    sessionsThisMonth: String(sessionsThisMonth),
+    averageVolumePerSession:
+      avgVolume != null ? `${Math.round(avgVolume).toLocaleString()} kg` : "-",
+    totalStrengthGain:
+      totalGain != null && Number.isFinite(totalGain)
+        ? `${totalGain > 0 ? "+" : ""}${Math.round(totalGain * 10) / 10} kg`
+        : "-",
+    daysSinceLastSession:
+      chronological.length > 0 ? `${Math.round(daysSince * 10) / 10} days` : "-",
   };
 }
 
 /**
  * Builds the full Exercise Detail analytics payload for one exercise from
  * already-loaded workout history + personal records (both loaded exactly
- * once by the page via the existing loadWorkoutHistory()/loadPersonalRecords()
- * helpers - this function does no I/O).
+ * once by the page - this function does no I/O).
  */
 export function buildExerciseAnalytics(
   exerciseName: string,
@@ -422,21 +560,36 @@ export function buildExerciseAnalytics(
 
   const category = getExerciseCategory(bodyPart);
 
+  const qualifying = getQualifyingPersonalRecord(exerciseName, history);
   const matchingRecord = (personalRecords || []).find(
     (record) => record.exerciseName.trim().toLowerCase() === normalizedName
   );
 
+  // Displayed PR = highest qualifying weight (≥8 reps) from history.
+  // Fall back to the stored personal record only when history has no
+  // qualifying set yet (e.g. legacy data), never invent a value.
   const highestFromSessions = sessions.reduce((max, s) => Math.max(max, s.weight), 0);
-  const currentPR = matchingRecord?.weight ?? (highestFromSessions > 0 ? highestFromSessions : null);
+  const currentPR =
+    qualifying?.weight ??
+    matchingRecord?.weight ??
+    (highestFromSessions > 0 ? highestFromSessions : null);
+
+  // Absolute highest weight across all sessions, never below the PR.
+  const highestWeightCandidates = [highestFromSessions, currentPR ?? 0].filter((w) => w > 0);
+  const highestWeight =
+    highestWeightCandidates.length > 0 ? Math.max(...highestWeightCandidates) : null;
 
   const totalSessions = sessions.length;
+  const weights = sessions.map((s) => s.weight).filter((w) => w > 0);
+  const reps = sessions.map((s) => s.reps).filter((r) => r > 0);
+  const sets = sessions.map((s) => s.sets).filter((s) => s > 0);
 
   const stats: ExerciseStats = {
     currentPR,
-    highestWeight: highestFromSessions > 0 ? highestFromSessions : currentPR,
-    averageWeight: average(sessions.map((s) => s.weight).filter((w) => w > 0)),
-    averageReps: average(sessions.map((s) => s.reps)),
-    averageSets: average(sessions.map((s) => s.sets)),
+    highestWeight,
+    averageWeight: average(weights),
+    averageReps: average(reps),
+    averageSets: average(sets),
     totalSessions,
     totalVolume: sessions.reduce((sum, s) => sum + s.volume, 0),
     firstWorkoutDate: chronological[0]?.date ?? null,
@@ -450,7 +603,7 @@ export function buildExerciseAnalytics(
     stats,
     sessions,
     milestones: buildMilestones(chronological),
-    insights: buildInsights(chronological),
+    insights: buildInsights(chronological, currentPR),
     hasEnoughDataForTrends: totalSessions >= MIN_SESSIONS_FOR_TRENDS,
   };
 }

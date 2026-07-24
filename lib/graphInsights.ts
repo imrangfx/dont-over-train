@@ -78,18 +78,7 @@ export function buildGraphInsights(chronological: ExerciseSession[], exerciseNam
     }
   }
 
-  // 5. Sessions performed in the current real-world calendar month.
-  const nowDate = new Date(realNow);
-  const sessionsThisMonth = chronological.filter((s) => {
-    const d = new Date(s.timestamp);
-    return d.getFullYear() === nowDate.getFullYear() && d.getMonth() === nowDate.getMonth();
-  }).length;
-
-  if (sessionsThisMonth > 0) {
-    insights.push(
-      `You've trained ${exerciseName} ${sessionsThisMonth} time${sessionsThisMonth === 1 ? "" : "s"} this month.`
-    );
-  }
+  // Sessions-this-month is shown as an Insights tile; omit the duplicate sentence.
 
   return insights.slice(0, MAX_INSIGHTS);
 }

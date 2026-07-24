@@ -18,11 +18,14 @@ import { forearms } from "@/app/Data/forearms";
 import EmptyState from "@/components/ui/EmptyState";
 import { Dumbbell } from "lucide-react";
 import { loadWorkoutHistory, type WorkoutHistoryEntry } from "@/lib/workouts";
-import { getQualifyingPersonalRecord } from "@/lib/exerciseAnalytics";
+import {
+  getQualifyingPersonalRecord,
+  QUALIFYING_PR_MIN_REPS,
+} from "@/lib/exerciseAnalytics";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { useMinimumLoadingDelay } from "@/lib/hooks/useMinimumLoadingDelay";
 
-const PR_MIN_REPS = 8;
+const PR_MIN_REPS = QUALIFYING_PR_MIN_REPS;
 
 export default function ExercisePage() {
   const [sets, setSets] = useState(3);

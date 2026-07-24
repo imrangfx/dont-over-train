@@ -3,6 +3,7 @@ import {
   calculateBestMonthByVolume,
   calculateConsistencyPercent,
   calculateTrainingFrequency,
+  calculateWeeklyWeightImprovement,
   type ExerciseSession,
 } from "@/lib/exerciseAnalytics";
 import { METRIC_META, type ChartMetric, type ChartPoint } from "@/lib/chartAnalytics";
@@ -50,9 +51,12 @@ export function calculateAverageWeeklyGrowth(series: ChartPoint[]): number | nul
 
   const first = series[0];
   const last = series[series.length - 1];
-  const spanMs = Math.max(last.session.timestamp - first.session.timestamp, 1);
-  const spanWeeks = Math.max(spanMs / (7 * 24 * 60 * 60 * 1000), 1 / 7);
+  const spanMs = last.session.timestamp - first.session.timestamp;
+  const dayMs = 24 * 60 * 60 * 1000;
+  if (spanMs < dayMs) return null;
 
+  // Floor at 1 week so short windows are not extrapolated into wild rates.
+  const spanWeeks = Math.max(spanMs / (7 * dayMs), 1);
   return (last.value - first.value) / spanWeeks;
 }
 
@@ -91,7 +95,11 @@ export function buildTrendSummary(
   const metricLabel = METRIC_META[metric].shortLabel;
 
   const trend = calculateTrendDirection(series);
-  const weeklyGrowth = calculateAverageWeeklyGrowth(series);
+  // Weight uses day-deduped progression so growth matches frequency math.
+  const weeklyGrowth =
+    metric === "weight"
+      ? calculateWeeklyWeightImprovement(sessionsInRange)
+      : calculateAverageWeeklyGrowth(series);
   const bestMonth = calculateBestMonthByVolume(sessionsInRange);
   const frequency = calculateTrainingFrequency(sessionsInRange);
   const avgDaysBetween = calculateAverageDaysBetweenSessions(sessionsInRange);

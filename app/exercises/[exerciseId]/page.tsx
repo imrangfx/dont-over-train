@@ -24,7 +24,7 @@ import {
 import { loadWorkoutHistory, type WorkoutHistoryEntry } from "@/lib/workouts";
 import { loadPersonalRecords } from "@/lib/personalRecords";
 import { CATEGORY_LABELS, type PersonalRecord } from "@/lib/progression";
-import { buildExerciseAnalytics } from "@/lib/exerciseAnalytics";
+import { buildExerciseAnalytics, QUALIFYING_PR_MIN_REPS } from "@/lib/exerciseAnalytics";
 import { buildChartSeries } from "@/lib/chartAnalytics";
 import { buildTrendSummary } from "@/lib/trendAnalytics";
 import { buildGraphInsights } from "@/lib/graphInsights";
@@ -111,18 +111,25 @@ export default function ExerciseDetailPage() {
 
   const visibleSessions = analytics.sessions.slice(0, visibleCount);
   const hasMoreSessions = analytics.sessions.length > visibleCount;
-  const currentPRSession = analytics.sessions.find(
-    (s) => s.weight === analytics.stats.currentPR
-  );
 
   // Chronological (oldest -> newest) copy: the chart/trend/insight helpers
-  // all assume ascending order, while analytics.sessions (Sprint 1) is
-  // newest-first for the Recent Sessions list. Memoized so the graph's own
-  // internal metric/range switching never triggers this to recompute.
+  // all assume ascending order, while analytics.sessions is newest-first for
+  // the Recent Sessions list.
   const chronological = useMemo(
     () => [...analytics.sessions].sort((a, b) => a.timestamp - b.timestamp),
     [analytics.sessions]
   );
+
+  // Prefer the session that actually set the qualifying PR (weight match +
+  // enough reps); fall back to any session at that weight.
+  const currentPRSession = useMemo(() => {
+    const pr = analytics.stats.currentPR;
+    if (pr == null) return undefined;
+    return (
+      analytics.sessions.find((s) => s.weight === pr && s.reps >= QUALIFYING_PR_MIN_REPS) ??
+      analytics.sessions.find((s) => s.weight === pr)
+    );
+  }, [analytics.sessions, analytics.stats.currentPR]);
 
   const trendCards = useMemo(() => {
     const weightSeries = buildChartSeries(chronological, "weight");
@@ -368,7 +375,8 @@ export default function ExerciseDetailPage() {
               </div>
             )}
 
-            {/* Insights */}
+            {/* Insights — unique metrics only (frequency / weekly growth / best month /
+                consistency live in Trend Summary above). */}
             <h2 className="mt-10 text-xl font-semibold tracking-tight">Insights</h2>
             {!analytics.hasEnoughDataForTrends ? (
               <div className="mt-4 rounded-2xl border border-zinc-800 bg-[#111111] p-6 text-center">
@@ -382,10 +390,10 @@ export default function ExerciseDetailPage() {
               </div>
             ) : (
               <div className="mt-4 grid grid-cols-2 gap-3 sm:gap-4">
-                <StatTile icon={<TrendingUp size={20} />} title="Weekly Improvement" value={analytics.insights.averageWeeklyImprovement} />
-                <StatTile icon={<Calendar size={20} />} title="Training Frequency" value={analytics.insights.averageTrainingFrequency} />
-                <StatTile icon={<Award size={20} />} title="Best Month" value={analytics.insights.bestPerformingMonth} />
-                <StatTile icon={<Sparkles size={20} />} title="Consistency" value={analytics.insights.estimatedConsistency} />
+                <StatTile icon={<Calendar size={20} />} title="Sessions This Month" value={analytics.insights.sessionsThisMonth} />
+                <StatTile icon={<Flame size={20} />} title="Avg Volume / Session" value={analytics.insights.averageVolumePerSession} />
+                <StatTile icon={<TrendingUp size={20} />} title="Total Strength Gain" value={analytics.insights.totalStrengthGain} />
+                <StatTile icon={<CalendarCheck size={20} />} title="Days Since Last" value={analytics.insights.daysSinceLastSession} />
               </div>
             )}
           </>
