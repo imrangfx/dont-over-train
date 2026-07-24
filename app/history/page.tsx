@@ -13,6 +13,16 @@ export default function HistoryPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const bodyPartSlugMap: Record<string, string> = {
+    Chest: "chest",
+    Back: "back",
+    Shoulders: "shoulders",
+    Triceps: "triceps",
+    Biceps: "biceps",
+    Legs: "legs",
+    Forearms: "forearms",
+  };
+
   useEffect(() => {
     let active = true;
 
@@ -71,8 +81,25 @@ export default function HistoryPage() {
                   {workout.date}
                 </p>
 
-                <h2 className="mt-3 text-2xl font-bold text-lime-400">
-                  {workout.bodyParts?.join(" + ") || "Workout"}
+                <h2 className="mt-3 flex flex-wrap items-center text-2xl font-bold">
+                  {workout.bodyParts && workout.bodyParts.length > 0 ? (
+                    workout.bodyParts.map((part, index) => (
+                      <span key={part} className="flex items-center">
+                        <Link
+                          href={`/workout/${bodyPartSlugMap[part] ?? part.toLowerCase()}`}
+                          className="text-lime-400 transition-colors hover:text-lime-300"
+                        >
+                          {part}
+                        </Link>
+
+                        {index < workout.bodyParts.length - 1 && (
+                          <span className="mx-1 text-white">+</span>
+                        )}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-lime-400">Workout</span>
+                  )}
                 </h2>
 
                 <p className="mt-2 text-zinc-400">
