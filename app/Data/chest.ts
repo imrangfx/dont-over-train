@@ -298,21 +298,6 @@ export const chest = {
     },
   },
 
-  "decline-hammer-press": {
-    name: "Decline Hammer Press",
-    bodyPart: "Chest",
-    section: "lower-chest",
-    fatigue: {
-      upperChest: 1,
-      midChest: 5,
-      lowerChest: 16,
-      frontDelts: 2,
-      "Lateral Head Triceps": 4,
-      "Medial Head Triceps": 3,
-      "Long Head Triceps": 1,
-    },
-  },
-
   "straight-bar-dips": {
     name: "Straight Bar Dips",
     bodyPart: "Chest",
