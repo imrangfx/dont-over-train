@@ -185,18 +185,6 @@ export const back = {
     },
   },
 
-  "cable-low-row": {
-    name: "Cable Low Row",
-    bodyPart: "Back",
-    section: "mid-back",
-    fatigue: {
-      midBack: 17,
-      upperBack: 14,
-      lats: 8,
-      biceps: 6,
-    },
-  },
-
   // =====================
   // LOWER BACK
   // =====================

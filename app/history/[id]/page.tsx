@@ -8,6 +8,7 @@ import { loadWorkoutHistoryById, type WorkoutHistoryEntry, type WorkoutExercise 
 import { exerciseHref } from "@/lib/exerciseAnalytics";
 import EmptyState from "@/components/ui/EmptyState";
 import LoadingCard from "@/components/ui/LoadingCard";
+import BottomNav from "@/components/BottomNav";
 
 export default function WorkoutDetailsPage() {
   const params = useParams();
@@ -86,8 +87,10 @@ export default function WorkoutDetailsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black px-6 py-8 text-white animate-[fade-in_200ms_ease-out]">
+    <>
+    <main className="min-h-screen bg-black px-6 py-8 pb-[calc(72px+env(safe-area-inset-bottom)+1.5rem)] text-white animate-[fade-in_200ms_ease-out]">
       <div className="mx-auto max-w-[390px]">
+
 
         <Link
           href="/history"
@@ -265,7 +268,11 @@ export default function WorkoutDetailsPage() {
           </div>
 
         )}
-      </div>
+
+       </div>
     </main>
-  );
+
+    <BottomNav />
+  </>
+);
 }
