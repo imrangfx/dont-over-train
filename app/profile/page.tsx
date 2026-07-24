@@ -209,9 +209,7 @@ export default function ProfilePage() {
   const bestScoreValue = Number(insights.bestWorkoutScore) || 0;
   const workoutScoreQuality = rateWorkoutScore(bestScoreValue);
 
-  const workoutAnalysis = lastWorkout
-    ? analyzeWorkout(lastWorkout, history)
-    : null;
+  const workoutAnalysis = analyzeWorkout(filteredHistory);
 
   const highestPR = getHighestPersonalRecord(personalRecords);
   const bodyPartLevel = calculateBodyPartLevel(history);
@@ -588,18 +586,9 @@ export default function ProfilePage() {
               value={
                 insights.bestWorkoutScore === "-"
                   ? "-"
-                  : `${insights.bestWorkoutScore} Points`
+                  : `${insights.bestWorkoutScore}/100`
               }
-              rating={
-                insights.bestWorkoutScore === "-"
-                  ? undefined
-                  : workoutScoreQuality.rating
-              }
-              ratingLabel={
-                insights.bestWorkoutScore === "-"
-                  ? undefined
-                  : workoutScoreQuality.label
-              }
+    
             />
 
             <InsightRow
@@ -637,7 +626,7 @@ export default function ProfilePage() {
 
         </div>
 
-        {/* Workout Analysis — single focus improvement from the latest workout */}
+        {/* Workout Analysis — same filtered period as Workout Insights */}
 
         {!loadingHistory && workoutAnalysis && (
           <div className="card-surface mt-8 p-5">

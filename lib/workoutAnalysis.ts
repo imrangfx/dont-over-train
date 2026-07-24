@@ -1,9 +1,9 @@
 /**
  * Workout quality ratings and single-focus analysis.
  *
- * Built on real session durations (durationMinutes) plus volume metrics.
- * Add future coaching insights by extending ANALYSIS_RULES — callers only
- * need analyzeWorkout() / rate* helpers; no session architecture changes.
+ * Rating helpers power Profile statistic cards. analyzeWorkout() returns
+ * exactly one prioritized insight for the Workout Analysis card, always from
+ * the same filtered workout list as Workout Insights (averages / trends).
  */
 
 import type { WorkoutHistoryEntry } from "@/lib/workouts";
@@ -170,176 +170,345 @@ export function rateCurrentStreak(days: number): MetricQuality {
 }
 
 export type WorkoutAnalysisKind =
-  | "time_efficiency"
-  | "volume"
-  | "sets"
+  | "duration"
   | "score"
+  | "volume"
+  | "exercise_selection"
+  | "recovery"
+  | "personal_record"
   | "excellent";
 
 export type WorkoutAnalysis = {
   kind: WorkoutAnalysisKind;
   title: string;
-  /** Leading glyph for the card heading. */
+  /** Leading glyph for the card heading — UI consumes this as-is. */
   emoji: "⚠️" | "✅";
   /** Short lines shown under the title — keep to one focus. */
   lines: string[];
 };
 
-type AnalysisContext = {
-  workout: WorkoutHistoryEntry;
-  recentAverageScore: number | null;
-  efficiency: TimeEfficiencyResult;
-};
+/** Ideal productive session window (minutes). Outside this = duration insight. */
+const DURATION_MIN_IDEAL = 35;
+const DURATION_MAX_IDEAL = 75;
+/** "Significantly" outside the ideal window (average duration). */
+const DURATION_TOO_SHORT = 30;
+const DURATION_TOO_LONG = 90;
 
-type AnalysisRule = {
-  kind: WorkoutAnalysisKind;
-  /** Higher = more important (shown first when multiple match). */
-  priority: number;
-  match: (ctx: AnalysisContext) => boolean;
-  build: (ctx: AnalysisContext) => WorkoutAnalysis;
-};
+/** Average score below this triggers Workout Quality. */
+const SCORE_QUALITY_THRESHOLD = 65;
+
+/** Average sets below this triggers volume coaching. */
+const VOLUME_MIN_SETS = 12;
+
+/** Average peak fatigue at or above this triggers recovery coaching. */
+const FATIGUE_HIGH_THRESHOLD = 70;
 
 /**
- * Ordered coaching rules. Future insights: append a rule with a priority.
- * analyzeWorkout() always returns exactly one result (the highest match).
+ * Sibling sections per body part — used to detect narrow exercise selection.
+ * Keys match `bodyPart` on workout exercises; values are section ids from Data/.
  */
-const ANALYSIS_RULES: AnalysisRule[] = [
-  {
-    kind: "time_efficiency",
-    priority: 100,
-    match: ({ efficiency, workout }) =>
-      efficiency.rating === "poor" && (workout.durationMinutes || 0) >= 75,
-    build: ({ workout, efficiency }) => ({
-      kind: "time_efficiency",
+const BODY_PART_SECTIONS: Record<string, string[]> = {
+  Chest: ["upper-chest", "mid-chest", "lower-chest"],
+  Back: ["upper-back", "mid-back", "lats", "lower-back"],
+  Shoulders: ["front-delts", "side-delts", "rear-delts"],
+  Biceps: ["long-head", "short-head", "brachialis"],
+  Triceps: ["long-head", "lateral-head", "medial-head"],
+  Legs: ["quads", "hamstrings", "glutes", "calves"],
+  Abs: ["upper-abs", "lower-abs", "obliques"],
+};
+
+function formatSectionLabel(section: string): string {
+  return section
+    .split(/[-_\s]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join(" ");
+}
+
+function formatMuscleLabel(muscle: string): string {
+  return muscle
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (s) => s.toUpperCase())
+    .trim();
+}
+
+function round1(value: number): number {
+  return Math.round(value * 10) / 10;
+}
+
+function maxWeightInExercise(weights: (number | "")[] | undefined): number {
+  if (!Array.isArray(weights)) return 0;
+  const numeric = weights.filter(
+    (w): w is number => typeof w === "number" && w > 0
+  );
+  return numeric.length > 0 ? Math.max(...numeric) : 0;
+}
+
+function averageOf(
+  workouts: WorkoutHistoryEntry[],
+  pick: (workout: WorkoutHistoryEntry) => number
+): number {
+  if (workouts.length === 0) return 0;
+  const sum = workouts.reduce((acc, workout) => acc + pick(workout), 0);
+  return sum / workouts.length;
+}
+
+/**
+ * Best PR improvement that occurred inside the filtered period
+ * (comparing each session to earlier sessions in the same period).
+ */
+function findBestBrokenPRInPeriod(
+  workouts: WorkoutHistoryEntry[]
+): { exerciseName: string; weight: number; previousWeight: number; delta: number } | null {
+  const chronological = [...workouts].sort(
+    (a, b) => (a.timestamp || 0) - (b.timestamp || 0)
+  );
+
+  const bestByExercise = new Map<string, number>();
+  let best: {
+    exerciseName: string;
+    weight: number;
+    previousWeight: number;
+    delta: number;
+  } | null = null;
+
+  for (const workout of chronological) {
+    for (const item of workout.exerciseList || []) {
+      const currentMax = maxWeightInExercise(item.weights);
+      if (currentMax <= 0) continue;
+
+      const priorMax = bestByExercise.get(item.name) ?? 0;
+      if (currentMax > priorMax) {
+        const delta = round1(currentMax - priorMax);
+        if (priorMax > 0 && (!best || delta > best.delta)) {
+          best = {
+            exerciseName: item.name,
+            weight: currentMax,
+            previousWeight: priorMax,
+            delta,
+          };
+        }
+        bestByExercise.set(item.name, currentMax);
+      }
+    }
+  }
+
+  return best;
+}
+
+/**
+ * Across the filtered period, if a trained body part only ever used one
+ * of its sibling sections, flag that narrow selection trend.
+ */
+function findNarrowExerciseSelectionInPeriod(
+  workouts: WorkoutHistoryEntry[]
+): { trainedLabel: string; suggestionLabel: string } | null {
+  const byBodyPart = new Map<string, Set<string>>();
+
+  for (const workout of workouts) {
+    for (const item of workout.exerciseList || []) {
+      const bodyPart = item.bodyPart;
+      const section = (item.section || "").toLowerCase().trim();
+      if (!bodyPart || !section) continue;
+
+      if (!byBodyPart.has(bodyPart)) byBodyPart.set(bodyPart, new Set());
+      byBodyPart.get(bodyPart)!.add(section);
+    }
+
+    for (const raw of workout.sections || []) {
+      const section = raw.toLowerCase().trim();
+      if (!section) continue;
+      for (const [bodyPart, siblings] of Object.entries(BODY_PART_SECTIONS)) {
+        if (siblings.includes(section)) {
+          if (!byBodyPart.has(bodyPart)) byBodyPart.set(bodyPart, new Set());
+          byBodyPart.get(bodyPart)!.add(section);
+        }
+      }
+    }
+  }
+
+  for (const [bodyPart, trained] of byBodyPart) {
+    const siblings = BODY_PART_SECTIONS[bodyPart];
+    if (!siblings || siblings.length < 2) continue;
+    if (trained.size !== 1) continue;
+
+    const trainedSection = [...trained][0];
+    const suggestion = siblings.find((section) => !trained.has(section)) ?? null;
+    if (!suggestion) continue;
+
+    return {
+      trainedLabel: formatSectionLabel(trainedSection),
+      suggestionLabel: formatSectionLabel(suggestion),
+    };
+  }
+
+  return null;
+}
+
+/** Highest average peak fatigue muscle across the filtered period. */
+function findHighestAverageFatigue(
+  workouts: WorkoutHistoryEntry[]
+): { muscle: string; value: number } | null {
+  const totals = new Map<string, { sum: number; count: number }>();
+
+  for (const workout of workouts) {
+    const peakByMuscle = new Map<string, number>();
+
+    const sources: Record<string, number>[] = [workout.fatigueBreakdown || {}];
+    for (const item of workout.exerciseList || []) {
+      if (item.fatigueBreakdown) sources.push(item.fatigueBreakdown);
+    }
+
+    for (const breakdown of sources) {
+      for (const [muscle, raw] of Object.entries(breakdown)) {
+        const value = Number(raw) || 0;
+        peakByMuscle.set(muscle, Math.max(peakByMuscle.get(muscle) ?? 0, value));
+      }
+    }
+
+    for (const [muscle, value] of peakByMuscle) {
+      const entry = totals.get(muscle) ?? { sum: 0, count: 0 };
+      entry.sum += value;
+      entry.count += 1;
+      totals.set(muscle, entry);
+    }
+  }
+
+  let top: { muscle: string; value: number } | null = null;
+  for (const [muscle, { sum, count }] of totals) {
+    if (count === 0) continue;
+    const avg = sum / count;
+    if (!top || avg > top.value) {
+      top = { muscle, value: avg };
+    }
+  }
+
+  return top;
+}
+
+/**
+ * Single most important period insight for the same filtered workout set
+ * used by Workout Insights. Never analyzes only the latest workout —
+ * always averages / trends across the provided list.
+ *
+ * Priority: duration → score → volume → selection → recovery → achievement.
+ */
+export function analyzeWorkout(
+  filteredWorkouts: WorkoutHistoryEntry[]
+): WorkoutAnalysis | null {
+  if (!filteredWorkouts.length) return null;
+
+  const count = filteredWorkouts.length;
+  const avgDuration = averageOf(
+    filteredWorkouts,
+    (workout) => Math.max(0, Number(workout.durationMinutes) || 0)
+  );
+  const avgScore = averageOf(
+    filteredWorkouts,
+    (workout) => Math.max(0, Number(workout.score) || 0)
+  );
+  const avgSets = averageOf(
+    filteredWorkouts,
+    (workout) => Math.max(0, Number(workout.sets) || 0)
+  );
+
+  const periodLabel =
+    count === 1 ? "this period" : `these ${count} workouts`;
+
+  // ── Priority #1 — Workout Duration (average) ────────────────────────────
+  if (avgDuration > 0 && avgDuration < DURATION_TOO_SHORT) {
+    return {
+      kind: "duration",
       emoji: "⚠️",
-      title: "Time Efficiency",
+      title: "Workout Duration",
       lines: [
-        `You spent ${formatDurationMinutes(workout.durationMinutes || 0)} in the gym.`,
-        `Only ${workout.exercises} exercise${workout.exercises === 1 ? "" : "s"} were completed.`,
-        efficiency.setsPerHour < 8
-          ? "Try reducing long rest periods between sets."
-          : "Aim for denser work next session.",
+        `Your average workout lasted only ${formatDurationMinutes(avgDuration)} across ${periodLabel}.`,
+        `Most productive workouts typically last ${DURATION_MIN_IDEAL}–${DURATION_MAX_IDEAL} minutes.`,
       ],
-    }),
-  },
-  {
-    kind: "volume",
-    priority: 90,
-    match: ({ workout }) => (workout.sets || 0) > 0 && (workout.sets || 0) < 10,
-    build: ({ workout }) => ({
+    };
+  }
+
+  if (avgDuration > DURATION_TOO_LONG) {
+    return {
+      kind: "duration",
+      emoji: "⚠️",
+      title: "Workout Duration",
+      lines: [
+        `Your average workout lasted ${formatDurationMinutes(avgDuration)} across ${periodLabel}.`,
+        "Very long workouts often reduce training quality.",
+      ],
+    };
+  }
+
+  // ── Priority #2 — Workout Score (average) ───────────────────────────────
+  if (avgScore < SCORE_QUALITY_THRESHOLD) {
+    return {
+      kind: "score",
+      emoji: "⚠️",
+      title: "Workout Quality",
+      lines: [
+        `Your average workout score was ${Math.round(avgScore)}/100 across ${periodLabel}.`,
+        "Focus on progressive overload and better exercise quality next session.",
+      ],
+    };
+  }
+
+  // ── Priority #3 — Workout Volume (average sets) ─────────────────────────
+  if (avgSets > 0 && avgSets < VOLUME_MIN_SETS) {
+    const setsDisplay = Number.isInteger(round1(avgSets))
+      ? String(Math.round(avgSets))
+      : String(round1(avgSets));
+
+    return {
       kind: "volume",
       emoji: "⚠️",
       title: "Workout Volume",
       lines: [
-        `Only ${workout.sets} set${workout.sets === 1 ? "" : "s"} were completed.`,
+        `You averaged only ${setsDisplay} sets per workout across ${periodLabel}.`,
         "Try completing 12–16 quality sets next session.",
       ],
-    }),
-  },
-  {
-    kind: "sets",
-    priority: 85,
-    match: ({ workout }) => (workout.sets || 0) >= 10 && (workout.sets || 0) < 12,
-    build: ({ workout }) => ({
-      kind: "sets",
-      emoji: "⚠️",
-      title: "Too Few Sets",
-      lines: [
-        `You finished ${workout.sets} sets.`,
-        "Adding 2–4 quality sets next time will push volume into a stronger range.",
-      ],
-    }),
-  },
-  {
-    kind: "score",
-    priority: 80,
-    match: ({ workout, recentAverageScore }) => {
-      const score = workout.score || 0;
-      if (score < 40) return true;
-      if (recentAverageScore != null && score < recentAverageScore - 15) return true;
-      return false;
-    },
-    build: ({ workout, recentAverageScore }) => ({
-      kind: "score",
-      emoji: "⚠️",
-      title: "Workout Score",
-      lines: [
-        recentAverageScore != null && (workout.score || 0) < recentAverageScore - 15
-          ? "Today's workout intensity was lower than your recent average."
-          : `Today's workout score was ${workout.score}.`,
-        "Consider increasing weight or effort next workout.",
-      ],
-    }),
-  },
-  {
-    kind: "excellent",
-    priority: 0,
-    match: ({ efficiency, workout }) =>
-      (efficiency.rating === "great" || efficiency.rating === "good") &&
-      (workout.sets || 0) >= 12 &&
-      (workout.score || 0) >= 50,
-    build: () => ({
-      kind: "excellent",
-      emoji: "✅",
-      title: "Great Workout",
-      lines: [
-        "Excellent workout duration and volume.",
-        "Keep it up.",
-      ],
-    }),
-  },
-];
-
-function recentAverageScore(
-  history: WorkoutHistoryEntry[],
-  excludeId?: string
-): number | null {
-  const others = history.filter((w) => w.id !== excludeId).slice(0, 5);
-  if (others.length === 0) return null;
-
-  const sum = others.reduce((acc, w) => acc + (Number(w.score) || 0), 0);
-  return sum / others.length;
-}
-
-/**
- * Returns the single most important improvement (or praise) for a workout.
- * Never stacks multiple warnings — highest-priority matching rule wins.
- */
-export function analyzeWorkout(
-  workout: WorkoutHistoryEntry,
-  history: WorkoutHistoryEntry[] = []
-): WorkoutAnalysis {
-  const efficiency = evaluateTimeEfficiency({
-    durationMinutes: workout.durationMinutes || 0,
-    exercises: workout.exercises || 0,
-    sets: workout.sets || 0,
-    reps: workout.reps || 0,
-    score: workout.score || 0,
-  });
-
-  const ctx: AnalysisContext = {
-    workout,
-    recentAverageScore: recentAverageScore(history, workout.id),
-    efficiency,
-  };
-
-  const matches = ANALYSIS_RULES.filter((rule) => rule.match(ctx)).sort(
-    (a, b) => b.priority - a.priority
-  );
-
-  if (matches.length > 0) {
-    return matches[0].build(ctx);
+    };
   }
 
-  // Neutral fallback when nothing strong fires — still one focused tip.
-  if (efficiency.rating === "poor") {
+  // ── Priority #4 — Exercise Selection (period trend) ─────────────────────
+  const narrowSelection = findNarrowExerciseSelectionInPeriod(filteredWorkouts);
+  if (narrowSelection) {
     return {
-      kind: "time_efficiency",
+      kind: "exercise_selection",
       emoji: "⚠️",
-      title: "Time Efficiency",
+      title: "Exercise Selection",
       lines: [
-        `You spent ${formatDurationMinutes(workout.durationMinutes || 0)} training.`,
-        "Tighten rest periods or add a bit more volume next time.",
+        `Across ${periodLabel}, you trained only ${narrowSelection.trainedLabel}.`,
+        `Consider adding one ${narrowSelection.suggestionLabel} exercise for a more balanced workout.`,
+      ],
+    };
+  }
+
+  // ── Priority #5 — Recovery / Fatigue (period average) ───────────────────
+  const peakFatigue = findHighestAverageFatigue(filteredWorkouts);
+  if (peakFatigue && peakFatigue.value >= FATIGUE_HIGH_THRESHOLD) {
+    const muscleLabel = formatMuscleLabel(peakFatigue.muscle);
+    return {
+      kind: "recovery",
+      emoji: "⚠️",
+      title: "Recovery",
+      lines: [
+        `${muscleLabel} averaged ${Math.min(Math.round(peakFatigue.value), 100)}% fatigue across ${periodLabel}.`,
+        `Avoid stacking more ${muscleLabel} volume until recovery improves.`,
+      ],
+    };
+  }
+
+  // ── Priority #6 — Positive Achievement (within period) ──────────────────
+  const brokenPR = findBestBrokenPRInPeriod(filteredWorkouts);
+  if (brokenPR && brokenPR.previousWeight > 0) {
+    return {
+      kind: "personal_record",
+      emoji: "✅",
+      title: "New Personal Record",
+      lines: [
+        `Across ${periodLabel}, you beat your previous PR by ${brokenPR.delta} kg.`,
+        `${brokenPR.exerciseName} reached ${brokenPR.weight} kg.`,
       ],
     };
   }
@@ -347,9 +516,9 @@ export function analyzeWorkout(
   return {
     kind: "excellent",
     emoji: "✅",
-    title: "Great Workout",
+    title: "Excellent Workout",
     lines: [
-      "Solid session — duration and volume look balanced.",
+      `Great balance of duration, volume and workout quality across ${periodLabel}.`,
       "Keep it up.",
     ],
   };
