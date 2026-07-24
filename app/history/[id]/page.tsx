@@ -153,29 +153,12 @@ export default function WorkoutDetailsPage() {
                   {exercise.sets} Sets • {exercise.reps} Reps
                 </p>
 
-                <div className="mt-4 space-y-2">
-
-                  {(exercise.weights || []).map(
-                    (weight: number | "", i: number) => (
-
-                      <div
-                        key={i}
-                        className="flex items-center justify-between rounded-xl bg-zinc-900 px-4 py-3"
-                      >
-
-                        <span className="text-zinc-400">
-                          Set {i + 1}
-                        </span>
-
-                        <span className="font-medium">
-                          {weight} kg
-                        </span>
-
-                      </div>
-
-                    )
-                  )}
-
+                <div className="mt-4 rounded-xl bg-zinc-900 px-4 py-3">
+                  <p className="font-medium text-white">
+                    {(exercise.weights || [])
+                      .map((weight) => `${weight} kg`)
+                      .join(" • ")}
+                  </p>
                 </div>
                 {exercise.fatigueBreakdown && (
                   <div className="mt-5">
