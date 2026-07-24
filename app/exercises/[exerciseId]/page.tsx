@@ -375,8 +375,7 @@ export default function ExerciseDetailPage() {
               </div>
             )}
 
-            {/* Insights — unique metrics only (frequency / weekly growth / best month /
-                consistency live in Trend Summary above). */}
+            {/* Insights */}
             <h2 className="mt-10 text-xl font-semibold tracking-tight">Insights</h2>
             {!analytics.hasEnoughDataForTrends ? (
               <div className="mt-4 rounded-2xl border border-zinc-800 bg-[#111111] p-6 text-center">
