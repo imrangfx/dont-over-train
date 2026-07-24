@@ -32,6 +32,7 @@ import ExerciseChart from "@/components/ExerciseChart";
 import TrendSummaryGrid from "@/components/TrendSummaryGrid";
 import GraphInsightsList from "@/components/GraphInsightsList";
 import AnimatedStatValue from "@/components/AnimatedStatValue";
+import BottomNav from "@/components/BottomNav";
 
 const PAGE_SIZE = 10;
 
@@ -215,7 +216,8 @@ export default function ExerciseDetailPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black px-6 py-8 pb-16 text-white animate-[fade-in_200ms_ease-out]">
+    <>
+    <main className="min-h-screen bg-black px-6 py-8 pb-[calc(72px+env(safe-area-inset-bottom)+1.5rem)] text-white animate-[fade-in_200ms_ease-out]">
       <div className="mx-auto max-w-[430px]">
         <Link
           href="/history"
@@ -399,6 +401,8 @@ export default function ExerciseDetailPage() {
         )}
       </div>
     </main>
+    <BottomNav />
+  </>
   );
 }
 
