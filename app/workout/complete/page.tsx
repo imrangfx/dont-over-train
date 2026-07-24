@@ -18,6 +18,7 @@ import { type InProgressWorkoutItem } from "@/lib/workouts";
 import {
   clearCompletedWorkoutSummary,
   completeWorkoutSession,
+  formatDurationMinutes,
   getActiveWorkoutSession,
   getCompletedWorkoutSummary,
   getSessionDurationMinutes,
@@ -55,6 +56,8 @@ export default function CompletePage() {
   const [shareData, setShareData] = useState<ShareCardData | null>(null);
   const [showShareCard, setShowShareCard] = useState(false);
   const [ready, setReady] = useState(false);
+  /** Already-saved session duration — displayed only, never recalculated in the UI. */
+  const [durationMinutes, setDurationMinutes] = useState(0);
 
   useEffect(() => {
     const existingSession = getActiveWorkoutSession();
@@ -70,6 +73,7 @@ export default function CompletePage() {
       if (draft && Array.isArray(draft.exercises) && draft.exercises.length > 0) {
         queueMicrotask(() => {
           setWorkouts(draft.exercises as InProgressWorkoutItem[]);
+          setDurationMinutes(draft.durationMinutes);
           setReady(true);
         });
         return;
@@ -180,6 +184,7 @@ export default function CompletePage() {
 
     queueMicrotask(() => {
       setWorkouts(formatted);
+      setDurationMinutes(durationMinutes);
       setReady(true);
     });
 
@@ -403,7 +408,7 @@ export default function CompletePage() {
             Workout Summary
           </h2>
 
-          <div className="mb-6 grid grid-cols-3 gap-4">
+          <div className="mb-6 grid grid-cols-2 gap-4">
 
             <div className="flex flex-col items-center justify-center text-center">
               <p className="text-5xl font-bold text-lime-400">
@@ -432,6 +437,16 @@ export default function CompletePage() {
 
               <p className="text-zinc-400">
                 Total Reps
+              </p>
+            </div>
+
+            <div className="flex flex-col items-center justify-center text-center">
+              <p className="text-5xl font-bold text-lime-400">
+                {formatDurationMinutes(durationMinutes)}
+              </p>
+
+              <p className="text-zinc-400">
+                Workout Duration
               </p>
             </div>
 
