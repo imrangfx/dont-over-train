@@ -90,11 +90,6 @@ export default function StartWorkoutPage() {
             {clock}
           </p>
 
-          <p className="mt-6 max-w-[280px] text-base leading-relaxed text-zinc-400">
-            {exerciseLabel}. Start when you&apos;re set — every second counts
-            from here.
-          </p>
-
           <button
             type="button"
             onClick={handleStart}
