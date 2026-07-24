@@ -187,10 +187,19 @@ export default function CompletePage() {
       const userId = await getCurrentUserId();
 
       if (userId) {
-        const { error, authExpired } = await saveWorkoutHistoryEntry(
-          historyEntry,
-          userId
-        );
+        const result = await saveWorkoutHistoryEntry(historyEntry, userId);
+        const { error, authExpired, authExpiredPath } = result;
+
+        // Diagnose every sync outcome on production (browser console).
+        console.warn("[workout-sync] complete_page_save", {
+          userId,
+          entryId: historyEntry.id,
+          error,
+          authExpired: !!authExpired,
+          authExpiredPath: authExpiredPath ?? null,
+          willShowSyncWarning: !!(error && authExpired),
+        });
+
         if (error) {
           // Never lose the workout: keep a local copy so it syncs
           // automatically next time there's a valid session (see
@@ -206,6 +215,11 @@ export default function CompletePage() {
         }
         return;
       }
+
+      console.warn("[workout-sync] complete_page_guest", {
+        entryId: historyEntry.id,
+        reason: "getCurrentUserId returned null",
+      });
 
       // Guest mode - unchanged. Local workout history is only ever read
       // here, on the guest path, so a logged-in user's save never touches

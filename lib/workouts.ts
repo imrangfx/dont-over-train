@@ -266,18 +266,16 @@ export function rowToEntry(row: WorkoutRow): WorkoutHistoryEntry {
 }
 
 export async function getCurrentUserId(): Promise<string | null> {
-  // Prefer a validated user for write-path decisions. getSession() only reads
-  // local storage and can report a user id whose access token is already
-  // dead; getUser() hits Auth and refreshes when the library can.
+  // Prefer a validated user. getSession() alone can report a user id whose
+  // access token is already dead.
   const { data, error } = await supabase.auth.getUser();
   if (!error && data.user?.id) return data.user.id;
 
-  // Common after a long backgrounded workout: access JWT expired, getUser
-  // failed, but the refresh token is still valid. Refresh silently.
-  const { data: refreshed, error: refreshError } = await supabase.auth.refreshSession();
-  if (!refreshError && refreshed.session?.user?.id) {
-    return refreshed.session.user.id;
-  }
+  // Access JWT often expires during a long workout. Refresh through the
+  // single-flight lock so this never races with ensureFreshSession /
+  // personal-records refresh on the complete page.
+  const refreshed = await refreshSessionSingleFlight("getCurrentUserId");
+  if (refreshed.session?.user?.id) return refreshed.session.user.id;
 
   // Last resort: local session (offline / Auth briefly unreachable).
   const { data: sessionData } = await supabase.auth.getSession();
@@ -287,9 +285,11 @@ export async function getCurrentUserId(): Promise<string | null> {
 /**
  * Detects Supabase/PostgREST errors caused by an expired or invalid session
  * (JWT/refresh token), as opposed to unrelated failures (network, RLS,
- * validation, offline). Used to decide whether a session refresh + retry
- * can recover a failed write, and whether a failure should be reported to
- * the user as "signed out" rather than a generic sync error.
+ * validation, offline).
+ *
+ * NOTE: Keep this narrow. Over-matching (e.g. generic "unauthorized") marks
+ * non-auth failures as authExpired and shows the sign-in warning while the
+ * user is still signed in.
  */
 function isAuthSessionError(message: string | null | undefined): boolean {
   if (!message) return false;
@@ -305,7 +305,7 @@ function isAuthSessionError(message: string | null | undefined): boolean {
     lower.includes("invalid token") ||
     lower.includes("token is expired") ||
     lower.includes("invalid claim") ||
-    lower.includes("unauthorized")
+    lower.includes("authsessionmissing")
   );
 }
 
@@ -314,42 +314,123 @@ function accessTokenMsRemaining(expiresAt: number | undefined): number {
   return expiresAt * 1000 - Date.now();
 }
 
+type RefreshFlightResult = {
+  session: { user?: { id?: string }; expires_at?: number } | null;
+  errorMessage: string | null;
+};
+
+/**
+ * Single-flight refresh lock.
+ *
+ * ROOT CAUSE (production): Finish Workout runs two parallel async paths —
+ * saveWorkoutHistoryEntry and recordWorkoutPersonalRecords — both calling
+ * getUser/refreshSession. Supabase refresh tokens rotate; the second caller
+ * uses a stale refresh token, Auth returns "Invalid Refresh Token", the
+ * client clears the session, and ensureFreshSession() then returns false →
+ * authExpired → "Couldn't sync to cloud" while the user still looks signed in.
+ *
+ * All refresh callers must share this lock so only one /token request runs.
+ */
+let refreshInFlight: Promise<RefreshFlightResult> | null = null;
+
+function logSyncDiag(
+  event: string,
+  detail: Record<string, unknown> = {}
+): void {
+  // Visible in the browser console on Vercel production — do not remove until
+  // the intermittent sync warning is confirmed gone.
+  console.warn(`[workout-sync] ${event}`, detail);
+}
+
+async function refreshSessionSingleFlight(
+  reason: string
+): Promise<RefreshFlightResult> {
+  if (refreshInFlight) {
+    logSyncDiag("refresh_join", { reason });
+    return refreshInFlight;
+  }
+
+  refreshInFlight = (async () => {
+    logSyncDiag("refresh_start", { reason });
+    try {
+      const { data, error } = await supabase.auth.refreshSession();
+      if (error) {
+        logSyncDiag("refresh_error", { reason, message: error.message });
+        const { data: latest } = await supabase.auth.getSession();
+        return {
+          session: latest.session,
+          errorMessage: error.message,
+        };
+      }
+      logSyncDiag("refresh_ok", {
+        reason,
+        expiresAt: data.session?.expires_at ?? null,
+      });
+      return { session: data.session, errorMessage: null };
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "refresh threw";
+      logSyncDiag("refresh_throw", { reason, message });
+      const { data: latest } = await supabase.auth.getSession();
+      return { session: latest.session, errorMessage: message };
+    } finally {
+      refreshInFlight = null;
+    }
+  })();
+
+  return refreshInFlight;
+}
+
 /**
  * Ensures a usable access token before Supabase writes.
- *
- * Root-cause notes (production / long workouts):
- * - Auto-refresh pauses while the tab is backgrounded; finishing a workout
- *   after a long rest can hit PostgREST with an expired JWT.
- * - A failed *proactive* refresh must NOT be treated as signed-out when the
- *   access token is still inside its real expiry window.
- *
  * Returns false only when there is no recoverable authenticated session.
  */
 export async function ensureFreshSession(): Promise<boolean> {
+  // Join any refresh already started by getCurrentUserId / PR sync.
+  if (refreshInFlight) {
+    const joined = await refreshInFlight;
+    if (accessTokenMsRemaining(joined.session?.expires_at) > 0) return true;
+  }
+
   const { data, error } = await supabase.auth.getSession();
   const session = !error ? data.session : null;
 
   if (!session) {
-    // Storage empty / getSession failed — one explicit refresh recovery.
-    const { data: recovered, error: recoverError } = await supabase.auth.refreshSession();
-    return !recoverError && !!recovered.session;
+    const recovered = await refreshSessionSingleFlight("ensureFreshSession:no-session");
+    const ok = accessTokenMsRemaining(recovered.session?.expires_at) > 0;
+    logSyncDiag("ensureFreshSession:no-session", {
+      ok,
+      refreshError: recovered.errorMessage,
+    });
+    return ok;
   }
 
   const msLeft = accessTokenMsRemaining(session.expires_at);
 
   // Comfortable headroom — current token is fine for the upcoming write.
-  if (msLeft > 60_000) return true;
+  if (msLeft > 60_000) {
+    logSyncDiag("ensureFreshSession:headroom", { msLeft });
+    return true;
+  }
 
-  const { data: refreshed, error: refreshError } = await supabase.auth.refreshSession();
-  if (!refreshError && refreshed.session) return true;
+  const refreshed = await refreshSessionSingleFlight(
+    msLeft > 0 ? "ensureFreshSession:expiring" : "ensureFreshSession:expired"
+  );
+  if (accessTokenMsRemaining(refreshed.session?.expires_at) > 0) return true;
 
-  // Proactive refresh failed (network / cooldown) but access token still valid.
-  if (msLeft > 0) return true;
+  // Proactive refresh failed but access token still valid.
+  if (msLeft > 0) {
+    logSyncDiag("ensureFreshSession:keep-valid-token", {
+      msLeft,
+      refreshError: refreshed.errorMessage,
+    });
+    return true;
+  }
 
-  // Access token already expired and refresh failed — last getSession check
-  // in case another tab rotated tokens into storage via BroadcastChannel.
-  const { data: latest } = await supabase.auth.getSession();
-  return accessTokenMsRemaining(latest.session?.expires_at) > 0;
+  logSyncDiag("ensureFreshSession:failed", {
+    msLeft,
+    refreshError: refreshed.errorMessage,
+  });
+  return false;
 }
 
 /**
@@ -357,12 +438,20 @@ export async function ensureFreshSession(): Promise<boolean> {
  * Used after a write returns JWT expired so the retry uses a new access token.
  */
 export async function forceRefreshSession(): Promise<boolean> {
-  const { data, error } = await supabase.auth.refreshSession();
-  if (!error && data.session) return true;
-
-  const { data: latest } = await supabase.auth.getSession();
-  return accessTokenMsRemaining(latest.session?.expires_at) > 0;
+  const refreshed = await refreshSessionSingleFlight("forceRefreshSession");
+  return accessTokenMsRemaining(refreshed.session?.expires_at) > 0;
 }
+
+export type SaveWorkoutResult = {
+  error: string | null;
+  authExpired?: boolean;
+  /** Which branch set authExpired — for production diagnosis. */
+  authExpiredPath?:
+    | "ensure_fresh_failed"
+    | "profile_auth_error"
+    | "upsert_auth_error"
+    | "catch_auth_error";
+};
 
 /**
  * Ensures a public.profiles row exists for this user before anything that
@@ -400,10 +489,19 @@ export async function ensureProfileExists(
 export async function saveWorkoutHistoryEntry(
   entry: WorkoutHistoryEntry,
   userId: string
-): Promise<{ error: string | null; authExpired?: boolean }> {
+): Promise<SaveWorkoutResult> {
   try {
     if (!(await ensureFreshSession())) {
-      return { error: "Your session has expired.", authExpired: true };
+      logSyncDiag("authExpired", {
+        path: "ensure_fresh_failed",
+        userId,
+        entryId: entry.id,
+      });
+      return {
+        error: "Your session has expired.",
+        authExpired: true,
+        authExpiredPath: "ensure_fresh_failed",
+      };
     }
 
     // The workouts.user_id -> profiles.id foreign key requires the profile
@@ -411,7 +509,26 @@ export async function saveWorkoutHistoryEntry(
     // guard here too so a save never fails purely due to a missing profile.
     const { error: profileError } = await ensureProfileExists(userId);
     if (profileError) {
-      return { error: profileError, authExpired: isAuthSessionError(profileError) };
+      const authExpired = isAuthSessionError(profileError);
+      if (authExpired) {
+        logSyncDiag("authExpired", {
+          path: "profile_auth_error",
+          message: profileError,
+          userId,
+          entryId: entry.id,
+        });
+      } else {
+        logSyncDiag("save_profile_error", {
+          message: profileError,
+          userId,
+          entryId: entry.id,
+        });
+      }
+      return {
+        error: profileError,
+        authExpired,
+        authExpiredPath: authExpired ? "profile_auth_error" : undefined,
+      };
     }
 
     const payload = {
@@ -428,24 +545,68 @@ export async function saveWorkoutHistoryEntry(
 
     let { error } = await supabase.from("workouts").upsert(payload, { onConflict: "id" });
 
-    // Reactive fallback: write used a JWT that expired in flight (common after
-    // a long backgrounded workout). Force-refresh and retry once — do not ask
-    // the user to sign in again when a refresh token is still available.
+    // Reactive fallback: write used a JWT that expired in flight. Force-refresh
+    // (single-flight) and retry once.
     if (error && isAuthSessionError(error.message)) {
+      logSyncDiag("upsert_jwt_retry", {
+        message: error.message,
+        userId,
+        entryId: entry.id,
+      });
       if (await forceRefreshSession()) {
         ({ error } = await supabase.from("workouts").upsert(payload, { onConflict: "id" }));
+        logSyncDiag("upsert_jwt_retry_result", {
+          ok: !error,
+          message: error?.message ?? null,
+          entryId: entry.id,
+        });
       }
     }
 
     if (error) {
-      return { error: error.message, authExpired: isAuthSessionError(error.message) };
+      const authExpired = isAuthSessionError(error.message);
+      if (authExpired) {
+        logSyncDiag("authExpired", {
+          path: "upsert_auth_error",
+          message: error.message,
+          userId,
+          entryId: entry.id,
+        });
+      } else {
+        logSyncDiag("save_upsert_error", {
+          message: error.message,
+          userId,
+          entryId: entry.id,
+        });
+      }
+      return {
+        error: error.message,
+        authExpired,
+        authExpiredPath: authExpired ? "upsert_auth_error" : undefined,
+      };
     }
 
     markLastSynced();
+    logSyncDiag("save_ok", { userId, entryId: entry.id });
     return { error: null };
   } catch (err) {
     const message = err instanceof Error ? err.message : "Failed to sync workout.";
-    return { error: message, authExpired: isAuthSessionError(message) };
+    const authExpired = isAuthSessionError(message);
+    if (authExpired) {
+      logSyncDiag("authExpired", {
+        path: "catch_auth_error",
+        message,
+        userId,
+        entryId: entry.id,
+      });
+    } else {
+      logSyncDiag("save_throw", { message, userId, entryId: entry.id });
+    }
+    return {
+      error: message,
+      authExpired,
+      authExpiredPath: authExpired ? "catch_auth_error" : undefined,
+    };
   }
 }
 
