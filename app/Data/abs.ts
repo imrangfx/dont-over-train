@@ -76,15 +76,6 @@ export const abs = {
     },
   },
 
-  "smith-machine-crunch": {
-    name: "Smith Machine Crunch",
-    bodyPart: "Abs",
-    section: "upper-abs",
-    fatigue: {
-      upperAbs: 17,
-    },
-  },
-
   "medicine-ball-crunch": {
     name: "Medicine Ball Crunch",
     bodyPart: "Abs",

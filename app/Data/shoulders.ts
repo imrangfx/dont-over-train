@@ -278,16 +278,6 @@ export const shoulders = {
   },
 },
 
-"rope-face-pull": {
-  name: "Rope Face Pull",
-  bodyPart: "Shoulders",
-  section: "rear-delts",
-  fatigue: {
-    rearDelts: 16,
-    upperBack: 7,
-  },
-},
-
 "incline-rear-delt-raise": {
   name: "Incline Rear Delt Raise",
   bodyPart: "Shoulders",
