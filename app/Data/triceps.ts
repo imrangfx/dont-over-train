@@ -303,15 +303,4 @@ export const triceps = {
       frontDelts: 3,
     },
   },
-
-  "tate-press": {
-    name: "Tate Press",
-    bodyPart: "Triceps",
-    section: "medial-head",
-    fatigue: {
-      "Medial Head Triceps": 12,
-      "Long Head Triceps": 4,
-      frontDelts: 2,
-    },
-  },
 };

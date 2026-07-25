@@ -63,18 +63,6 @@ export const biceps = {
     },
   },
 
-  "cable-curl-behind-body": {
-    name: "Cable Curl Behind Body",
-    bodyPart: "Biceps",
-    section: "long-head",
-    fatigue: {
-      "Long Head Biceps": 14,
-      "Short Head Biceps": 2,
-      Brachialis: 1,
-      Brachioradialis: 3,
-    },
-  },
-
   "single-arm-cable-curl": {
     name: "Single Arm Cable Curl",
     bodyPart: "Biceps",

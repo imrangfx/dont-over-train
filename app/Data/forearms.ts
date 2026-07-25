@@ -117,17 +117,6 @@ export const forearms = {
       },
     },
   
-    "towel-pull-up": {
-      name: "Towel Pull Up",
-      bodyPart: "Forearms",
-      section: "forearms",
-      fatigue: {
-        forearms: 18,
-        biceps: 8,
-        lats: 5,
-      },
-    },
-  
     "rope-climb": {
       name: "Rope Climb",
       bodyPart: "Forearms",

@@ -230,15 +230,6 @@ export const shoulders = {
 // =====================
 // REAR DELTS
 // =====================
-"reverse-pec-deck": {
-  name: "Reverse Pec Deck",
-  bodyPart: "Shoulders",
-  section: "rear-delts",
-  fatigue: {
-    rearDelts: 18,
-    upperBack: 6,
-  },
-},
 
 "face-pull": {
   name: "Face Pull",
@@ -247,15 +238,6 @@ export const shoulders = {
   fatigue: {
     rearDelts: 16,
     upperBack: 7,
-  },
-},
-
-"rear-delt-fly": {
-  name: "Rear Delt Fly",
-  bodyPart: "Shoulders",
-  section: "rear-delts",
-  fatigue: {
-    rearDelts: 18,
   },
 },
 
