@@ -29,6 +29,7 @@ import {
   SettingRow,
 } from "@/components/ui/SettingRow";
 import { useToast } from "@/components/ui/Toast";
+import InstallAppButton from "@/components/InstallAppButton";
 
 const CONTACT_SUPPORT_BODY = [
   "Hi,",
@@ -279,6 +280,7 @@ export default function SettingsPage() {
               label="Contact Support"
               href={CONTACT_SUPPORT_URL}
             />
+            <InstallAppButton variant="settings" />
           </div>
         </section>
 
