@@ -6,6 +6,7 @@ import { Info } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { FcGoogle } from "react-icons/fc";
 import { useToast } from "@/components/ui/Toast";
+import InstallAppButton from "@/components/InstallAppButton";
 
 export default function OnboardingPage() {
     const router = useRouter();
@@ -74,6 +75,8 @@ export default function OnboardingPage() {
                     <FcGoogle size={24} aria-hidden="true" />
                     Continue with Google
                 </button>
+
+                <InstallAppButton />
 
                 <p className="mt-2 text-xs text-gray-400">
                     Sync your workouts across all devices
