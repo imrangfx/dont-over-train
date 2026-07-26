@@ -3,6 +3,21 @@ export const chest = {
   // UPPER CHEST
   // =====================
 
+  "decline-push-up": {
+  name: "Decline Push-Up",
+  bodyPart: "Chest",
+  section: "upper-chest",
+  fatigue: {
+    upperChest: 14,
+    midChest: 6,
+    lowerChest: 2,
+    frontDelts: 5,
+    "Lateral Head Triceps": 3,
+    "Medial Head Triceps": 2,
+    "Long Head Triceps": 1,
+  },
+},
+
   "incline-dumbbell-press": {
     name: "Incline Dumbbell Press",
     bodyPart: "Chest",
@@ -106,6 +121,36 @@ export const chest = {
   // =====================
   // MID CHEST
   // =====================
+
+  "push-up": {
+  name: "Push-Up",
+  bodyPart: "Chest",
+  section: "mid-chest",
+  fatigue: {
+    upperChest: 4,
+    midChest: 15,
+    lowerChest: 4,
+    frontDelts: 4,
+    "Lateral Head Triceps": 4,
+    "Medial Head Triceps": 3,
+    "Long Head Triceps": 1,
+  },
+},
+
+"wide-push-up": {
+  name: "Wide Push-Up",
+  bodyPart: "Chest",
+  section: "mid-chest",
+  fatigue: {
+    upperChest: 3,
+    midChest: 17,
+    lowerChest: 3,
+    frontDelts: 3,
+    "Lateral Head Triceps": 2,
+    "Medial Head Triceps": 1,
+    "Long Head Triceps": 1,
+  },
+},
 
   "machine-chest-press": {
     name: "Machine Chest Press",
@@ -240,6 +285,21 @@ export const chest = {
       "Long Head Triceps": 2,
     },
   },
+
+  "incline-push-up": {
+  name: "Incline Push-Up",
+  bodyPart: "Chest",
+  section: "lower-chest",
+  fatigue: {
+    upperChest: 1,
+    midChest: 6,
+    lowerChest: 15,
+    frontDelts: 2,
+    "Lateral Head Triceps": 3,
+    "Medial Head Triceps": 2,
+    "Long Head Triceps": 1,
+  },
+},
 
   "decline-dumbbell-press": {
     name: "Decline Dumbbell Press",
