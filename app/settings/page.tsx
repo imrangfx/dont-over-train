@@ -295,6 +295,25 @@ export default function SettingsPage() {
           </button>
         )}
 
+        <section className="mt-8" aria-labelledby="featured-on-heading">
+          <SectionHeader id="featured-on-heading" title="Featured On" />
+          <div className="flex justify-center">
+            <a
+              href="https://fazier.com/launches/www.dontovertrain.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=launched&theme=neutral"
+                width={120}
+                alt="Fazier badge"
+                className="h-auto w-[120px] max-w-full"
+              />
+            </a>
+          </div>
+        </section>
+
       </div>
 
       <ConfirmationModal
