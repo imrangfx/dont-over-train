@@ -255,6 +255,18 @@ export const chest = {
     },
   },
 
+  "dumbbell-chest-fly": {
+  name: "Dumbbell Chest Fly",
+  bodyPart: "Chest",
+  section: "mid-chest",
+  fatigue: {
+    upperChest: 3,
+    midChest: 15,
+    lowerChest: 3,
+    frontDelts: 2,
+  },
+},
+
   "pec-deck-fly": {
     name: "Pec Deck Fly",
     bodyPart: "Chest",
