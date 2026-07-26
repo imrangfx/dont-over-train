@@ -88,6 +88,30 @@ export default function OnboardingPage() {
                     across all your devices.
                 </p>
 
+                <section className="mt-10 w-full" aria-labelledby="featured-on-heading">
+                    <h2
+                        id="featured-on-heading"
+                        className="mb-3 text-center text-sm font-medium uppercase tracking-wide text-gray-500"
+                    >
+                        Featured On
+                    </h2>
+                    <div className="flex justify-center">
+                        <a
+                            href="https://fazier.com/launches/www.dontovertrain.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                                src="https://fazier.com/api/v1/public/badges/launch_badges.svg?badge_type=launched&theme=neutral"
+                                width="120"
+                                alt="Launched on Fazier"
+                                className="h-auto w-[120px] max-w-full"
+                            />
+                        </a>
+                    </div>
+                </section>
+
                 {/* Info */}
                 <div className="mt-12 flex w-full items-start gap-3 rounded-2xl border border-gray-900 bg-neutral-950 p-5">
                     <Info
