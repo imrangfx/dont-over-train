@@ -327,19 +327,4 @@ export const chest = {
       "Medial Head Triceps": 1,
     },
   },
-
-  "decline-cable-press": {
-    name: "Decline Cable Press",
-    bodyPart: "Chest",
-    section: "lower-chest",
-    fatigue: {
-      upperChest: 1,
-      midChest: 5,
-      lowerChest: 15,
-      frontDelts: 2,
-      "Lateral Head Triceps": 3,
-      "Medial Head Triceps": 2,
-      "Long Head Triceps": 1,
-    },
-  },
 };
