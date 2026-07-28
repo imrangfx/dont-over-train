@@ -38,6 +38,57 @@ export type WeeklyProgress = {
   weekStartLabel: string;
 };
 
+export type WeekDayStatus = "workout" | "rest" | "future";
+
+export type WeekDayProgress = {
+  day: string;
+  date: string;
+  status: WeekDayStatus;
+};
+
+const WEEK_DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
+
+/**
+ * Builds Mon–Sun entries for the current calendar week, tagging each day
+ * against workout history: "workout" if trained, "rest" if a past day with
+ * no workout, "future" for today/upcoming days still without a workout.
+ */
+export function buildCurrentWeekProgress(
+  history: WorkoutHistoryEntry[],
+  now: number = Date.now()
+): WeekDayProgress[] {
+  const today = new Date(now);
+  const mondayOffset = (today.getDay() + 6) % 7;
+  const monday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - mondayOffset);
+  const todayKey = toLocalDayKey(now);
+
+  const trainedDayKeys = new Set(
+    (history || []).map((w) => toLocalDayKey(w.timestamp))
+  );
+
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    const date = toLocalDayKey(d.getTime());
+    const hasWorkout = trainedDayKeys.has(date);
+
+    let status: WeekDayStatus;
+    if (hasWorkout) {
+      status = "workout";
+    } else if (date < todayKey) {
+      status = "rest";
+    } else {
+      status = "future";
+    }
+
+    return {
+      day: WEEK_DAY_LABELS[i],
+      date,
+      status,
+    };
+  });
+}
+
 /** Aggregates the current calendar week (Monday-start) from workout history. */
 export function calculateWeeklyProgress(
   history: WorkoutHistoryEntry[],
