@@ -10,6 +10,17 @@ import EmptyState from "@/components/ui/EmptyState";
 import LoadingCard from "@/components/ui/LoadingCard";
 import BottomNav from "@/components/BottomNav";
 
+/** Fatigue % → text / bar color classes (0–49 green, 50–79 yellow, 80–100 red). */
+function getFatigueColor(value: number): { text: string; bg: string } {
+  if (value < 50) {
+    return { text: "text-lime-400", bg: "bg-lime-400" };
+  }
+  if (value < 80) {
+    return { text: "text-yellow-400", bg: "bg-yellow-400" };
+  }
+  return { text: "text-red-500", bg: "bg-red-500" };
+}
+
 export default function WorkoutDetailsPage() {
   const params = useParams();
   const id = params.id as string;
@@ -173,36 +184,38 @@ export default function WorkoutDetailsPage() {
                     {
                       Object.entries(exercise.fatigueBreakdown)
                         .filter(([, value]) => Number(value) > 0)
-                        .map(([muscle, value]) => (
+                        .map(([muscle, value]) => {
+                          const fatigueColor = getFatigueColor(Number(value));
 
-                          <div key={muscle} className="mb-3">
+                          return (
+                            <div key={muscle} className="mb-3">
 
-                            <div className="mb-1 flex justify-between text-sm">
-                              <span>
-                                {String(muscle)
-                                  .replace(/([A-Z])/g, " $1")
-                                  .replace(/^./, (s: string) => s.toUpperCase())}
-                              </span>
+                              <div className="mb-1 flex justify-between text-sm">
+                                <span>
+                                  {String(muscle)
+                                    .replace(/([A-Z])/g, " $1")
+                                    .replace(/^./, (s: string) => s.toUpperCase())}
+                                </span>
 
-                              <span className="text-lime-400">
-                                {value}%
-                              </span>
+                                <span className={fatigueColor.text}>
+                                  {value}%
+                                </span>
+                              </div>
+
+                              <div className="h-2 rounded-full bg-zinc-800">
+
+                                <div
+                                  className={`h-2 rounded-full ${fatigueColor.bg}`}
+                                  style={{
+                                    width: `${Math.min(Number(value), 100)}%`,
+                                  }}
+                                />
+
+                              </div>
+
                             </div>
-
-                            <div className="h-2 rounded-full bg-zinc-800">
-
-                              <div
-                                className="h-2 rounded-full bg-lime-400"
-                                style={{
-                                  width: `${Math.min(Number(value), 100)}%`,
-                                }}
-                              />
-
-                            </div>
-
-                          </div>
-
-                        ))
+                          );
+                        })
                     }
 
                   </div>
@@ -228,41 +241,43 @@ export default function WorkoutDetailsPage() {
             {
               Object.entries(workout.fatigueBreakdown)
                 .filter(([, value]) => Number(value) > 0)
-                .map(([muscle, value]) => (
+                .map(([muscle, value]) => {
+                  const fatigueColor = getFatigueColor(Number(value));
 
-                  <div
-                    key={muscle}
-                    className="mb-5"
-                  >
+                  return (
+                    <div
+                      key={muscle}
+                      className="mb-5"
+                    >
 
-                    <div className="mb-2 flex justify-between">
+                      <div className="mb-2 flex justify-between">
 
-                      <span>
-                        {String(muscle)
-                          .replace(/([A-Z])/g, " $1")
-                          .replace(/^./, (s: string) => s.toUpperCase())}
-                      </span>
+                        <span>
+                          {String(muscle)
+                            .replace(/([A-Z])/g, " $1")
+                            .replace(/^./, (s: string) => s.toUpperCase())}
+                        </span>
 
-                      <span className="text-lime-400">
-                        {value}%
-                      </span>
+                        <span className={fatigueColor.text}>
+                          {value}%
+                        </span>
+
+                      </div>
+
+                      <div className="h-2 rounded-full bg-zinc-800">
+
+                        <div
+                          className={`h-2 rounded-full ${fatigueColor.bg}`}
+                          style={{
+                            width: `${Math.min(Number(value), 100)}%`,
+                          }}
+                        />
+
+                      </div>
 
                     </div>
-
-                    <div className="h-2 rounded-full bg-zinc-800">
-
-                      <div
-                        className="h-2 rounded-full bg-lime-400"
-                        style={{
-                          width: `${Math.min(Number(value), 100)}%`,
-                        }}
-                      />
-
-                    </div>
-
-                  </div>
-
-                ))
+                  );
+                })
             }
 
           </div>
