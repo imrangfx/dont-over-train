@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ViewTransition } from "react";
 import { useEffect, useMemo, useState } from "react";
 import {
+  AlertTriangle,
   BatteryCharging,
   BatteryMedium,
   BatteryWarning,
@@ -457,60 +458,83 @@ function LatestPRCard({ record }: { record: PersonalRecord | null }) {
 
 function WeeklyProgressCard({ progress }: { progress: WeeklyProgressData }) {
   return (
-    <div className="card-surface p-5">
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <SectionIcon className="bg-lime-400/10 text-lime-400">
-            <CalendarCheck size={18} />
-          </SectionIcon>
-          <h2 className="text-lg font-semibold tracking-tight">Weekly Progress</h2>
+    <>
+      <div className="card-surface p-5">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <SectionIcon className="bg-lime-400/10 text-lime-400">
+              <CalendarCheck size={18} />
+            </SectionIcon>
+            <h2 className="text-lg font-semibold tracking-tight">Weekly Progress</h2>
+          </div>
+
+          <span className="shrink-0 text-xs text-zinc-500">
+            Week of {progress.weekStartLabel}
+          </span>
         </div>
 
-        <span className="shrink-0 text-xs text-zinc-500">
-          Week of {progress.weekStartLabel}
-        </span>
-      </div>
+        <div className="mt-5 flex items-center justify-between">
+          {progress.days.map((day, index) => {
+            const circleClass =
+              day.status === "workout"
+                ? "bg-lime-400 text-black"
+                : day.status === "rest"
+                  ? "bg-zinc-600 text-white"
+                  : "bg-zinc-900 text-zinc-600";
 
-      <div className="mt-5 flex items-center justify-between">
-        {progress.days.map((day, index) => {
-          const circleClass =
-            day.status === "workout"
-              ? "bg-lime-400 text-black"
-              : day.status === "rest"
-                ? "bg-zinc-600 text-white"
-                : "bg-zinc-900 text-zinc-600";
+            const label =
+              day.status === "workout"
+                ? "Workout"
+                : day.status === "rest"
+                  ? "Rest day"
+                  : "Upcoming";
 
-          const label =
-            day.status === "workout"
-              ? "Workout"
-              : day.status === "rest"
-                ? "Rest day"
-                : "Upcoming";
+            return (
+              <div key={day.date} className="flex flex-col items-center gap-2">
+                <span className="text-[11px] font-medium text-zinc-500">
+                  {WEEKDAY_LETTERS[index]}
+                </span>
 
-          return (
-            <div key={day.date} className="flex flex-col items-center gap-2">
-              <span className="text-[11px] font-medium text-zinc-500">
-                {WEEKDAY_LETTERS[index]}
-              </span>
-
-              <div
-                className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${circleClass}`}
-                aria-label={label}
-              >
-                {day.status === "workout" ? "✓" : day.status === "rest" ? "R" : ""}
+                <div
+                  className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${circleClass}`}
+                  aria-label={label}
+                >
+                  {day.status === "workout" ? "✓" : day.status === "rest" ? "R" : ""}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+
+        <div className="mt-5 text-sm">
+          <span className="text-zinc-400">
+            <span className="font-semibold text-white">{progress.workoutsThisWeek}</span> workout
+            {progress.workoutsThisWeek !== 1 ? "s" : ""} this week
+          </span>
+        </div>
       </div>
 
-      <div className="mt-5 text-sm">
-        <span className="text-zinc-400">
-          <span className="font-semibold text-white">{progress.workoutsThisWeek}</span> workout
-          {progress.workoutsThisWeek !== 1 ? "s" : ""} this week
-        </span>
-      </div>
-    </div>
+      {progress.hasWarning && (
+        <div
+          role="status"
+          className="mt-3 flex items-start gap-3 rounded-2xl border border-yellow-500/30 bg-yellow-500/5 p-4"
+        >
+          <AlertTriangle
+            size={18}
+            className="mt-0.5 shrink-0 text-yellow-400"
+            aria-hidden="true"
+          />
+          <div>
+            <p className="text-sm font-semibold text-yellow-400">
+              You&apos;ve trained 6 days this week.
+            </p>
+            <p className="mt-1 text-sm leading-5 text-zinc-400">
+              Take a rest tomorrow to avoid overtraining.
+            </p>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
