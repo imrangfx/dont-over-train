@@ -22,12 +22,13 @@ import { recordWorkoutPersonalRecords } from "@/lib/personalRecords";
 import { calculateBodyPartLevel } from "@/lib/bodyPartProgression";
 import { buildPersonalRecordShareCard, type ShareCardData } from "@/lib/shareCard";
 import {
+  canCompleteWorkoutSession,
   clearCompletedWorkoutSummary,
   completeWorkoutSession,
   formatDurationMinutes,
-  getActiveWorkoutSession,
   getCompletedWorkoutSummary,
-  getSessionDurationMinutes,
+  getWorkoutSession,
+  resolveWorkoutDuration,
 } from "@/lib/workoutSession";
 import { useToast } from "@/components/ui/Toast";
 import LevelUpCelebration from "@/components/LevelUpCelebration";
@@ -65,13 +66,14 @@ export default function CompletePage() {
   const [durationMinutes, setDurationMinutes] = useState(0);
 
   useEffect(() => {
-    const existingSession = getActiveWorkoutSession();
+    const workoutSession = getWorkoutSession();
     const saved = JSON.parse(localStorage.getItem("currentWorkout") || "[]");
     const fromStorage = normalizeInProgressList(saved);
+    const resolved = resolveWorkoutDuration(workoutSession);
 
     // Already finished (session cleared) — restore summary draft if present.
     // Never send the user back to Start Workout for a completed session.
-    if (!existingSession) {
+    if (!canCompleteWorkoutSession(workoutSession) || !resolved) {
       const draft = getCompletedWorkoutSummary();
       if (draft && Array.isArray(draft.exercises) && draft.exercises.length > 0) {
         queueMicrotask(() => {
@@ -92,9 +94,7 @@ export default function CompletePage() {
       return;
     }
 
-    const endedAt = Date.now();
-    const startedAt = existingSession.startedAt;
-    const durationMinutes = getSessionDurationMinutes(startedAt, endedAt);
+    const { durationMinutes, startedAt, endedAt } = resolved;
 
     const totalSetsHistory = formatted.reduce(
       (acc, item) => acc + workoutSetCount(item.sets),

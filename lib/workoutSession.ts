@@ -4,9 +4,10 @@
  * Persisted alongside `currentWorkout` (exercise list) under a separate key so
  * session timing can evolve without mutating exercise logging data.
  *
- * Planned flows (not wired in UI yet):
+ * Flows:
  * 1. Start Workout → startWorkoutSession() records startedAt and runs a timer
  * 2. Continue Without Timer → logging without a timer; duration entered manually
+ *    via setManualWorkoutDuration() before complete
  *
  * Existing callers that use ActiveWorkoutSession helpers remain supported via
  * thin adapters over this model.
@@ -143,6 +144,71 @@ export function startWorkoutSession(now = Date.now()): WorkoutSession {
 export function resetWorkoutSession(): void {
   if (!canUseStorage()) return;
   localStorage.removeItem(SESSION_KEY);
+}
+
+/**
+ * Records a manually entered duration for an untimed workout.
+ * Minimum 1 minute. Does not start a timer.
+ */
+export function setManualWorkoutDuration(minutes: number): WorkoutSession {
+  const durationMinutes = Math.max(1, Math.round(Number(minutes) || 0));
+  const session: WorkoutSession = {
+    started: false,
+    startedAt: null,
+    durationMinutes,
+    manualDuration: true,
+  };
+  writeWorkoutSession(session);
+  return session;
+}
+
+export type ResolvedWorkoutDuration = {
+  durationMinutes: number;
+  startedAt: number;
+  endedAt: number;
+  manualDuration: boolean;
+};
+
+/**
+ * Resolves final duration for save/complete from the current WorkoutSession.
+ * Timed sessions use startedAt → endedAt; manual sessions use durationMinutes.
+ */
+export function resolveWorkoutDuration(
+  session: WorkoutSession = getWorkoutSession(),
+  endedAt = Date.now()
+): ResolvedWorkoutDuration | null {
+  if (session.started && isValidStartedAt(session.startedAt)) {
+    return {
+      durationMinutes: getSessionDurationMinutes(session.startedAt, endedAt),
+      startedAt: session.startedAt,
+      endedAt,
+      manualDuration: false,
+    };
+  }
+
+  if (
+    session.manualDuration &&
+    typeof session.durationMinutes === "number" &&
+    Number.isFinite(session.durationMinutes) &&
+    session.durationMinutes >= 1
+  ) {
+    const durationMinutes = Math.max(1, Math.round(session.durationMinutes));
+    return {
+      durationMinutes,
+      startedAt: endedAt - durationMinutes * 60_000,
+      endedAt,
+      manualDuration: true,
+    };
+  }
+
+  return null;
+}
+
+/** True when the session can be completed (timed or manual duration set). */
+export function canCompleteWorkoutSession(
+  session: WorkoutSession = getWorkoutSession()
+): boolean {
+  return resolveWorkoutDuration(session) != null;
 }
 
 /**

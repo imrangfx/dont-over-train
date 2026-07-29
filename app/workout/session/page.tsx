@@ -23,8 +23,11 @@ import {
   getActiveWorkoutSession,
   getLiveElapsedMs,
   clearWorkoutSession,
+  isWorkoutStarted,
+  setManualWorkoutDuration,
   type ActiveWorkoutSession,
 } from "@/lib/workoutSession";
+import ManualDurationModal from "@/components/ui/ManualDurationModal";
 
 export default function SessionPage() {
   const router = useRouter();
@@ -33,6 +36,7 @@ export default function SessionPage() {
   const [loaded, setLoaded] = useState(false);
   const [session, setSession] = useState<ActiveWorkoutSession | null>(null);
   const [elapsedMs, setElapsedMs] = useState(0);
+  const [manualDurationOpen, setManualDurationOpen] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("currentWorkout");
@@ -364,17 +368,31 @@ export default function SessionPage() {
           Choose Another Body Part
         </button>
 
-        {session && (
-          <button
-            type="button"
-            onClick={() => router.replace("/workout/complete")}
-            className="btn-base w-full border border-lime-400 text-lime-400 py-4 rounded-2xl text-xl"
-          >
-            Finish Workout
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={() => {
+            if (isWorkoutStarted()) {
+              router.replace("/workout/complete");
+              return;
+            }
+            setManualDurationOpen(true);
+          }}
+          className="btn-base w-full border border-lime-400 text-lime-400 py-4 rounded-2xl text-xl"
+        >
+          Finish Workout
+        </button>
 
       </div>
+
+      <ManualDurationModal
+        open={manualDurationOpen}
+        onClose={() => setManualDurationOpen(false)}
+        onConfirm={(durationMinutes) => {
+          setManualWorkoutDuration(durationMinutes);
+          setManualDurationOpen(false);
+          router.replace("/workout/complete");
+        }}
+      />
     </main>
   );
 }
