@@ -13,9 +13,9 @@ import { abs } from "@/app/Data/abs";
 import {
   normalizeInProgressList,
   recoveryHoursForFatigue,
+  formatWorkoutSetsSummary,
   workoutDisplayReps,
   workoutSetCount,
-  workoutWeights,
   type InProgressWorkoutItem,
 } from "@/lib/workouts";
 import {
@@ -208,22 +208,9 @@ export default function SessionPage() {
                     {exercise.exercise}
                   </h3>
 
-                  <p className="text-zinc-400">
-                    {workoutSetCount(exercise.sets)} sets ×{" "}
-                    {workoutDisplayReps(exercise.sets)} reps
+                  <p className="mt-1 text-sm text-zinc-400">
+                    {formatWorkoutSetsSummary(exercise.sets)}
                   </p>
-                  {workoutWeights(exercise.sets).some((w) => w !== "") ? (
-                    <p className="text-sm text-zinc-500 mt-1">
-                      Weights:{" "}
-                      {workoutWeights(exercise.sets)
-                        .map((w) => (w === "" ? "-" : `${w}kg`))
-                        .join(" • ")}
-                    </p>
-                  ) : exercise.weight ? (
-                    <p className="text-sm text-zinc-500 mt-1">
-                      Weight: {exercise.weight}kg
-                    </p>
-                  ) : null}
                 </div>
 
                 <button

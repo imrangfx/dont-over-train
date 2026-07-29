@@ -11,7 +11,7 @@ import {
   saveWorkoutHistoryEntry,
   saveWorkoutHistoryEntryLocally,
   toLegacyExerciseFields,
-  workoutDisplayReps,
+  formatWorkoutSetsSummary,
   workoutSetCount,
   workoutTotalReps,
   workoutWeights,
@@ -454,22 +454,8 @@ export default function CompletePage() {
                 </h3>
 
                 <p className="text-zinc-400">
-                  {workoutSetCount(item.sets)} sets ×{" "}
-                  {workoutDisplayReps(item.sets)} reps
+                  {formatWorkoutSetsSummary(item.sets)}
                 </p>
-
-                {workoutWeights(item.sets).some((w) => w !== "") ? (
-                  <p className="mt-1 text-sm text-zinc-500">
-                    Weights:{" "}
-                    {workoutWeights(item.sets)
-                      .map((w) => (w === "" ? "-" : `${w}kg`))
-                      .join(" • ")}
-                  </p>
-                ) : item.weight ? (
-                  <p className="mt-1 text-sm text-zinc-500">
-                    Weight: {item.weight}kg
-                  </p>
-                ) : null}
               </div>
 
             ))}

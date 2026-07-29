@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { ArrowLeft, ChevronRight, Dumbbell } from "lucide-react";
-import { loadWorkoutHistoryById, type WorkoutHistoryEntry, type WorkoutExercise } from "@/lib/workouts";
+import { loadWorkoutHistoryById, formatWorkoutSetsSummary, normalizeWorkoutSets, type WorkoutHistoryEntry, type WorkoutExercise } from "@/lib/workouts";
 import { exerciseHref } from "@/lib/exerciseAnalytics";
 import EmptyState from "@/components/ui/EmptyState";
 import LoadingCard from "@/components/ui/LoadingCard";
@@ -164,16 +164,9 @@ export default function WorkoutDetailsPage() {
                 </Link>
 
                 <p className="mt-2 text-zinc-400">
-                  {exercise.sets} Sets • {exercise.reps} Reps
+                  {formatWorkoutSetsSummary(normalizeWorkoutSets(exercise))}
                 </p>
 
-                <div className="mt-4 rounded-xl bg-zinc-900 px-4 py-3">
-                  <p className="font-medium text-white">
-                    {(exercise.weights || [])
-                      .map((weight) => `${weight} kg`)
-                      .join(" • ")}
-                  </p>
-                </div>
                 {exercise.fatigueBreakdown && (
                   <div className="mt-5">
 

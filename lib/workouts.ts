@@ -124,6 +124,24 @@ export function workoutWeights(sets: WorkoutSet[]): (number | "")[] {
   return sets.map((set) => set.weight);
 }
 
+/**
+ * Compact gym-style set summary from WorkoutSet[].
+ * Weighted: `60×10 • 60×10 • 60×8`
+ * Bodyweight (empty/0 weight): `12 • 10 • 8`
+ * Order is preserved; identical weights are never merged.
+ */
+export function formatWorkoutSetsSummary(sets: WorkoutSet[]): string {
+  return sets
+    .map((set) => {
+      const reps = Number(set.reps) || 0;
+      const weight = set.weight;
+      const hasWeight = typeof weight === "number" && weight > 0;
+      if (!hasWeight) return String(reps);
+      return `${weight}×${reps}`;
+    })
+    .join(" • ");
+}
+
 /** Map canonical sets back to the persisted history exercise fields. */
 export function toLegacyExerciseFields(sets: WorkoutSet[]): {
   sets: number;
