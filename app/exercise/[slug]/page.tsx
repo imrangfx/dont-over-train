@@ -190,6 +190,10 @@ export default function ExercisePage() {
     );
   }
   const exerciseName = exerciseData.name;
+  const requiresWeight =
+    "requiresWeight" in exerciseData
+      ? Boolean(exerciseData.requiresWeight)
+      : true;
   const qualifyingPR = getQualifyingPersonalRecord(exerciseName, history, PR_MIN_REPS);
   const sortedMuscles = Object.entries(
     exerciseData.fatigue
@@ -373,48 +377,56 @@ export default function ExercisePage() {
                   Set {index + 1}
                 </p>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <p className="mb-2 text-xs text-zinc-500">Weight (kg)</p>
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() => adjustSetWeight(index, -WEIGHT_STEP)}
-                        disabled={set.weight === "" || set.weight <= 0}
-                        aria-label={`Decrease set ${index + 1} weight by 2.5 kilograms`}
-                        className="btn-base absolute left-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white disabled:opacity-40"
-                      >
-                        −
-                      </button>
+                <div
+                  className={
+                    requiresWeight
+                      ? "grid grid-cols-2 gap-3"
+                      : "grid grid-cols-1 gap-3"
+                  }
+                >
+                  {requiresWeight && (
+                    <div>
+                      <p className="mb-2 text-xs text-zinc-500">Weight (kg)</p>
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() => adjustSetWeight(index, -WEIGHT_STEP)}
+                          disabled={set.weight === "" || set.weight <= 0}
+                          aria-label={`Decrease set ${index + 1} weight by 2.5 kilograms`}
+                          className="btn-base absolute left-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white disabled:opacity-40"
+                        >
+                          −
+                        </button>
 
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        placeholder="60"
-                        value={set.weight}
-                        onChange={(e) =>
-                          updateSetWeight(
-                            index,
-                            e.target.value === ""
-                              ? ""
-                              : Number(e.target.value)
-                          )
-                        }
-                        aria-label={`Set ${index + 1} weight in kilograms`}
-                        className="w-full [appearance:textfield] rounded-2xl border border-[#333] bg-[#111] px-11 py-3 text-center text-xl font-semibold text-white outline-none focus:border-lime-400 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                      />
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.5"
+                          placeholder="60"
+                          value={set.weight}
+                          onChange={(e) =>
+                            updateSetWeight(
+                              index,
+                              e.target.value === ""
+                                ? ""
+                                : Number(e.target.value)
+                            )
+                          }
+                          aria-label={`Set ${index + 1} weight in kilograms`}
+                          className="w-full [appearance:textfield] rounded-2xl border border-[#333] bg-[#111] px-11 py-3 text-center text-xl font-semibold text-white outline-none focus:border-lime-400 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                        />
 
-                      <button
-                        type="button"
-                        onClick={() => adjustSetWeight(index, WEIGHT_STEP)}
-                        aria-label={`Increase set ${index + 1} weight by 2.5 kilograms`}
-                        className="btn-base absolute right-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white"
-                      >
-                        +
-                      </button>
+                        <button
+                          type="button"
+                          onClick={() => adjustSetWeight(index, WEIGHT_STEP)}
+                          aria-label={`Increase set ${index + 1} weight by 2.5 kilograms`}
+                          className="btn-base absolute right-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white"
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   <div>
                     <p className="mb-2 text-xs text-zinc-500">Reps</p>
