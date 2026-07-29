@@ -22,9 +22,8 @@ import { useMinimumLoadingDelay } from "@/lib/hooks/useMinimumLoadingDelay";
 import {
   buildWorkoutSets,
   loadWorkoutHistory,
-  workoutDisplayReps,
   workoutSetCount,
-  workoutWeights,
+  workoutTotalReps,
   type WorkoutHistoryEntry,
   type WorkoutSet,
 } from "@/lib/workouts";
@@ -55,24 +54,25 @@ export default function ExercisePage() {
   const BASELINE_REPS = 10;
 
   const sets = workoutSetCount(loggedSets);
-  const reps = workoutDisplayReps(loggedSets);
-  const setWeights = workoutWeights(loggedSets);
+  const totalReps = workoutTotalReps(loggedSets);
 
   function updateSets(newSets: number) {
     setLoggedSets((prev) => {
-      const sharedReps = workoutDisplayReps(prev) || 10;
-      const weights = workoutWeights(prev);
-      return buildWorkoutSets(newSets, sharedReps, weights);
-    });
-  }
+      if (newSets === prev.length) return prev;
+      if (newSets < prev.length) return prev.slice(0, newSets);
 
-  function updateReps(newReps: number) {
-    setLoggedSets((prev) =>
-      prev.map((set) => ({
-        ...set,
-        reps: newReps,
-      }))
-    );
+      const last = prev[prev.length - 1];
+      const defaultReps = last?.reps || 10;
+      const defaultWeight = last?.weight ?? "";
+      const additions: WorkoutSet[] = Array.from(
+        { length: newSets - prev.length },
+        () => ({
+          weight: defaultWeight,
+          reps: defaultReps,
+        })
+      );
+      return [...prev, ...additions];
+    });
   }
 
   function updateSetWeight(index: number, value: number | "") {
@@ -80,6 +80,15 @@ export default function ExercisePage() {
       const next = [...prev];
       if (!next[index]) return prev;
       next[index] = { ...next[index], weight: value };
+      return next;
+    });
+  }
+
+  function updateSetReps(index: number, value: number) {
+    setLoggedSets((prev) => {
+      const next = [...prev];
+      if (!next[index]) return prev;
+      next[index] = { ...next[index], reps: Math.max(1, value) };
       return next;
     });
   }
@@ -195,7 +204,7 @@ export default function ExercisePage() {
 
   const projectedFatigue = Math.round(
     baseFatigue *
-    ((sets * reps) /
+    (totalReps /
       (BASELINE_SETS * BASELINE_REPS))
   );
 
@@ -312,7 +321,7 @@ export default function ExercisePage() {
           </p>
         </div>
 
-        {/* Sets & Reps */}
+        {/* Sets */}
         <div
           className={`rounded-3xl p-5 mb-5 bg-[#111] border ${finalFatigue >= 80
             ? "border-red-500 animate-danger"
@@ -320,131 +329,138 @@ export default function ExercisePage() {
             }`}
         >
           <h2 className="text-2xl mb-6">
-            Sets & Reps
+            Sets
           </h2>
 
-          <div className="flex justify-between">
-            {/* Sets */}
-            <div>
-              <p className="text-zinc-400 mb-3">Sets</p>
+          <div>
+            <p className="text-zinc-400 mb-3">Number of Sets</p>
 
-              <div className="flex items-center gap-4">
-                <button
-                  type="button"
-                  onClick={() =>
-                    updateSets(Math.max(1, sets - 1))
-                  }
-                  disabled={sets <= 1}
-                  aria-label="Decrease sets"
-                  className="btn-base w-12 h-12 rounded-2xl bg-[#222] text-2xl disabled:opacity-40"
-                >
-                  -
-                </button>
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() =>
+                  updateSets(Math.max(1, sets - 1))
+                }
+                disabled={sets <= 1}
+                aria-label="Decrease sets"
+                className="btn-base w-12 h-12 rounded-2xl bg-[#222] text-2xl disabled:opacity-40"
+              >
+                -
+              </button>
 
-                <span className="text-3xl" aria-live="polite">
-                  {sets}
-                </span>
+              <span className="text-3xl" aria-live="polite">
+                {sets}
+              </span>
 
-                <button
-                  type="button"
-                  onClick={() => updateSets(sets + 1)}
-                  aria-label="Increase sets"
-                  className="btn-base w-12 h-12 rounded-2xl bg-[#222] text-2xl"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-
-            {/* Reps */}
-            <div>
-              <p className="text-zinc-400 mb-3">Reps</p>
-
-              <div className="flex items-center gap-4">
-                <button
-                  type="button"
-                  onClick={() =>
-                    updateReps(Math.max(1, reps - 1))
-                  }
-                  disabled={reps <= 1}
-                  aria-label="Decrease reps"
-                  className="btn-base w-12 h-12 rounded-2xl bg-[#222] text-2xl disabled:opacity-40"
-                >
-                  -
-                </button>
-
-                <span className="text-3xl" aria-live="polite">
-                  {reps}
-                </span>
-
-                <button
-                  type="button"
-                  onClick={() => updateReps(reps + 1)}
-                  aria-label="Increase reps"
-                  className="btn-base w-12 h-12 rounded-2xl bg-[#222] text-2xl"
-                >
-                  +
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => updateSets(sets + 1)}
+                aria-label="Increase sets"
+                className="btn-base w-12 h-12 rounded-2xl bg-[#222] text-2xl"
+              >
+                +
+              </button>
             </div>
           </div>
 
-          <div className="mt-8">
-            <p className="text-zinc-400 mb-3">
-              Weight Per Set (kg)
-            </p>
+          <div className="mt-8 space-y-3">
+            {loggedSets.map((set, index) => (
+              <div
+                key={index}
+                className="rounded-2xl border border-[#333] bg-[#1a1a1a] p-4"
+              >
+                <p className="mb-4 text-sm font-medium text-zinc-400">
+                  Set {index + 1}
+                </p>
 
-            <div className="space-y-3">
-              {setWeights.map((setWeight, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-3"
-                >
-                  <span className="w-14 shrink-0 text-sm text-zinc-400">
-                    Set {index + 1}
-                  </span>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="mb-2 text-xs text-zinc-500">Weight (kg)</p>
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => adjustSetWeight(index, -WEIGHT_STEP)}
+                        disabled={set.weight === "" || set.weight <= 0}
+                        aria-label={`Decrease set ${index + 1} weight by 2.5 kilograms`}
+                        className="btn-base absolute left-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white disabled:opacity-40"
+                      >
+                        −
+                      </button>
 
-                  <div className="relative flex-1">
-                    <button
-                      type="button"
-                      onClick={() => adjustSetWeight(index, -WEIGHT_STEP)}
-                      disabled={setWeight === "" || setWeight <= 0}
-                      aria-label={`Decrease set ${index + 1} weight by 2.5 kilograms`}
-                      className="btn-base absolute left-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-lg font-semibold text-white disabled:opacity-40"
-                    >
-                      −
-                    </button>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.5"
+                        placeholder="60"
+                        value={set.weight}
+                        onChange={(e) =>
+                          updateSetWeight(
+                            index,
+                            e.target.value === ""
+                              ? ""
+                              : Number(e.target.value)
+                          )
+                        }
+                        aria-label={`Set ${index + 1} weight in kilograms`}
+                        className="w-full [appearance:textfield] rounded-2xl border border-[#333] bg-[#111] px-11 py-3 text-center text-xl font-semibold text-white outline-none focus:border-lime-400 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      />
 
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.5"
-                      placeholder="e.g. 60"
-                      value={setWeight}
-                      onChange={(e) =>
-                        updateSetWeight(
-                          index,
-                          e.target.value === ""
-                            ? ""
-                            : Number(e.target.value)
-                        )
-                      }
-                      aria-label={`Set ${index + 1} weight in kilograms`}
-                      className="w-full [appearance:textfield] rounded-2xl border border-[#333] bg-[#1a1a1a] px-14 py-4 text-center text-2xl font-semibold text-white outline-none focus:border-lime-400 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                    />
+                      <button
+                        type="button"
+                        onClick={() => adjustSetWeight(index, WEIGHT_STEP)}
+                        aria-label={`Increase set ${index + 1} weight by 2.5 kilograms`}
+                        className="btn-base absolute right-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
 
-                    <button
-                      type="button"
-                      onClick={() => adjustSetWeight(index, WEIGHT_STEP)}
-                      aria-label={`Increase set ${index + 1} weight by 2.5 kilograms`}
-                      className="btn-base absolute right-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-lg font-semibold text-white"
-                    >
-                      +
-                    </button>
+                  <div>
+                    <p className="mb-2 text-xs text-zinc-500">Reps</p>
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          updateSetReps(index, Math.max(1, set.reps - 1))
+                        }
+                        disabled={set.reps <= 1}
+                        aria-label={`Decrease set ${index + 1} reps`}
+                        className="btn-base absolute left-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white disabled:opacity-40"
+                      >
+                        −
+                      </button>
+
+                      <input
+                        type="number"
+                        min="1"
+                        step="1"
+                        value={set.reps}
+                        onChange={(e) =>
+                          updateSetReps(
+                            index,
+                            e.target.value === ""
+                              ? 1
+                              : Number(e.target.value)
+                          )
+                        }
+                        aria-label={`Set ${index + 1} reps`}
+                        className="w-full [appearance:textfield] rounded-2xl border border-[#333] bg-[#111] px-11 py-3 text-center text-xl font-semibold text-white outline-none focus:border-lime-400 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => updateSetReps(index, set.reps + 1)}
+                        aria-label={`Increase set ${index + 1} reps`}
+                        className="btn-base absolute right-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white"
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -473,7 +489,7 @@ export default function ExercisePage() {
                     muscle,
                     Math.round(
                       Number(value) *
-                      ((sets * reps) /
+                      (totalReps /
                         (BASELINE_SETS * BASELINE_REPS))
                     ),
                   ]
