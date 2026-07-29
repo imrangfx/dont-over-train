@@ -7,6 +7,7 @@ export const chest = {
   name: "Decline Push-Up",
   bodyPart: "Chest",
   section: "upper-chest",
+  requiresWeight: false,
   fatigue: {
     upperChest: 14,
     midChest: 6,
@@ -23,6 +24,7 @@ export const chest = {
     bodyPart: "Chest",
     section: "upper-chest",
     image: "/exercise/chest/incline-dumbbell-press.webp",
+    requiresWeight: true,
     fatigue: {
       upperChest: 15,
       midChest: 6,
@@ -38,6 +40,7 @@ export const chest = {
     name: "Incline Barbell Press",
     bodyPart: "Chest",
     section: "upper-chest",
+    requiresWeight: true,
     fatigue: {
       upperChest: 18,
       midChest: 8,
@@ -53,6 +56,7 @@ export const chest = {
     name: "Incline Smith Press",
     bodyPart: "Chest",
     section: "upper-chest",
+    requiresWeight: true,
     fatigue: {
       upperChest: 16,
       midChest: 6,
@@ -68,6 +72,7 @@ export const chest = {
     name: "Low to High Cable Crossover",
     bodyPart: "Chest",
     section: "upper-chest",
+    requiresWeight: true,
     fatigue: {
       upperChest: 12,
       midChest: 3,
@@ -80,6 +85,7 @@ export const chest = {
     name: "Incline Hammer Press",
     bodyPart: "Chest",
     section: "upper-chest",
+    requiresWeight: true,
     fatigue: {
       upperChest: 15,
       midChest: 6,
@@ -95,6 +101,7 @@ export const chest = {
     name: "Incline Machine Press",
     bodyPart: "Chest",
     section: "upper-chest",
+    requiresWeight: true,
     fatigue: {
       upperChest: 14,
       midChest: 6,
@@ -110,6 +117,7 @@ export const chest = {
     name: "Incline Cable Fly",
     bodyPart: "Chest",
     section: "upper-chest",
+    requiresWeight: true,
     fatigue: {
       upperChest: 14,
       midChest: 4,
@@ -126,6 +134,7 @@ export const chest = {
   name: "Push-Up",
   bodyPart: "Chest",
   section: "mid-chest",
+  requiresWeight: false,
   fatigue: {
     upperChest: 4,
     midChest: 15,
@@ -141,6 +150,7 @@ export const chest = {
   name: "Wide Push-Up",
   bodyPart: "Chest",
   section: "mid-chest",
+  requiresWeight: false,
   fatigue: {
     upperChest: 3,
     midChest: 17,
@@ -156,6 +166,7 @@ export const chest = {
     name: "Machine Chest Press",
     bodyPart: "Chest",
     section: "mid-chest",
+    requiresWeight: true,
     fatigue: {
       upperChest: 4,
       midChest: 16,
@@ -171,6 +182,7 @@ export const chest = {
     name: "Dumbell Hex Press",
     bodyPart: "Chest",
     section: "mid-chest",
+    requiresWeight: true,
     fatigue: {
       midChest: 17,
       frontDelts: 5,
@@ -184,6 +196,7 @@ export const chest = {
     name: "Cable Press",
     bodyPart: "Chest",
     section: "mid-chest",
+    requiresWeight: true,
     fatigue: {
       upperChest: 4,
       midChest: 14,
@@ -199,6 +212,7 @@ export const chest = {
     name: "Dumbbell Bench Press",
     bodyPart: "Chest",
     section: "mid-chest",
+    requiresWeight: true,
     fatigue: {
       upperChest: 4,
       midChest: 16,
@@ -214,6 +228,7 @@ export const chest = {
     name: "Barbell Bench Press",
     bodyPart: "Chest",
     section: "mid-chest",
+    requiresWeight: true,
     fatigue: {
       upperChest: 4,
       midChest: 18,
@@ -229,6 +244,7 @@ export const chest = {
     name: "Hammer Strength Press",
     bodyPart: "Chest",
     section: "mid-chest",
+    requiresWeight: true,
     fatigue: {
       upperChest: 5,
       midChest: 16,
@@ -244,6 +260,7 @@ export const chest = {
     name: "Smith Machine Bench Press",
     bodyPart: "Chest",
     section: "mid-chest",
+    requiresWeight: true,
     fatigue: {
       upperChest: 4,
       midChest: 16,
@@ -259,6 +276,7 @@ export const chest = {
   name: "Dumbbell Chest Fly",
   bodyPart: "Chest",
   section: "mid-chest",
+  requiresWeight: true,
   fatigue: {
     upperChest: 3,
     midChest: 15,
@@ -271,6 +289,7 @@ export const chest = {
     name: "Pec Deck Fly",
     bodyPart: "Chest",
     section: "mid-chest",
+    requiresWeight: true,
     fatigue: {
       upperChest: 3,
       midChest: 14,
@@ -287,6 +306,7 @@ export const chest = {
     name: "Decline Barbell Press",
     bodyPart: "Chest",
     section: "lower-chest",
+    requiresWeight: true,
     fatigue: {
       upperChest: 1,
       midChest: 6,
@@ -302,6 +322,7 @@ export const chest = {
   name: "Incline Push-Up",
   bodyPart: "Chest",
   section: "lower-chest",
+  requiresWeight: false,
   fatigue: {
     upperChest: 1,
     midChest: 6,
@@ -317,6 +338,7 @@ export const chest = {
     name: "Decline Dumbbell Press",
     bodyPart: "Chest",
     section: "lower-chest",
+    requiresWeight: true,
     fatigue: {
       upperChest: 1,
       midChest: 6,
@@ -332,6 +354,7 @@ export const chest = {
     name: "Chest Dips",
     bodyPart: "Chest",
     section: "lower-chest",
+    requiresWeight: false,
     fatigue: {
       upperChest: 1,
       midChest: 6,
@@ -347,6 +370,7 @@ export const chest = {
     name: "High To Low Cable Fly",
     bodyPart: "Chest",
     section: "lower-chest",
+    requiresWeight: true,
     fatigue: {
       upperChest: 1,
       midChest: 4,
@@ -359,6 +383,7 @@ export const chest = {
     name: "Decline Smith Press",
     bodyPart: "Chest",
     section: "lower-chest",
+    requiresWeight: true,
     fatigue: {
       upperChest: 1,
       midChest: 5,
@@ -374,6 +399,7 @@ export const chest = {
     name: "Straight Bar Dips",
     bodyPart: "Chest",
     section: "lower-chest",
+    requiresWeight: false,
     fatigue: {
       upperChest: 1,
       midChest: 5,
@@ -389,6 +415,7 @@ export const chest = {
     name: "Assisted Dips",
     bodyPart: "Chest",
     section: "lower-chest",
+    requiresWeight: false,
     fatigue: {
       upperChest: 1,
       midChest: 4,

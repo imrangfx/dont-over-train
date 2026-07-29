@@ -7,6 +7,7 @@ export const shoulders = {
   name: "Barbell Overhead Press",
   bodyPart: "Shoulders",
   section: "front-delts",
+  requiresWeight: true,
   fatigue: {
     frontDelts: 18,
     sideDelts: 6,
@@ -20,6 +21,7 @@ export const shoulders = {
   name: "Dumbbell Overhead Press",
   bodyPart: "Shoulders",
   section: "front-delts",
+  requiresWeight: true,
   fatigue: {
     frontDelts: 17,
     sideDelts: 7,
@@ -33,6 +35,7 @@ export const shoulders = {
   name: "Arnold Press",
   bodyPart: "Shoulders",
   section: "front-delts",
+  requiresWeight: true,
   fatigue: {
     frontDelts: 18,
     sideDelts: 8,
@@ -46,6 +49,7 @@ export const shoulders = {
   name: "Machine Shoulder Press",
   bodyPart: "Shoulders",
   section: "front-delts",
+  requiresWeight: true,
   fatigue: {
     frontDelts: 17,
     sideDelts: 6,
@@ -59,6 +63,7 @@ export const shoulders = {
   name: "Smith Overhead Press",
   bodyPart: "Shoulders",
   section: "front-delts",
+  requiresWeight: true,
   fatigue: {
     frontDelts: 17,
     sideDelts: 6,
@@ -72,6 +77,7 @@ export const shoulders = {
   name: "Landmine Shoulder Press",
   bodyPart: "Shoulders",
   section: "front-delts",
+  requiresWeight: true,
   fatigue: {
     frontDelts: 15,
     sideDelts: 5,
@@ -85,6 +91,7 @@ export const shoulders = {
   name: "Single Arm Dumbbell Press",
   bodyPart: "Shoulders",
   section: "front-delts",
+  requiresWeight: true,
   fatigue: {
     frontDelts: 16,
     sideDelts: 6,
@@ -98,6 +105,7 @@ export const shoulders = {
   name: "Seated Barbell Press",
   bodyPart: "Shoulders",
   section: "front-delts",
+  requiresWeight: true,
   fatigue: {
     frontDelts: 18,
     sideDelts: 6,
@@ -111,6 +119,7 @@ export const shoulders = {
   name: "Seated Dumbbell Press",
   bodyPart: "Shoulders",
   section: "front-delts",
+  requiresWeight: true,
   fatigue: {
     frontDelts: 17,
     sideDelts: 7,
@@ -124,6 +133,7 @@ export const shoulders = {
   name: "Push Press",
   bodyPart: "Shoulders",
   section: "front-delts",
+  requiresWeight: true,
   fatigue: {
     frontDelts: 18,
     sideDelts: 6,
@@ -140,6 +150,7 @@ export const shoulders = {
   name: "Dumbbell Lateral Raise",
   bodyPart: "Shoulders",
   section: "side-delts",
+  requiresWeight: true,
   fatigue: {
     sideDelts: 18,
     frontDelts: 2,
@@ -150,6 +161,7 @@ export const shoulders = {
   name: "Cable Lateral Raise",
   bodyPart: "Shoulders",
   section: "side-delts",
+  requiresWeight: true,
   fatigue: {
     sideDelts: 18,
     frontDelts: 1,
@@ -160,6 +172,7 @@ export const shoulders = {
   name: "Machine Lateral Raise",
   bodyPart: "Shoulders",
   section: "side-delts",
+  requiresWeight: true,
   fatigue: {
     sideDelts: 17,
   },
@@ -169,6 +182,7 @@ export const shoulders = {
   name: "Leaning Cable Lateral Raise",
   bodyPart: "Shoulders",
   section: "side-delts",
+  requiresWeight: true,
   fatigue: {
     sideDelts: 18,
   },
@@ -178,6 +192,7 @@ export const shoulders = {
   name: "Single Arm Lateral Raise",
   bodyPart: "Shoulders",
   section: "side-delts",
+  requiresWeight: true,
   fatigue: {
     sideDelts: 17,
   },
@@ -187,6 +202,7 @@ export const shoulders = {
   name: "Seated Lateral Raise",
   bodyPart: "Shoulders",
   section: "side-delts",
+  requiresWeight: true,
   fatigue: {
     sideDelts: 17,
   },
@@ -196,6 +212,7 @@ export const shoulders = {
   name: "Incline Lateral Raise",
   bodyPart: "Shoulders",
   section: "side-delts",
+  requiresWeight: true,
   fatigue: {
     sideDelts: 17,
   },
@@ -205,6 +222,7 @@ export const shoulders = {
   name: "Behind The Back Cable Lateral Raise",
   bodyPart: "Shoulders",
   section: "side-delts",
+  requiresWeight: true,
   fatigue: {
     sideDelts: 18,
   },
@@ -214,6 +232,7 @@ export const shoulders = {
   name: "Resistance Band Lateral Raise",
   bodyPart: "Shoulders",
   section: "side-delts",
+  requiresWeight: true,
   fatigue: {
     sideDelts: 15,
   },
@@ -223,6 +242,7 @@ export const shoulders = {
   name: "Partial Lateral Raise",
   bodyPart: "Shoulders",
   section: "side-delts",
+  requiresWeight: true,
   fatigue: {
     sideDelts: 16,
   },
@@ -235,6 +255,7 @@ export const shoulders = {
   name: "Face Pull",
   bodyPart: "Shoulders",
   section: "rear-delts",
+  requiresWeight: true,
   fatigue: {
     rearDelts: 16,
     upperBack: 7,
@@ -245,6 +266,7 @@ export const shoulders = {
   name: "Bent Over Dumbbell Reverse Fly",
   bodyPart: "Shoulders",
   section: "rear-delts",
+  requiresWeight: true,
   fatigue: {
     rearDelts: 17,
     upperBack: 5,
@@ -255,6 +277,7 @@ export const shoulders = {
   name: "Cable Rear Delt Fly",
   bodyPart: "Shoulders",
   section: "rear-delts",
+  requiresWeight: true,
   fatigue: {
     rearDelts: 18,
   },
@@ -264,6 +287,7 @@ export const shoulders = {
   name: "Reverse Cable Cross",
   bodyPart: "Shoulders",
   section: "rear-delts",
+  requiresWeight: true,
   fatigue: {
     rearDelts: 17,
   },
@@ -273,6 +297,7 @@ export const shoulders = {
   name: "Machine Rear Delt Fly",
   bodyPart: "Shoulders",
   section: "rear-delts",
+  requiresWeight: true,
   fatigue: {
     rearDelts: 18,
   },
@@ -282,6 +307,7 @@ export const shoulders = {
   name: "Incline Rear Delt Raise",
   bodyPart: "Shoulders",
   section: "rear-delts",
+  requiresWeight: true,
   fatigue: {
     rearDelts: 17,
   },
@@ -291,6 +317,7 @@ export const shoulders = {
   name: "Band Pull Apart",
   bodyPart: "Shoulders",
   section: "rear-delts",
+  requiresWeight: true,
   fatigue: {
     rearDelts: 15,
     upperBack: 5,

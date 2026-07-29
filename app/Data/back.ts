@@ -8,6 +8,7 @@ export const back = {
     name: "Face Pull",
     bodyPart: "Back",
     section: "upper-back",
+    requiresWeight: true,
     fatigue: {
       upperBack: 18,
       rearDelts: 12,
@@ -18,6 +19,7 @@ export const back = {
     name: "Seal Row",
     bodyPart: "Back",
     section: "upper-back",
+    requiresWeight: true,
     fatigue: {
       upperBack: 18,
       lats: 6,
@@ -32,6 +34,7 @@ export const back = {
     name: "High Row",
     bodyPart: "Back",
     section: "upper-back",
+    requiresWeight: true,
     fatigue: {
       upperBack: 17,
       rearDelts: 8,
@@ -44,6 +47,7 @@ export const back = {
     name: "Wide Grip Seated Row",
     bodyPart: "Back",
     section: "upper-back",
+    requiresWeight: true,
     fatigue: {
       upperBack: 17,
       lats: 6,
@@ -55,6 +59,7 @@ export const back = {
     name: "Rear Delt Row",
     bodyPart: "Back",
     section: "upper-back",
+    requiresWeight: true,
     fatigue: {
       upperBack: 16,
       rearDelts: 10,
@@ -70,6 +75,7 @@ export const back = {
     name: "Wide Grip Pull Up",
     bodyPart: "Back",
     section: "lats",
+    requiresWeight: false,
     fatigue: {
       lats: 18,
       upperBack: 5,
@@ -84,6 +90,7 @@ export const back = {
     name: "Lat Pulldown",
     bodyPart: "Back",
     section: "lats",
+    requiresWeight: true,
     fatigue: {
       lats: 17,
       upperBack: 5,
@@ -97,6 +104,7 @@ export const back = {
     name: "Close Grip Pulldown",
     bodyPart: "Back",
     section: "lats",
+    requiresWeight: true,
     fatigue: {
       lats: 16,
       upperBack: 4,
@@ -111,6 +119,7 @@ export const back = {
     name: "Straight Arm Pulldown",
     bodyPart: "Back",
     section: "lats",
+    requiresWeight: true,
     fatigue: {
       lats: 18,
       upperBack: 2,
@@ -121,6 +130,7 @@ export const back = {
     name: "Single Arm Lat Pulldown",
     bodyPart: "Back",
     section: "lats",
+    requiresWeight: true,
     fatigue: {
       lats: 17,
       upperBack: 4,
@@ -136,6 +146,7 @@ export const back = {
     name: "Barbell Row",
     bodyPart: "Back",
     section: "mid-back",
+    requiresWeight: true,
     fatigue: {
       upperBack: 16,
       midBack: 18,
@@ -152,6 +163,7 @@ export const back = {
     name: "T Bar Row",
     bodyPart: "Back",
     section: "mid-back",
+    requiresWeight: true,
     fatigue: {
       midBack: 18,
       upperBack: 15,
@@ -165,6 +177,7 @@ export const back = {
     name: "Chest Supported Row",
     bodyPart: "Back",
     section: "mid-back",
+    requiresWeight: true,
     fatigue: {
       midBack: 18,
       upperBack: 15,
@@ -177,6 +190,7 @@ export const back = {
     name: "Seated Cable Row",
     bodyPart: "Back",
     section: "mid-back",
+    requiresWeight: true,
     fatigue: {
       midBack: 17,
       upperBack: 14,
@@ -193,6 +207,7 @@ export const back = {
     name: "Deadlift",
     bodyPart: "Back",
     section: "lower-back",
+    requiresWeight: true,
     fatigue: {
       lowerBack: 20,
       upperBack: 10,
@@ -206,6 +221,7 @@ export const back = {
     name: "Romanian Deadlift",
     bodyPart: "Back",
     section: "lower-back",
+    requiresWeight: true,
     fatigue: {
       lowerBack: 18,
       glutes: 10,
@@ -217,6 +233,7 @@ export const back = {
     name: "Back Extension",
     bodyPart: "Back",
     section: "lower-back",
+    requiresWeight: false,
     fatigue: {
       lowerBack: 18,
       glutes: 8,
@@ -228,6 +245,7 @@ export const back = {
     name: "Good Morning",
     bodyPart: "Back",
     section: "lower-back",
+    requiresWeight: true,
     fatigue: {
       lowerBack: 16,
       glutes: 10,
@@ -239,6 +257,7 @@ export const back = {
     name: "Rack Pull",
     bodyPart: "Back",
     section: "lower-back",
+    requiresWeight: true,
     fatigue: {
       lowerBack: 18,
       upperBack: 10,

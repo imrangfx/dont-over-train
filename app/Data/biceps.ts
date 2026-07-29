@@ -7,6 +7,7 @@ export const biceps = {
     name: "Incline Dumbbell Curl",
     bodyPart: "Biceps",
     section: "long-head",
+    requiresWeight: true,
     fatigue: {
       "Long Head Biceps": 14,
       "Short Head Biceps": 2,
@@ -19,6 +20,7 @@ export const biceps = {
     name: "Bayesian Cable Curl",
     bodyPart: "Biceps",
     section: "long-head",
+    requiresWeight: true,
     fatigue: {
       "Long Head Biceps": 15,
       "Short Head Biceps": 2,
@@ -31,6 +33,7 @@ export const biceps = {
     name: "Close Grip Barbell Curl",
     bodyPart: "Biceps",
     section: "long-head",
+    requiresWeight: true,
     fatigue: {
       "Long Head Biceps": 14,
       "Short Head Biceps": 2,
@@ -43,6 +46,7 @@ export const biceps = {
     name: "Standing Dumbbell Curl",
     bodyPart: "Biceps",
     section: "long-head",
+    requiresWeight: true,
     fatigue: {
       "Long Head Biceps": 12,
       "Short Head Biceps": 3,
@@ -55,6 +59,7 @@ export const biceps = {
     name: "Alternating Dumbbell Curl",
     bodyPart: "Biceps",
     section: "long-head",
+    requiresWeight: true,
     fatigue: {
       "Long Head Biceps": 12,
       "Short Head Biceps": 3,
@@ -67,6 +72,7 @@ export const biceps = {
     name: "Single Arm Cable Curl",
     bodyPart: "Biceps",
     section: "long-head",
+    requiresWeight: true,
     fatigue: {
       "Long Head Biceps": 13,
       "Short Head Biceps": 2,
@@ -79,6 +85,7 @@ export const biceps = {
     name: "Rope Cable Curl",
     bodyPart: "Biceps",
     section: "long-head",
+    requiresWeight: true,
     fatigue: {
       "Long Head Biceps": 12,
       "Short Head Biceps": 2,
@@ -91,6 +98,7 @@ export const biceps = {
     name: "Seated Incline Dumbbell Curl",
     bodyPart: "Biceps",
     section: "long-head",
+    requiresWeight: true,
     fatigue: {
       "Long Head Biceps": 15,
       "Short Head Biceps": 2,
@@ -103,6 +111,7 @@ export const biceps = {
     name: "EZ Bar Close Grip Curl",
     bodyPart: "Biceps",
     section: "long-head",
+    requiresWeight: true,
     fatigue: {
       "Long Head Biceps": 13,
       "Short Head Biceps": 2,
@@ -119,6 +128,7 @@ export const biceps = {
     name: "Preacher Curl",
     bodyPart: "Biceps",
     section: "short-head",
+    requiresWeight: true,
     fatigue: {
       "Short Head Biceps": 14,
       "Long Head Biceps": 2,
@@ -131,6 +141,7 @@ export const biceps = {
     name: "Spider Curl",
     bodyPart: "Biceps",
     section: "short-head",
+    requiresWeight: true,
     fatigue: {
       "Short Head Biceps": 15,
       "Long Head Biceps": 2,
@@ -143,6 +154,7 @@ export const biceps = {
     name: "Concentration Curl",
     bodyPart: "Biceps",
     section: "short-head",
+    requiresWeight: true,
     fatigue: {
       "Short Head Biceps": 15,
       "Long Head Biceps": 2,
@@ -155,6 +167,7 @@ export const biceps = {
     name: "Wide Grip Barbell Curl",
     bodyPart: "Biceps",
     section: "short-head",
+    requiresWeight: true,
     fatigue: {
       "Short Head Biceps": 13,
       "Long Head Biceps": 2,
@@ -167,6 +180,7 @@ export const biceps = {
     name: "Machine Biceps Curl",
     bodyPart: "Biceps",
     section: "short-head",
+    requiresWeight: true,
     fatigue: {
       "Short Head Biceps": 13,
       "Long Head Biceps": 2,
@@ -179,6 +193,7 @@ export const biceps = {
     name: "Cable Preacher Curl",
     bodyPart: "Biceps",
     section: "short-head",
+    requiresWeight: true,
     fatigue: {
       "Short Head Biceps": 13,
       "Long Head Biceps": 2,
@@ -191,6 +206,7 @@ export const biceps = {
     name: "High Cable Curl",
     bodyPart: "Biceps",
     section: "short-head",
+    requiresWeight: true,
     fatigue: {
       "Short Head Biceps": 14,
       "Long Head Biceps": 2,
@@ -203,6 +219,7 @@ export const biceps = {
     name: "Dumbbell Preacher Curl",
     bodyPart: "Biceps",
     section: "short-head",
+    requiresWeight: true,
     fatigue: {
       "Short Head Biceps": 13,
       "Long Head Biceps": 2,
@@ -215,6 +232,7 @@ export const biceps = {
     name: "Scott Curl",
     bodyPart: "Biceps",
     section: "short-head",
+    requiresWeight: true,
     fatigue: {
       "Short Head Biceps": 14,
       "Long Head Biceps": 2,
@@ -227,6 +245,7 @@ export const biceps = {
     name: "Seated Dumbbell Curl",
     bodyPart: "Biceps",
     section: "short-head",
+    requiresWeight: true,
     fatigue: {
       "Short Head Biceps": 12,
       "Long Head Biceps": 3,
@@ -243,6 +262,7 @@ export const biceps = {
     name: "Hammer Curl",
     bodyPart: "Biceps",
     section: "brachialis",
+    requiresWeight: true,
     fatigue: {
       Brachialis: 10,
       Brachioradialis: 6,
@@ -255,6 +275,7 @@ export const biceps = {
     name: "Cross Body Hammer Curl",
     bodyPart: "Biceps",
     section: "brachialis",
+    requiresWeight: true,
     fatigue: {
       Brachialis: 11,
       Brachioradialis: 5,
@@ -267,6 +288,7 @@ export const biceps = {
     name: "Rope Hammer Curl",
     bodyPart: "Biceps",
     section: "brachialis",
+    requiresWeight: true,
     fatigue: {
       Brachialis: 10,
       Brachioradialis: 5,
@@ -279,6 +301,7 @@ export const biceps = {
     name: "Reverse EZ Curl",
     bodyPart: "Biceps",
     section: "brachialis",
+    requiresWeight: true,
     fatigue: {
       Brachioradialis: 10,
       Brachialis: 6,
@@ -291,6 +314,7 @@ export const biceps = {
     name: "Reverse Barbell Curl",
     bodyPart: "Biceps",
     section: "brachialis",
+    requiresWeight: true,
     fatigue: {
       Brachioradialis: 10,
       Brachialis: 6,
@@ -303,6 +327,7 @@ export const biceps = {
     name: "Reverse Cable Curl",
     bodyPart: "Biceps",
     section: "brachialis",
+    requiresWeight: true,
     fatigue: {
       Brachioradialis: 9,
       Brachialis: 6,
@@ -315,6 +340,7 @@ export const biceps = {
     name: "Dumbbell Reverse Curl",
     bodyPart: "Biceps",
     section: "brachialis",
+    requiresWeight: true,
     fatigue: {
       Brachioradialis: 9,
       Brachialis: 6,
@@ -327,6 +353,7 @@ export const biceps = {
     name: "Zottman Curl",
     bodyPart: "Biceps",
     section: "brachialis",
+    requiresWeight: true,
     fatigue: {
       Brachialis: 8,
       Brachioradialis: 8,
@@ -339,6 +366,7 @@ export const biceps = {
     name: "Neutral Grip Cable Curl",
     bodyPart: "Biceps",
     section: "brachialis",
+    requiresWeight: true,
     fatigue: {
       Brachialis: 10,
       Brachioradialis: 5,
@@ -351,6 +379,7 @@ export const biceps = {
     name: "Machine Hammer Curl",
     bodyPart: "Biceps",
     section: "brachialis",
+    requiresWeight: true,
     fatigue: {
       Brachialis: 10,
       Brachioradialis: 5,
