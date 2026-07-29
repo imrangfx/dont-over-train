@@ -8,7 +8,7 @@ import {
   getActiveWorkoutSession,
   startWorkoutSession,
 } from "@/lib/workoutSession";
-import type { InProgressWorkoutItem } from "@/lib/workouts";
+import { normalizeInProgressList } from "@/lib/workouts";
 
 export default function StartWorkoutPage() {
   const router = useRouter();
@@ -19,11 +19,7 @@ export default function StartWorkoutPage() {
   useEffect(() => {
     const saved = localStorage.getItem("currentWorkout");
     const parsed = saved ? JSON.parse(saved) : null;
-    const list: InProgressWorkoutItem[] = parsed
-      ? Array.isArray(parsed)
-        ? parsed
-        : [parsed]
-      : [];
+    const list = normalizeInProgressList(parsed);
 
     queueMicrotask(() => {
       // Active session → resume the live workout, never re-show Start.

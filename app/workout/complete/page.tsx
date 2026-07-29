@@ -7,14 +7,20 @@ import {
   calculateCurrentStreak,
   getCurrentUserId,
   loadWorkoutHistory,
+  normalizeInProgressList,
   saveWorkoutHistoryEntry,
   saveWorkoutHistoryEntryLocally,
+  toLegacyExerciseFields,
+  workoutDisplayReps,
+  workoutSetCount,
+  workoutTotalReps,
+  workoutWeights,
   type WorkoutHistoryEntry,
+  type InProgressWorkoutItem,
 } from "@/lib/workouts";
 import { recordWorkoutPersonalRecords } from "@/lib/personalRecords";
 import { calculateBodyPartLevel } from "@/lib/bodyPartProgression";
 import { buildPersonalRecordShareCard, type ShareCardData } from "@/lib/shareCard";
-import { type InProgressWorkoutItem } from "@/lib/workouts";
 import {
   clearCompletedWorkoutSummary,
   completeWorkoutSession,
@@ -29,7 +35,7 @@ import ShareCardModal from "@/components/ShareCardModal";
 
 /** Best (highest) weight lifted for a single exercise this session. */
 function maxWeightLifted(item: InProgressWorkoutItem): number {
-  const weights = Array.isArray(item.setWeights) ? item.setWeights : [];
+  const weights = workoutWeights(item.sets);
   const numeric = weights.filter(
     (w: unknown): w is number => typeof w === "number" && w > 0
   );
@@ -61,9 +67,7 @@ export default function CompletePage() {
   useEffect(() => {
     const existingSession = getActiveWorkoutSession();
     const saved = JSON.parse(localStorage.getItem("currentWorkout") || "[]");
-    const fromStorage: InProgressWorkoutItem[] = Array.isArray(saved)
-      ? saved
-      : [saved];
+    const fromStorage = normalizeInProgressList(saved);
 
     // Already finished (session cleared) — restore summary draft if present.
     // Never send the user back to Start Workout for a completed session.
@@ -71,7 +75,7 @@ export default function CompletePage() {
       const draft = getCompletedWorkoutSummary();
       if (draft && Array.isArray(draft.exercises) && draft.exercises.length > 0) {
         queueMicrotask(() => {
-          setWorkouts(draft.exercises as InProgressWorkoutItem[]);
+          setWorkouts(normalizeInProgressList(draft.exercises));
           setDurationMinutes(draft.durationMinutes);
           setReady(true);
         });
@@ -93,13 +97,12 @@ export default function CompletePage() {
     const durationMinutes = getSessionDurationMinutes(startedAt, endedAt);
 
     const totalSetsHistory = formatted.reduce(
-      (acc, item) => acc + item.sets,
+      (acc, item) => acc + workoutSetCount(item.sets),
       0
     );
 
     const totalRepsHistory = formatted.reduce(
-      (acc, item) =>
-        acc + item.sets * item.reps,
+      (acc, item) => acc + workoutTotalReps(item.sets),
       0
     );
 
@@ -152,15 +155,18 @@ export default function CompletePage() {
         )
       ),
 
-      exerciseList: formatted.map((item) => ({
-        name: item.exercise,
-        bodyPart: item.bodyPart,
-        section: item.section || "",
-        sets: item.sets,
-        reps: item.reps,
-        weights: item.setWeights || [],
-        fatigueBreakdown: item.fatigueBreakdown || {},
-      })),
+      exerciseList: formatted.map((item) => {
+        const legacy = toLegacyExerciseFields(item.sets);
+        return {
+          name: item.exercise,
+          bodyPart: item.bodyPart,
+          section: item.section || "",
+          sets: legacy.sets,
+          reps: legacy.reps,
+          weights: legacy.weights,
+          fatigueBreakdown: item.fatigueBreakdown || {},
+        };
+      }),
       fatigueBreakdown: fatigueTotals,
     };
 
@@ -317,12 +323,12 @@ export default function CompletePage() {
   }
 
   const totalSets = workouts.reduce(
-    (acc, item) => acc + item.sets,
+    (acc, item) => acc + workoutSetCount(item.sets),
     0
   );
 
   const totalReps = workouts.reduce(
-    (acc, item) => acc + item.sets * item.reps,
+    (acc, item) => acc + workoutTotalReps(item.sets),
     0
   );
 
@@ -448,14 +454,15 @@ export default function CompletePage() {
                 </h3>
 
                 <p className="text-zinc-400">
-                  {item.sets} sets × {item.reps} reps
+                  {workoutSetCount(item.sets)} sets ×{" "}
+                  {workoutDisplayReps(item.sets)} reps
                 </p>
 
-                {item.setWeights?.some((w: number | "") => w !== "") ? (
+                {workoutWeights(item.sets).some((w) => w !== "") ? (
                   <p className="mt-1 text-sm text-zinc-500">
                     Weights:{" "}
-                    {item.setWeights
-                      .map((w: number | "") => (w === "" ? "-" : `${w}kg`))
+                    {workoutWeights(item.sets)
+                      .map((w) => (w === "" ? "-" : `${w}kg`))
                       .join(" • ")}
                   </p>
                 ) : item.weight ? (

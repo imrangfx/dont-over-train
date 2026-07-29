@@ -10,7 +10,14 @@ import { triceps } from "@/app/Data/triceps";
 import { shoulders } from "@/app/Data/shoulders";
 import { legs } from "@/app/Data/legs";
 import { abs } from "@/app/Data/abs";
-import { recoveryHoursForFatigue, type InProgressWorkoutItem } from "@/lib/workouts";
+import {
+  normalizeInProgressList,
+  recoveryHoursForFatigue,
+  workoutDisplayReps,
+  workoutSetCount,
+  workoutWeights,
+  type InProgressWorkoutItem,
+} from "@/lib/workouts";
 import {
   formatElapsedClock,
   getActiveWorkoutSession,
@@ -30,11 +37,7 @@ export default function SessionPage() {
   useEffect(() => {
     const saved = localStorage.getItem("currentWorkout");
     const parsed = saved ? JSON.parse(saved) : null;
-    const list: InProgressWorkoutItem[] = parsed
-      ? Array.isArray(parsed)
-        ? parsed
-        : [parsed]
-      : [];
+    const list = normalizeInProgressList(parsed);
     const active = getActiveWorkoutSession();
 
     // Deferred to a microtask so this effect never calls setState
@@ -95,7 +98,7 @@ export default function SessionPage() {
     ).forEach(([muscle, value]) => {
       const adjustedValue = Math.round(
         value *
-        ((item.sets * item.reps) /
+        ((workoutSetCount(item.sets) * workoutDisplayReps(item.sets)) /
           (3 * 10))
       );
 
@@ -202,13 +205,14 @@ export default function SessionPage() {
                   </h3>
 
                   <p className="text-zinc-400">
-                    {exercise.sets} sets × {exercise.reps} reps
+                    {workoutSetCount(exercise.sets)} sets ×{" "}
+                    {workoutDisplayReps(exercise.sets)} reps
                   </p>
-                  {exercise.setWeights?.some((w: number | "") => w !== "") ? (
+                  {workoutWeights(exercise.sets).some((w) => w !== "") ? (
                     <p className="text-sm text-zinc-500 mt-1">
                       Weights:{" "}
-                      {exercise.setWeights
-                        .map((w: number | "") => (w === "" ? "-" : `${w}kg`))
+                      {workoutWeights(exercise.sets)
+                        .map((w) => (w === "" ? "-" : `${w}kg`))
                         .join(" • ")}
                     </p>
                   ) : exercise.weight ? (

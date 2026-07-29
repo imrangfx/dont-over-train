@@ -1,5 +1,18 @@
 import { supabase } from "@/lib/supabase";
 
+/**
+ * Canonical per-set logging entry. Each set stores its own weight and reps.
+ * Empty weight uses "" while the user is still filling in the logger UI.
+ */
+export type WorkoutSet = {
+  weight: number | "";
+  reps: number;
+};
+
+/**
+ * Persisted history exercise shape (unchanged for backward compatibility).
+ * Prefer building this via `toLegacyExerciseFields()` from `WorkoutSet[]`.
+ */
 export type WorkoutExercise = {
   name: string;
   bodyPart: string;
@@ -16,21 +29,152 @@ export type WorkoutExercise = {
  * WorkoutHistoryEntry on the complete page). Written by
  * app/exercise/[slug]/page.tsx, read/mutated by app/workout/session/page.tsx
  * and app/workout/complete/page.tsx.
+ *
+ * Canonical load data is `sets: WorkoutSet[]`. Optional legacy fields may
+ * still appear in older in-progress localStorage payloads and are normalized
+ * on read via `normalizeInProgressItem`.
  */
 export type InProgressWorkoutItem = {
   exercise: string;
   slug: string;
-  sets: number;
-  reps: number;
-  setWeights: (number | "")[];
-  weight?: number;
+  /** Per-set weight + reps (new logging foundation). */
+  sets: WorkoutSet[];
   bodyPart: string;
   section?: string;
   sourcePath: string;
   fatigue: number;
   primaryMuscle?: string;
   fatigueBreakdown: Record<string, number>;
+  /** @deprecated Legacy single weight — normalized into `sets` on read. */
+  weight?: number;
+  /** @deprecated Legacy shared reps — normalized into `sets` on read. */
+  reps?: number;
+  /** @deprecated Legacy weight array — normalized into `sets` on read. */
+  setWeights?: (number | "")[];
 };
+
+/** Loose input accepted by normalize helpers (new or legacy shapes). */
+export type ExerciseLoadInput = {
+  sets?: number | WorkoutSet[];
+  reps?: number;
+  weights?: (number | "")[];
+  setWeights?: (number | "")[];
+  weight?: number;
+};
+
+/** Build N sets that share the same reps (current logger UX). */
+export function buildWorkoutSets(
+  count: number,
+  reps: number,
+  weights?: (number | "")[]
+): WorkoutSet[] {
+  const n = Math.max(0, Math.floor(count));
+  const sharedReps = Number(reps) || 0;
+  return Array.from({ length: n }, (_, i) => ({
+    weight: weights?.[i] ?? "",
+    reps: sharedReps,
+  }));
+}
+
+/**
+ * Normalize legacy (`sets` count + shared `reps` + weights) or already-new
+ * (`sets: WorkoutSet[]`) payloads into the canonical per-set array.
+ */
+export function normalizeWorkoutSets(input: ExerciseLoadInput | null | undefined): WorkoutSet[] {
+  if (!input) return [];
+
+  if (Array.isArray(input.sets)) {
+    return input.sets.map((set) => ({
+      weight:
+        typeof set?.weight === "number" || set?.weight === ""
+          ? set.weight
+          : "",
+      reps: Number(set?.reps) || 0,
+    }));
+  }
+
+  const count = Number(input.sets) || 0;
+  const reps = Number(input.reps) || 0;
+  const weights =
+    input.setWeights ??
+    input.weights ??
+    (typeof input.weight === "number" ? [input.weight] : []);
+
+  return buildWorkoutSets(count, reps, weights);
+}
+
+export function workoutSetCount(sets: WorkoutSet[]): number {
+  return sets.length;
+}
+
+/** Sum of per-set reps (equals count × shared reps when all sets match). */
+export function workoutTotalReps(sets: WorkoutSet[]): number {
+  return sets.reduce((sum, set) => sum + (Number(set.reps) || 0), 0);
+}
+
+/**
+ * Display / shared-reps value used by the current single-reps UI and by
+ * legacy history fields. Prefers the first set's reps.
+ */
+export function workoutDisplayReps(sets: WorkoutSet[]): number {
+  return Number(sets[0]?.reps) || 0;
+}
+
+export function workoutWeights(sets: WorkoutSet[]): (number | "")[] {
+  return sets.map((set) => set.weight);
+}
+
+/** Map canonical sets back to the persisted history exercise fields. */
+export function toLegacyExerciseFields(sets: WorkoutSet[]): {
+  sets: number;
+  reps: number;
+  weights: (number | "")[];
+} {
+  return {
+    sets: workoutSetCount(sets),
+    reps: workoutDisplayReps(sets),
+    weights: workoutWeights(sets),
+  };
+}
+
+/**
+ * Coerce a raw `currentWorkout` localStorage entry (new or legacy) into
+ * `InProgressWorkoutItem` with canonical `sets: WorkoutSet[]`.
+ */
+export function normalizeInProgressItem(
+  raw: unknown
+): InProgressWorkoutItem | null {
+  if (!raw || typeof raw !== "object") return null;
+
+  const item = raw as Partial<InProgressWorkoutItem> & ExerciseLoadInput;
+  if (typeof item.exercise !== "string" || typeof item.slug !== "string") {
+    return null;
+  }
+
+  const sets = normalizeWorkoutSets(item);
+
+  return {
+    exercise: item.exercise,
+    slug: item.slug,
+    sets,
+    bodyPart: typeof item.bodyPart === "string" ? item.bodyPart : "",
+    section: item.section,
+    sourcePath: typeof item.sourcePath === "string" ? item.sourcePath : "/",
+    fatigue: Number(item.fatigue) || 0,
+    primaryMuscle: item.primaryMuscle,
+    fatigueBreakdown:
+      item.fatigueBreakdown && typeof item.fatigueBreakdown === "object"
+        ? item.fatigueBreakdown
+        : {},
+  };
+}
+
+export function normalizeInProgressList(raw: unknown): InProgressWorkoutItem[] {
+  const list = Array.isArray(raw) ? raw : raw ? [raw] : [];
+  return list
+    .map((item) => normalizeInProgressItem(item))
+    .filter((item): item is InProgressWorkoutItem => item != null);
+}
 
 export type WorkoutHistoryEntry = {
   id: string;

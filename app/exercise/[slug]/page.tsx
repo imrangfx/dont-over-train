@@ -17,24 +17,28 @@ import { abs } from "@/app/Data/abs";
 import { forearms } from "@/app/Data/forearms";
 import EmptyState from "@/components/ui/EmptyState";
 import { Dumbbell } from "lucide-react";
-import { loadWorkoutHistory, type WorkoutHistoryEntry } from "@/lib/workouts";
+import LoadingScreen from "@/components/ui/LoadingScreen";
+import { useMinimumLoadingDelay } from "@/lib/hooks/useMinimumLoadingDelay";
+import {
+  buildWorkoutSets,
+  loadWorkoutHistory,
+  workoutDisplayReps,
+  workoutSetCount,
+  workoutWeights,
+  type WorkoutHistoryEntry,
+  type WorkoutSet,
+} from "@/lib/workouts";
 import {
   getQualifyingPersonalRecord,
   QUALIFYING_PR_MIN_REPS,
 } from "@/lib/exerciseAnalytics";
-import LoadingScreen from "@/components/ui/LoadingScreen";
-import { useMinimumLoadingDelay } from "@/lib/hooks/useMinimumLoadingDelay";
 
 const PR_MIN_REPS = QUALIFYING_PR_MIN_REPS;
 
 export default function ExercisePage() {
-  const [sets, setSets] = useState(3);
-  const [reps, setReps] = useState(10);
-  const [setWeights, setSetWeights] = useState<(number | "")[]>([
-    "",
-    "",
-    "",
-  ]);
+  const [loggedSets, setLoggedSets] = useState<WorkoutSet[]>(() =>
+    buildWorkoutSets(3, 10)
+  );
   const [currentFatigue, setCurrentFatigue] = useState<
     Record<string, number>
   >({});
@@ -50,24 +54,32 @@ export default function ExercisePage() {
   const BASELINE_SETS = 3;
   const BASELINE_REPS = 10;
 
+  const sets = workoutSetCount(loggedSets);
+  const reps = workoutDisplayReps(loggedSets);
+  const setWeights = workoutWeights(loggedSets);
+
   function updateSets(newSets: number) {
-    setSets(newSets);
-    setSetWeights((prev) => {
-      if (newSets > prev.length) {
-        const additions: (number | "")[] = Array.from(
-          { length: newSets - prev.length },
-          () => ""
-        );
-        return [...prev, ...additions];
-      }
-      return prev.slice(0, newSets);
+    setLoggedSets((prev) => {
+      const sharedReps = workoutDisplayReps(prev) || 10;
+      const weights = workoutWeights(prev);
+      return buildWorkoutSets(newSets, sharedReps, weights);
     });
   }
 
+  function updateReps(newReps: number) {
+    setLoggedSets((prev) =>
+      prev.map((set) => ({
+        ...set,
+        reps: newReps,
+      }))
+    );
+  }
+
   function updateSetWeight(index: number, value: number | "") {
-    setSetWeights((prev) => {
+    setLoggedSets((prev) => {
       const next = [...prev];
-      next[index] = value;
+      if (!next[index]) return prev;
+      next[index] = { ...next[index], weight: value };
       return next;
     });
   }
@@ -75,11 +87,15 @@ export default function ExercisePage() {
   const WEIGHT_STEP = 2.5;
 
   function adjustSetWeight(index: number, delta: number) {
-    setSetWeights((prev) => {
+    setLoggedSets((prev) => {
       const next = [...prev];
-      const current = next[index];
+      if (!next[index]) return prev;
+      const current = next[index].weight;
       const base = current === "" ? 0 : current;
-      next[index] = Math.max(0, Math.round((base + delta) * 10) / 10);
+      next[index] = {
+        ...next[index],
+        weight: Math.max(0, Math.round((base + delta) * 10) / 10),
+      };
       return next;
     });
   }
@@ -348,7 +364,7 @@ export default function ExercisePage() {
                 <button
                   type="button"
                   onClick={() =>
-                    setReps(Math.max(1, reps - 1))
+                    updateReps(Math.max(1, reps - 1))
                   }
                   disabled={reps <= 1}
                   aria-label="Decrease reps"
@@ -363,7 +379,7 @@ export default function ExercisePage() {
 
                 <button
                   type="button"
-                  onClick={() => setReps(reps + 1)}
+                  onClick={() => updateReps(reps + 1)}
                   aria-label="Increase reps"
                   className="btn-base w-12 h-12 rounded-2xl bg-[#222] text-2xl"
                 >
@@ -446,9 +462,7 @@ export default function ExercisePage() {
             const newExercise = {
               exercise: exerciseName,
               slug,
-              sets,
-              reps,
-              setWeights,
+              sets: loggedSets,
               bodyPart: exerciseData.bodyPart,
               sourcePath: from,
               fatigue: projectedFatigue,
