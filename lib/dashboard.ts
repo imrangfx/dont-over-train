@@ -28,22 +28,21 @@ export function getGreeting(now: number = Date.now()): string {
   return "Good Night";
 }
 
-export type WeeklyProgress = {
-  workoutsThisWeek: number;
-  setsThisWeek: number;
-  repsThisWeek: number;
-  /** Monday (index 0) through Sunday (index 6). */
-  daysTrained: boolean[];
-  todayIndex: number;
-  weekStartLabel: string;
-};
-
 export type WeekDayStatus = "workout" | "rest" | "future";
 
 export type WeekDayProgress = {
   day: string;
   date: string;
   status: WeekDayStatus;
+};
+
+export type WeeklyProgress = {
+  workoutsThisWeek: number;
+  setsThisWeek: number;
+  repsThisWeek: number;
+  /** Monday (index 0) through Sunday (index 6). */
+  days: WeekDayProgress[];
+  weekStartLabel: string;
 };
 
 const WEEK_DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
@@ -96,23 +95,19 @@ export function calculateWeeklyProgress(
 ): WeeklyProgress {
   const today = new Date(now);
   const mondayOffset = (today.getDay() + 6) % 7;
-  const monday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - mondayOffset);
-
-  const dayKeys = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(monday);
-    d.setDate(monday.getDate() + i);
-    return toLocalDayKey(d.getTime());
-  });
+  const monday = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() - mondayOffset
+  );
 
   const thisWeekWorkouts = (history || []).filter((w) => w.timestamp >= monday.getTime());
-  const trainedDayKeys = new Set(thisWeekWorkouts.map((w) => toLocalDayKey(w.timestamp)));
 
   return {
     workoutsThisWeek: thisWeekWorkouts.length,
     setsThisWeek: thisWeekWorkouts.reduce((sum, w) => sum + (w.sets || 0), 0),
     repsThisWeek: thisWeekWorkouts.reduce((sum, w) => sum + (w.reps || 0), 0),
-    daysTrained: dayKeys.map((key) => trainedDayKeys.has(key)),
-    todayIndex: mondayOffset,
+    days: buildCurrentWeekProgress(history, now),
     weekStartLabel: monday.toLocaleDateString(undefined, { month: "short", day: "numeric" }),
   };
 }

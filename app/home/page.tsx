@@ -472,28 +472,36 @@ function WeeklyProgressCard({ progress }: { progress: WeeklyProgressData }) {
       </div>
 
       <div className="mt-5 flex items-center justify-between">
-        {progress.daysTrained.map((trained, index) => (
-          <div key={index} className="flex flex-col items-center gap-2">
-            <span className="text-[11px] font-medium text-zinc-500">
-              {WEEKDAY_LETTERS[index]}
-            </span>
+        {progress.days.map((day, index) => {
+          const circleClass =
+            day.status === "workout"
+              ? "bg-lime-400 text-black"
+              : day.status === "rest"
+                ? "bg-zinc-600 text-white"
+                : "bg-zinc-900 text-zinc-600";
 
-            <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${
-                trained
-                  ? "bg-lime-400 text-black"
-                  : index === progress.todayIndex
-                    ? "bg-zinc-900 text-lime-400 ring-2 ring-lime-400/60"
-                    : "bg-zinc-900 text-zinc-600"
-              }`}
-              aria-label={
-                trained ? "Trained" : index === progress.todayIndex ? "Today" : "Not trained"
-              }
-            >
-              {trained ? "✓" : ""}
+          const label =
+            day.status === "workout"
+              ? "Workout"
+              : day.status === "rest"
+                ? "Rest day"
+                : "Upcoming";
+
+          return (
+            <div key={day.date} className="flex flex-col items-center gap-2">
+              <span className="text-[11px] font-medium text-zinc-500">
+                {WEEKDAY_LETTERS[index]}
+              </span>
+
+              <div
+                className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${circleClass}`}
+                aria-label={label}
+              >
+                {day.status === "workout" ? "✓" : day.status === "rest" ? "R" : ""}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="mt-5 text-sm">
