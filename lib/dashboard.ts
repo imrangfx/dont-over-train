@@ -36,6 +36,15 @@ export type WeekDayProgress = {
   status: WeekDayStatus;
 };
 
+/** Derived weekly recovery signals from Mon–Sun day statuses. */
+export type WeeklyRecoveryStatus = {
+  workoutDays: number;
+  restDays: number;
+  hasWarning: boolean;
+  isDanger: boolean;
+  streakBroken: boolean;
+};
+
 export type WeeklyProgress = {
   workoutsThisWeek: number;
   setsThisWeek: number;
@@ -43,7 +52,7 @@ export type WeeklyProgress = {
   /** Monday (index 0) through Sunday (index 6). */
   days: WeekDayProgress[];
   weekStartLabel: string;
-};
+} & WeeklyRecoveryStatus;
 
 const WEEK_DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
 
@@ -88,6 +97,25 @@ export function buildCurrentWeekProgress(
   });
 }
 
+/**
+ * Computes weekly recovery status from Mon–Sun day entries.
+ * Pure and reusable — does not touch workout history.
+ */
+export function calculateWeeklyRecoveryStatus(
+  days: WeekDayProgress[]
+): WeeklyRecoveryStatus {
+  const workoutDays = days.filter((d) => d.status === "workout").length;
+  const restDays = days.filter((d) => d.status === "rest").length;
+
+  return {
+    workoutDays,
+    restDays,
+    hasWarning: workoutDays === 6,
+    isDanger: workoutDays === 7,
+    streakBroken: restDays > 2,
+  };
+}
+
 /** Aggregates the current calendar week (Monday-start) from workout history. */
 export function calculateWeeklyProgress(
   history: WorkoutHistoryEntry[],
@@ -102,12 +130,14 @@ export function calculateWeeklyProgress(
   );
 
   const thisWeekWorkouts = (history || []).filter((w) => w.timestamp >= monday.getTime());
+  const days = buildCurrentWeekProgress(history, now);
 
   return {
     workoutsThisWeek: thisWeekWorkouts.length,
     setsThisWeek: thisWeekWorkouts.reduce((sum, w) => sum + (w.sets || 0), 0),
     repsThisWeek: thisWeekWorkouts.reduce((sum, w) => sum + (w.reps || 0), 0),
-    days: buildCurrentWeekProgress(history, now),
+    days,
     weekStartLabel: monday.toLocaleDateString(undefined, { month: "short", day: "numeric" }),
+    ...calculateWeeklyRecoveryStatus(days),
   };
 }
