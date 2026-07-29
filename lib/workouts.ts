@@ -10,8 +10,9 @@ export type WorkoutSet = {
 };
 
 /**
- * Persisted history exercise shape (unchanged for backward compatibility).
- * Prefer building this via `toLegacyExerciseFields()` from `WorkoutSet[]`.
+ * Persisted history exercise shape.
+ * Legacy entries use `sets` (count) + shared `reps` + `weights`.
+ * Newer entries also store `loggedSets` so each set keeps its own reps.
  */
 export type WorkoutExercise = {
   name: string;
@@ -20,6 +21,8 @@ export type WorkoutExercise = {
   sets: number;
   reps: number;
   weights: (number | "")[];
+  /** Canonical per-set weight + reps (preferred when present). */
+  loggedSets?: WorkoutSet[];
   fatigueBreakdown: Record<string, number>;
 };
 
@@ -60,6 +63,7 @@ export type ExerciseLoadInput = {
   weights?: (number | "")[];
   setWeights?: (number | "")[];
   weight?: number;
+  loggedSets?: WorkoutSet[];
 };
 
 /** Build N sets that share the same reps (current logger UX). */
@@ -76,21 +80,32 @@ export function buildWorkoutSets(
   }));
 }
 
+function coerceWorkoutSetList(raw: WorkoutSet[] | undefined): WorkoutSet[] | null {
+  if (!Array.isArray(raw) || raw.length === 0) return null;
+  if (typeof raw[0] !== "object" || raw[0] == null) return null;
+
+  return raw.map((set) => ({
+    weight:
+      typeof set?.weight === "number" || set?.weight === ""
+        ? set.weight
+        : "",
+    reps: Number(set?.reps) || 0,
+  }));
+}
+
 /**
  * Normalize legacy (`sets` count + shared `reps` + weights) or already-new
- * (`sets: WorkoutSet[]`) payloads into the canonical per-set array.
+ * (`loggedSets` / `sets: WorkoutSet[]`) payloads into the canonical per-set array.
  */
 export function normalizeWorkoutSets(input: ExerciseLoadInput | null | undefined): WorkoutSet[] {
   if (!input) return [];
 
+  const fromLogged = coerceWorkoutSetList(input.loggedSets);
+  if (fromLogged) return fromLogged;
+
   if (Array.isArray(input.sets)) {
-    return input.sets.map((set) => ({
-      weight:
-        typeof set?.weight === "number" || set?.weight === ""
-          ? set.weight
-          : "",
-      reps: Number(set?.reps) || 0,
-    }));
+    const fromSets = coerceWorkoutSetList(input.sets);
+    if (fromSets) return fromSets;
   }
 
   const count = Number(input.sets) || 0;
@@ -142,16 +157,22 @@ export function formatWorkoutSetsSummary(sets: WorkoutSet[]): string {
     .join(" • ");
 }
 
-/** Map canonical sets back to the persisted history exercise fields. */
+/** Map canonical sets to persisted history exercise load fields. */
 export function toLegacyExerciseFields(sets: WorkoutSet[]): {
   sets: number;
   reps: number;
   weights: (number | "")[];
+  loggedSets: WorkoutSet[];
 } {
   return {
     sets: workoutSetCount(sets),
     reps: workoutDisplayReps(sets),
     weights: workoutWeights(sets),
+    // Preserve each set's own reps (fixes shared-reps collapse on save).
+    loggedSets: sets.map((set) => ({
+      weight: set.weight,
+      reps: Number(set.reps) || 0,
+    })),
   };
 }
 

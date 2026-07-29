@@ -164,6 +164,7 @@ export default function CompletePage() {
           sets: legacy.sets,
           reps: legacy.reps,
           weights: legacy.weights,
+          loggedSets: legacy.loggedSets,
           fatigueBreakdown: item.fatigueBreakdown || {},
         };
       }),
