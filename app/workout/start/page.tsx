@@ -13,7 +13,6 @@ import { normalizeInProgressList } from "@/lib/workouts";
 export default function StartWorkoutPage() {
   const router = useRouter();
   const [clock, setClock] = useState(() => formatClockTime());
-  const [exerciseCount, setExerciseCount] = useState(0);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -34,7 +33,6 @@ export default function StartWorkoutPage() {
         return;
       }
 
-      setExerciseCount(list.length);
       setReady(true);
     });
   }, [router]);
@@ -47,9 +45,14 @@ export default function StartWorkoutPage() {
     return () => clearInterval(tick);
   }, []);
 
-  function handleStart() {
+  function handleStartWorkout() {
     startWorkoutSession();
     // replace so Back from session cannot return to Start after starting.
+    router.replace("/workout/session");
+  }
+
+  function handleContinueWithoutTimer() {
+    // Logging flow without creating a timed WorkoutSession.
     router.replace("/workout/session");
   }
 
@@ -64,8 +67,6 @@ export default function StartWorkoutPage() {
       </main>
     );
   }
-
-  const exerciseLabel = `${exerciseCount} exercise${exerciseCount !== 1 ? "s" : ""} selected`;
 
   return (
     <main className="flex min-h-screen flex-col bg-black px-6 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] text-white">
@@ -86,13 +87,23 @@ export default function StartWorkoutPage() {
             {clock}
           </p>
 
-          <button
-            type="button"
-            onClick={handleStart}
-            className="btn-base mt-12 w-full max-w-[320px] rounded-2xl bg-lime-400 py-5 text-2xl font-semibold text-black hover:brightness-110 active:brightness-95"
-          >
-            Start Workout
-          </button>
+          <div className="mt-12 flex w-full max-w-[320px] flex-col gap-3">
+            <button
+              type="button"
+              onClick={handleStartWorkout}
+              className="btn-base w-full rounded-2xl bg-lime-400 py-5 text-2xl font-semibold text-black hover:brightness-110 active:brightness-95"
+            >
+              Start Workout
+            </button>
+
+            <button
+              type="button"
+              onClick={handleContinueWithoutTimer}
+              className="btn-base w-full rounded-2xl border border-[#333] bg-[#111] py-4 text-lg font-semibold text-white hover:bg-[#1a1a1a] active:bg-[#222]"
+            >
+              Continue Without Timer
+            </button>
+          </div>
         </div>
       </div>
     </main>
