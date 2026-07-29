@@ -31,7 +31,9 @@ import type { BodyPartLevelProgress } from "@/lib/bodyPartProgression";
 import { exerciseHref } from "@/lib/exerciseAnalytics";
 import {
   calculateWeeklyProgress,
+  calculateWeeklyRecoveryStatus,
   getGreeting,
+  type WeekDayStatus,
   type WeeklyProgress as WeeklyProgressData,
 } from "@/lib/dashboard";
 import {
@@ -98,9 +100,8 @@ function BodyPartCard({
     <Link
       href={`/workout/${slug}`}
       transitionTypes={["nav-forward"]}
-      className={`group relative flex items-center gap-3 overflow-hidden rounded-xl bg-[#111111] border px-5 py-3 transition-all duration-200 hover:border-[#39ff14] hover:shadow-[0_0_0_1px_#39ff14] active:scale-[0.98] active:border-[#39ff14] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#39ff14] focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
-        isLastTrained ? "border-orange-500/30 animate-last-trained-glow" : "border-[#1a1a1a]"
-      }`}
+      className={`group relative flex items-center gap-3 overflow-hidden rounded-xl bg-[#111111] border px-5 py-3 transition-all duration-200 hover:border-[#39ff14] hover:shadow-[0_0_0_1px_#39ff14] active:scale-[0.98] active:border-[#39ff14] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#39ff14] focus-visible:ring-offset-2 focus-visible:ring-offset-black ${isLastTrained ? "border-orange-500/30 animate-last-trained-glow" : "border-[#1a1a1a]"
+        }`}
     >
       {isLastTrained && (
         <span className="absolute right-2 top-2 z-10 rounded-full bg-black/70 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-orange-300 ring-1 ring-orange-500/25 backdrop-blur-sm">
@@ -456,7 +457,16 @@ function LatestPRCard({ record }: { record: PersonalRecord | null }) {
   );
 }
 
-function WeeklyProgressCard({ progress }: { progress: WeeklyProgressData }) {
+function WeeklyProgressCard({ progress: realProgress }: { progress: WeeklyProgressData }) {
+  // Local-only testing. Keep false in production / before shipping.
+  const DEV_WEEKLY_TEST = true;
+  const DEV_SCENARIO: DevWeeklyScenario = "DANGER";
+
+  const progress =
+    DEV_WEEKLY_TEST && process.env.NODE_ENV === "development"
+      ? buildDevWeeklyProgress(DEV_SCENARIO)
+      : realProgress;
+
   const isDanger = progress.isDanger;
   const isPerfectWeek =
     progress.workoutDays === 5 &&
@@ -478,9 +488,8 @@ function WeeklyProgressCard({ progress }: { progress: WeeklyProgressData }) {
               <CalendarCheck size={18} />
             </SectionIcon>
             <h2
-              className={`text-lg font-semibold tracking-tight ${
-                isDanger ? "text-red-500" : ""
-              }`}
+              className={`text-lg font-semibold tracking-tight ${isDanger ? "text-red-500" : ""
+                }`}
             >
               Weekly Progress
             </h2>
@@ -592,6 +601,69 @@ function WeeklyProgressCard({ progress }: { progress: WeeklyProgressData }) {
       )}
     </>
   );
+}
+
+type DevWeeklyScenario = "PERFECT_WEEK" | "WARNING" | "DANGER" | "STREAK_BROKEN";
+
+/** Local-dev mock Weekly Progress. Never used when DEV_WEEKLY_TEST is false. */
+function buildDevWeeklyProgress(scenario: DevWeeklyScenario): WeeklyProgressData {
+  const dayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
+
+  const statusesByScenario: Record<DevWeeklyScenario, WeekDayStatus[]> = {
+    PERFECT_WEEK: [
+      "workout",
+      "workout",
+      "workout",
+      "workout",
+      "workout",
+      "rest",
+      "rest",
+    ],
+    WARNING: [
+      "workout",
+      "workout",
+      "workout",
+      "workout",
+      "workout",
+      "workout",
+      "future",
+    ],
+    DANGER: [
+      "workout",
+      "workout",
+      "workout",
+      "workout",
+      "workout",
+      "workout",
+      "workout",
+    ],
+    STREAK_BROKEN: [
+      "workout",
+      "workout",
+      "workout",
+      "workout",
+      "rest",
+      "rest",
+      "rest",
+    ],
+  };
+
+  const days = statusesByScenario[scenario].map((status, index) => ({
+    day: dayLabels[index],
+    date: `dev-${index + 1}`,
+    status,
+  }));
+
+  const recovery = calculateWeeklyRecoveryStatus(days);
+
+  return {
+    workoutsThisWeek: recovery.workoutDays,
+    setsThisWeek: 0,
+    repsThisWeek: 0,
+    days,
+    weekStartLabel: "Dev Test",
+    ...recovery,
+  };
 }
 
 function LevelCard({ level }: { level: BodyPartLevelProgress }) {
