@@ -458,6 +458,12 @@ function LatestPRCard({ record }: { record: PersonalRecord | null }) {
 
 function WeeklyProgressCard({ progress }: { progress: WeeklyProgressData }) {
   const isDanger = progress.isDanger;
+  const isPerfectWeek =
+    progress.workoutDays === 5 &&
+    progress.restDays === 2 &&
+    !progress.hasWarning &&
+    !progress.isDanger &&
+    !progress.streakBroken;
 
   return (
     <>
@@ -565,6 +571,23 @@ function WeeklyProgressCard({ progress }: { progress: WeeklyProgressData }) {
               Take a rest tomorrow to avoid overtraining.
             </p>
           </div>
+        </div>
+      )}
+
+      {isPerfectWeek && (
+        <div
+          role="status"
+          className="mt-3 rounded-2xl border border-lime-400/30 bg-lime-400/5 p-4"
+        >
+          <p className="text-sm font-semibold text-lime-400">
+            🏆 Perfect Week
+          </p>
+          <p className="mt-1 text-sm leading-5 text-zinc-300">
+            You balanced training and recovery.
+          </p>
+          <p className="mt-3 text-sm leading-5 text-zinc-500">
+            Keep it up!
+          </p>
         </div>
       )}
     </>
