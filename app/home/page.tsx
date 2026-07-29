@@ -457,15 +457,27 @@ function LatestPRCard({ record }: { record: PersonalRecord | null }) {
 }
 
 function WeeklyProgressCard({ progress }: { progress: WeeklyProgressData }) {
+  const isDanger = progress.isDanger;
+
   return (
     <>
-      <div className="card-surface p-5">
+      <div className={`card-surface p-5 ${isDanger ? "border-red-500/50" : ""}`}>
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <SectionIcon className="bg-lime-400/10 text-lime-400">
+            <SectionIcon
+              className={
+                isDanger ? "bg-red-500/10 text-red-500" : "bg-lime-400/10 text-lime-400"
+              }
+            >
               <CalendarCheck size={18} />
             </SectionIcon>
-            <h2 className="text-lg font-semibold tracking-tight">Weekly Progress</h2>
+            <h2
+              className={`text-lg font-semibold tracking-tight ${
+                isDanger ? "text-red-500" : ""
+              }`}
+            >
+              Weekly Progress
+            </h2>
           </div>
 
           <span className="shrink-0 text-xs text-zinc-500">
@@ -477,7 +489,9 @@ function WeeklyProgressCard({ progress }: { progress: WeeklyProgressData }) {
           {progress.days.map((day, index) => {
             const circleClass =
               day.status === "workout"
-                ? "bg-lime-400 text-black"
+                ? isDanger
+                  ? "bg-red-500 text-white"
+                  : "bg-lime-400 text-black"
                 : day.status === "rest"
                   ? "bg-zinc-600 text-white"
                   : "bg-zinc-900 text-zinc-600";
@@ -514,7 +528,26 @@ function WeeklyProgressCard({ progress }: { progress: WeeklyProgressData }) {
         </div>
       </div>
 
-      {progress.hasWarning && (
+      {isDanger && (
+        <div
+          role="alert"
+          className="mt-3 rounded-2xl border border-red-500/40 bg-red-500/5 p-4"
+        >
+          <p className="text-sm font-semibold text-red-400">
+            🚨 Overtraining Risk
+          </p>
+          <p className="mt-1 text-sm leading-5 text-zinc-300">
+            You trained every day this week.
+            <br />
+            Recovery is strongly recommended.
+          </p>
+          <p className="mt-3 text-sm leading-5 text-zinc-500">
+            Your workout streak is still active, but your recovery balance is unhealthy.
+          </p>
+        </div>
+      )}
+
+      {!isDanger && progress.hasWarning && (
         <div
           role="status"
           className="mt-3 flex items-start gap-3 rounded-2xl border border-yellow-500/30 bg-yellow-500/5 p-4"
