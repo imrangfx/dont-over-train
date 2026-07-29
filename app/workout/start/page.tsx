@@ -12,6 +12,7 @@ import {
   resolveWorkoutNextPath,
   workoutStartBackHref,
 } from "@/lib/workoutNavigation";
+import { normalizeInProgressList } from "@/lib/workouts";
 
 function StartWorkoutContent() {
   const router = useRouter();
@@ -24,9 +25,14 @@ function StartWorkoutContent() {
 
   useEffect(() => {
     queueMicrotask(() => {
-      // Timer already running (e.g. adding another section mid-workout) —
-      // skip Start and go straight to the selected exercise list.
-      if (isWorkoutStarted()) {
+      const saved = localStorage.getItem("currentWorkout");
+      const parsed = saved ? JSON.parse(saved) : null;
+      const inProgress = normalizeInProgressList(parsed);
+      const workoutAlreadyUnderway =
+        isWorkoutStarted() || inProgress.length > 0;
+
+      // Mid-workout (timed or untimed) — skip Start and open the exercise list.
+      if (workoutAlreadyUnderway) {
         router.replace(nextPath);
         return;
       }
