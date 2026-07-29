@@ -459,7 +459,7 @@ function LatestPRCard({ record }: { record: PersonalRecord | null }) {
 
 function WeeklyProgressCard({ progress: realProgress }: { progress: WeeklyProgressData }) {
   // Local-only testing. Keep false in production / before shipping.
-  const DEV_WEEKLY_TEST = true;
+  const DEV_WEEKLY_TEST = false;
   const DEV_SCENARIO: DevWeeklyScenario = "DANGER";
 
   const progress =
