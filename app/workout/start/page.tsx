@@ -1,41 +1,39 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 import {
   formatClockTime,
-  getActiveWorkoutSession,
+  isWorkoutStarted,
   startWorkoutSession,
 } from "@/lib/workoutSession";
-import { normalizeInProgressList } from "@/lib/workouts";
+import {
+  resolveWorkoutNextPath,
+  workoutStartBackHref,
+} from "@/lib/workoutNavigation";
 
-export default function StartWorkoutPage() {
+function StartWorkoutContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [clock, setClock] = useState(() => formatClockTime());
   const [ready, setReady] = useState(false);
 
+  const nextPath = resolveWorkoutNextPath(searchParams.get("next"), "/home");
+  const backHref = workoutStartBackHref(nextPath);
+
   useEffect(() => {
-    const saved = localStorage.getItem("currentWorkout");
-    const parsed = saved ? JSON.parse(saved) : null;
-    const list = normalizeInProgressList(parsed);
-
     queueMicrotask(() => {
-      // Active session → resume the live workout, never re-show Start.
-      if (getActiveWorkoutSession()) {
-        router.replace("/workout/session");
-        return;
-      }
-
-      // No exercises left (workout already finished / cleared) → leave flow.
-      if (list.length === 0) {
-        router.replace("/home");
+      // Timer already running (e.g. adding another section mid-workout) —
+      // skip Start and go straight to the selected exercise list.
+      if (isWorkoutStarted()) {
+        router.replace(nextPath);
         return;
       }
 
       setReady(true);
     });
-  }, [router]);
+  }, [router, nextPath]);
 
   useEffect(() => {
     const tick = setInterval(() => {
@@ -47,13 +45,11 @@ export default function StartWorkoutPage() {
 
   function handleStartWorkout() {
     startWorkoutSession();
-    // replace so Back from session cannot return to Start after starting.
-    router.replace("/workout/session");
+    router.replace(nextPath);
   }
 
   function handleContinueWithoutTimer() {
-    // Logging flow without creating a timed WorkoutSession.
-    router.replace("/workout/session");
+    router.replace(nextPath);
   }
 
   if (!ready) {
@@ -72,7 +68,7 @@ export default function StartWorkoutPage() {
     <main className="flex min-h-screen flex-col bg-black px-6 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] text-white">
       <div className="mx-auto flex w-full max-w-[430px] flex-1 flex-col">
         <Link
-          href="/workout/session"
+          href={backHref}
           className="btn-base inline-flex items-center gap-1 rounded-lg text-sm text-zinc-400 hover:text-white"
         >
           ← Back
@@ -107,5 +103,23 @@ export default function StartWorkoutPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function StartWorkoutPage() {
+  return (
+    <Suspense
+      fallback={
+        <main
+          role="status"
+          aria-label="Loading"
+          className="flex min-h-screen items-center justify-center bg-black"
+        >
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-lime-400" />
+        </main>
+      }
+    >
+      <StartWorkoutContent />
+    </Suspense>
   );
 }

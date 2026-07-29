@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { workouts } from "@/app/Data/workouts";
+import { workoutStartHref } from "@/lib/workoutNavigation";
 
 export default function WorkoutClient({
   slug,
@@ -45,7 +46,7 @@ export default function WorkoutClient({
                 {sections.map((section) => (
                   <Link
                     key={section.slug}
-                    href={`/workout/${slug}/${section.slug}`}
+                    href={workoutStartHref(slug, section.slug)}
                     className="btn-base flex items-center justify-between rounded-2xl bg-[#111] px-4 py-5 transition-all duration-200 hover:scale-[1.02] hover:ring-1 hover:ring-[#39ff14]/40"
                   >
                     <div className="flex-1">
