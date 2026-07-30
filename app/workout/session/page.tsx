@@ -19,7 +19,6 @@ import {
   type InProgressWorkoutItem,
 } from "@/lib/workouts";
 import { getExerciseTrackingType } from "@/app/Data/exercises";
-import { buildTrainingTodayTitle } from "@/lib/exerciseMuscles";
 import {
   formatElapsedClock,
   getActiveWorkoutSession,
@@ -132,11 +131,9 @@ export default function SessionPage() {
     );
   }
 
-  const workoutTitle =
-    buildTrainingTodayTitle(workout.map((exercise) => exercise.slug)) ||
-    [
-      ...new Set(workout.map((exercise) => exercise.bodyPart)),
-    ].join(" + ");
+  const workoutTitle = [
+    ...new Set(workout.map((exercise) => exercise.bodyPart)),
+  ].join(" + ");
 
   const lastBodyPart =
     workout[workout.length - 1]?.bodyPart || "Chest";
