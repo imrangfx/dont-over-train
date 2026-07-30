@@ -64,6 +64,18 @@ export const triceps = {
     },
   },
 
+  "incline-skull-crusher": {
+  name: "Incline Skull Crusher",
+  bodyPart: "Triceps",
+  section: "long-head",
+  trackingType: "weight" as const,
+  fatigue: {
+    longHeadTriceps: 18,
+    medialHeadTriceps: 10,
+    lateralHeadTriceps: 10,
+  },
+},
+
   "pjr-pullover": {
     name: "PJR Pullover",
     bodyPart: "Triceps",

@@ -242,16 +242,6 @@ export const abs = {
     },
   },
 
-  "side-plank": {
-    name: "Side Plank",
-    bodyPart: "Abs",
-    section: "obliques",
-    trackingType: "duration" as const,
-    fatigue: {
-      obliques: 16,
-    },
-  },
-
   "dumbbell-side-bend": {
     name: "Dumbbell Side Bend",
     bodyPart: "Abs",
@@ -313,6 +303,35 @@ export const abs = {
     fatigue: {
       obliques: 17,
       lowerAbs: 5,
+    },
+  },
+
+  // =====================
+  // CORE
+  // =====================
+
+  "plank": {
+    name: "Plank",
+    bodyPart: "Abs",
+    section: "core",
+    trackingType: "duration" as const,
+    fatigue: {
+      upperAbs: 10,
+      lowerAbs: 8,
+      obliques: 8,
+      lowerBack: 6,
+    },
+  },
+
+  "side-plank": {
+    name: "Side Plank",
+    bodyPart: "Abs",
+    section: "core",
+    trackingType: "duration" as const,
+    fatigue: {
+      obliques: 16,
+      upperAbs: 4,
+      lowerBack: 4,
     },
   },
 };
