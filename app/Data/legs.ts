@@ -6,7 +6,7 @@ export const legs = {
     name: "Barbell Back Squat",
     bodyPart: "Legs",
     section: "quads",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       quads: 20,
       glutes: 10,
@@ -18,7 +18,7 @@ export const legs = {
     name: "Leg Press",
     bodyPart: "Legs",
     section: "quads",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       quads: 19,
       glutes: 8,
@@ -30,7 +30,7 @@ export const legs = {
     name: "Hack Squat",
     bodyPart: "Legs",
     section: "quads",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       quads: 19,
       glutes: 6,
@@ -41,7 +41,7 @@ export const legs = {
     name: "Leg Extension",
     bodyPart: "Legs",
     section: "quads",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       quads: 18,
     },
@@ -51,7 +51,7 @@ export const legs = {
     name: "Bulgarian Split Squat",
     bodyPart: "Legs",
     section: "quads",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       quads: 18,
       glutes: 10,
@@ -63,7 +63,7 @@ export const legs = {
     name: "Front Squat",
     bodyPart: "Legs",
     section: "quads",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       quads: 20,
       glutes: 8,
@@ -75,7 +75,7 @@ export const legs = {
     name: "Smith Machine Squat",
     bodyPart: "Legs",
     section: "quads",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       quads: 18,
       glutes: 7,
@@ -86,7 +86,7 @@ export const legs = {
     name: "Walking Lunge",
     bodyPart: "Legs",
     section: "quads",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       quads: 17,
       glutes: 9,
@@ -98,7 +98,7 @@ export const legs = {
     name: "Goblet Squat",
     bodyPart: "Legs",
     section: "quads",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       quads: 17,
       glutes: 7,
@@ -110,7 +110,7 @@ export const legs = {
     name: "Sissy Squat",
     bodyPart: "Legs",
     section: "quads",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       quads: 18,
     },
@@ -121,7 +121,7 @@ export const legs = {
     name: "Romanian Deadlift",
     bodyPart: "Legs",
     section: "hamstrings",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       hamstrings: 18,
       glutes: 10,
@@ -133,7 +133,7 @@ export const legs = {
     name: "Stiff Leg Deadlift",
     bodyPart: "Legs",
     section: "hamstrings",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       hamstrings: 18,
       glutes: 8,
@@ -145,7 +145,7 @@ export const legs = {
     name: "Lying Leg Curl",
     bodyPart: "Legs",
     section: "hamstrings",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       hamstrings: 18,
     },
@@ -155,7 +155,7 @@ export const legs = {
     name: "Seated Leg Curl",
     bodyPart: "Legs",
     section: "hamstrings",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       hamstrings: 17,
     },
@@ -165,7 +165,7 @@ export const legs = {
     name: "Single Leg Curl",
     bodyPart: "Legs",
     section: "hamstrings",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       hamstrings: 17,
     },
@@ -175,7 +175,7 @@ export const legs = {
     name: "Good Morning",
     bodyPart: "Legs",
     section: "hamstrings",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       hamstrings: 16,
       glutes: 8,
@@ -187,7 +187,7 @@ export const legs = {
     name: "Glute Ham Raise",
     bodyPart: "Legs",
     section: "hamstrings",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       hamstrings: 18,
       glutes: 6,
@@ -198,7 +198,7 @@ export const legs = {
     name: "Nordic Curl",
     bodyPart: "Legs",
     section: "hamstrings",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       hamstrings: 20,
     },
@@ -208,7 +208,7 @@ export const legs = {
     name: "Cable Leg Curl",
     bodyPart: "Legs",
     section: "hamstrings",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       hamstrings: 16,
     },
@@ -218,7 +218,7 @@ export const legs = {
     name: "Band Leg Curl",
     bodyPart: "Legs",
     section: "hamstrings",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       hamstrings: 15,
     },
@@ -228,7 +228,7 @@ export const legs = {
     name: "Barbell Hip Thrust",
     bodyPart: "Legs",
     section: "glutes",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       glutes: 20,
       hamstrings: 6,
@@ -239,7 +239,7 @@ export const legs = {
     name: "Glute Bridge",
     bodyPart: "Legs",
     section: "glutes",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       glutes: 17,
     },
@@ -249,7 +249,7 @@ export const legs = {
     name: "Cable Kickback",
     bodyPart: "Legs",
     section: "glutes",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       glutes: 18,
     },
@@ -259,7 +259,7 @@ export const legs = {
     name: "Smith Hip Thrust",
     bodyPart: "Legs",
     section: "glutes",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       glutes: 19,
     },
@@ -269,7 +269,7 @@ export const legs = {
     name: "Frog Pump",
     bodyPart: "Legs",
     section: "glutes",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       glutes: 16,
     },
@@ -279,7 +279,7 @@ export const legs = {
     name: "Sumo Deadlift",
     bodyPart: "Legs",
     section: "glutes",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       glutes: 18,
       hamstrings: 8,
@@ -291,7 +291,7 @@ export const legs = {
     name: "Single Leg Hip Thrust",
     bodyPart: "Legs",
     section: "glutes",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       glutes: 18,
     },
@@ -301,7 +301,7 @@ export const legs = {
     name: "Glute Machine Kickback",
     bodyPart: "Legs",
     section: "glutes",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       glutes: 17,
     },
@@ -311,7 +311,7 @@ export const legs = {
     name: "Reverse Lunge",
     bodyPart: "Legs",
     section: "glutes",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       glutes: 17,
       quads: 8,
@@ -322,7 +322,7 @@ export const legs = {
     name: "Curtsy Lunge",
     bodyPart: "Legs",
     section: "glutes",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       glutes: 16,
     },
@@ -332,7 +332,7 @@ export const legs = {
     name: "Standing Calf Raise",
     bodyPart: "Legs",
     section: "calves",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       calves: 18,
     },
@@ -342,7 +342,7 @@ export const legs = {
     name: "Seated Calf Raise",
     bodyPart: "Legs",
     section: "calves",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       calves: 18,
     },
@@ -352,7 +352,7 @@ export const legs = {
     name: "Leg Press Calf Raise",
     bodyPart: "Legs",
     section: "calves",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       calves: 17,
     },
@@ -362,7 +362,7 @@ export const legs = {
     name: "Smith Calf Raise",
     bodyPart: "Legs",
     section: "calves",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       calves: 17,
     },
@@ -372,7 +372,7 @@ export const legs = {
     name: "Single Leg Calf Raise",
     bodyPart: "Legs",
     section: "calves",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       calves: 17,
     },
@@ -382,7 +382,7 @@ export const legs = {
     name: "Donkey Calf Raise",
     bodyPart: "Legs",
     section: "calves",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       calves: 18,
     },
@@ -392,7 +392,7 @@ export const legs = {
     name: "Machine Calf Raise",
     bodyPart: "Legs",
     section: "calves",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       calves: 17,
     },
@@ -402,7 +402,7 @@ export const legs = {
     name: "Jump Rope",
     bodyPart: "Legs",
     section: "calves",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       calves: 14,
     },
@@ -412,7 +412,7 @@ export const legs = {
     name: "Farmer Walk On Toes",
     bodyPart: "Legs",
     section: "calves",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       calves: 15,
     },
@@ -422,7 +422,7 @@ export const legs = {
     name: "Bodyweight Calf Raise",
     bodyPart: "Legs",
     section: "calves",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       calves: 15,
     },

@@ -7,7 +7,7 @@ export const forearms = {
       name: "Wrist Curl",
       bodyPart: "Forearms",
       section: "forearms",
-      requiresWeight: true,
+      trackingType: "weight" as const,
       fatigue: {
         forearms: 18,
       },
@@ -17,7 +17,7 @@ export const forearms = {
       name: "Reverse Wrist Curl",
       bodyPart: "Forearms",
       section: "forearms",
-      requiresWeight: true,
+      trackingType: "weight" as const,
       fatigue: {
         forearms: 17,
       },
@@ -27,7 +27,7 @@ export const forearms = {
       name: "Behind The Back Wrist Curl",
       bodyPart: "Forearms",
       section: "forearms",
-      requiresWeight: true,
+      trackingType: "weight" as const,
       fatigue: {
         forearms: 17,
       },
@@ -37,7 +37,7 @@ export const forearms = {
       name: "Cable Wrist Curl",
       bodyPart: "Forearms",
       section: "forearms",
-      requiresWeight: true,
+      trackingType: "weight" as const,
       fatigue: {
         forearms: 17,
       },
@@ -47,7 +47,7 @@ export const forearms = {
       name: "Reverse EZ Curl",
       bodyPart: "Forearms",
       section: "forearms",
-      requiresWeight: true,
+      trackingType: "weight" as const,
       fatigue: {
         forearms: 16,
         biceps: 6,
@@ -58,7 +58,7 @@ export const forearms = {
       name: "Reverse Barbell Curl",
       bodyPart: "Forearms",
       section: "forearms",
-      requiresWeight: true,
+      trackingType: "weight" as const,
       fatigue: {
         forearms: 16,
         biceps: 6,
@@ -69,7 +69,7 @@ export const forearms = {
       name: "Reverse Cable Curl",
       bodyPart: "Forearms",
       section: "forearms",
-      requiresWeight: true,
+      trackingType: "weight" as const,
       fatigue: {
         forearms: 16,
         biceps: 5,
@@ -80,7 +80,7 @@ export const forearms = {
       name: "Dumbbell Reverse Curl",
       bodyPart: "Forearms",
       section: "forearms",
-      requiresWeight: true,
+      trackingType: "weight" as const,
       fatigue: {
         forearms: 16,
         biceps: 5,
@@ -91,7 +91,7 @@ export const forearms = {
       name: "Farmer's Carry",
       bodyPart: "Forearms",
       section: "forearms",
-      requiresWeight: true,
+      trackingType: "weight" as const,
       fatigue: {
         forearms: 18,
         traps: 5,
@@ -102,7 +102,7 @@ export const forearms = {
       name: "Plate Pinch",
       bodyPart: "Forearms",
       section: "forearms",
-      requiresWeight: true,
+      trackingType: "weight" as const,
       fatigue: {
         forearms: 17,
       },
@@ -112,7 +112,7 @@ export const forearms = {
       name: "Dead Hang",
       bodyPart: "Forearms",
       section: "forearms",
-      requiresWeight: false,
+      trackingType: "duration" as const,
       fatigue: {
         forearms: 17,
         lats: 3,
@@ -123,7 +123,7 @@ export const forearms = {
       name: "Gripper Squeeze",
       bodyPart: "Forearms",
       section: "forearms",
-      requiresWeight: false,
+      trackingType: "bodyweight" as const,
       fatigue: {
         forearms: 16,
       },
@@ -133,7 +133,7 @@ export const forearms = {
       name: "Rope Climb",
       bodyPart: "Forearms",
       section: "forearms",
-      requiresWeight: false,
+      trackingType: "bodyweight" as const,
       fatigue: {
         forearms: 19,
         biceps: 8,
@@ -145,7 +145,7 @@ export const forearms = {
       name: "Fat Grip Dumbbell Hold",
       bodyPart: "Forearms",
       section: "forearms",
-      requiresWeight: true,
+      trackingType: "duration" as const,
       fatigue: {
         forearms: 18,
       },

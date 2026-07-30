@@ -8,7 +8,7 @@ export const triceps = {
     name: "Overhead Cable Extension",
     bodyPart: "Triceps",
     section: "long-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Long Head Triceps": 18,
     },
@@ -18,7 +18,7 @@ export const triceps = {
     name: "Overhead Rope Extension",
     bodyPart: "Triceps",
     section: "long-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Long Head Triceps": 18,
     },
@@ -28,7 +28,7 @@ export const triceps = {
     name: "Dumbbell Overhead Extension",
     bodyPart: "Triceps",
     section: "long-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Long Head Triceps": 18,
     },
@@ -38,7 +38,7 @@ export const triceps = {
     name: "EZ Bar Overhead Extension",
     bodyPart: "Triceps",
     section: "long-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Long Head Triceps": 17,
     },
@@ -48,7 +48,7 @@ export const triceps = {
     name: "Single Arm Overhead Cable Extension",
     bodyPart: "Triceps",
     section: "long-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Long Head Triceps": 17,
     },
@@ -58,7 +58,7 @@ export const triceps = {
     name: "Incline Dumbbell Extension",
     bodyPart: "Triceps",
     section: "long-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Long Head Triceps": 17,
     },
@@ -68,7 +68,7 @@ export const triceps = {
     name: "PJR Pullover",
     bodyPart: "Triceps",
     section: "long-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Long Head Triceps": 16,
     },
@@ -78,7 +78,7 @@ export const triceps = {
     name: "Seated Overhead Dumbbell Extension",
     bodyPart: "Triceps",
     section: "long-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Long Head Triceps": 17,
     },
@@ -88,7 +88,7 @@ export const triceps = {
     name: "Lying Overhead Cable Extension",
     bodyPart: "Triceps",
     section: "long-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Long Head Triceps": 17,
     },
@@ -98,7 +98,7 @@ export const triceps = {
     name: "Cross Body Cable Extension",
     bodyPart: "Triceps",
     section: "long-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Long Head Triceps": 16,
     },
@@ -112,7 +112,7 @@ export const triceps = {
     name: "Rope Pushdown",
     bodyPart: "Triceps",
     section: "lateral-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Lateral Head Triceps": 18,
     },
@@ -122,7 +122,7 @@ export const triceps = {
     name: "Straight Bar Pushdown",
     bodyPart: "Triceps",
     section: "lateral-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Lateral Head Triceps": 18,
     },
@@ -132,7 +132,7 @@ export const triceps = {
     name: "V Bar Pushdown",
     bodyPart: "Triceps",
     section: "lateral-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Lateral Head Triceps": 18,
     },
@@ -142,7 +142,7 @@ export const triceps = {
     name: "Single Arm Pushdown",
     bodyPart: "Triceps",
     section: "lateral-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Lateral Head Triceps": 17,
     },
@@ -152,7 +152,7 @@ export const triceps = {
     name: "Machine Triceps Extension",
     bodyPart: "Triceps",
     section: "lateral-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Lateral Head Triceps": 17,
     },
@@ -162,7 +162,7 @@ export const triceps = {
     name: "Bench Dips",
     bodyPart: "Triceps",
     section: "lateral-head",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       "Lateral Head Triceps": 14,
       "Long Head Triceps": 3,
@@ -174,7 +174,7 @@ export const triceps = {
     name: "Assisted Dips",
     bodyPart: "Triceps",
     section: "lateral-head",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       "Lateral Head Triceps": 14,
       "Long Head Triceps": 3,
@@ -186,7 +186,7 @@ export const triceps = {
     name: "Parallel Bar Dips",
     bodyPart: "Triceps",
     section: "lateral-head",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       "Lateral Head Triceps": 13,
       "Long Head Triceps": 5,
@@ -199,7 +199,7 @@ export const triceps = {
     name: "Close Grip Push Up",
     bodyPart: "Triceps",
     section: "lateral-head",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       "Lateral Head Triceps": 12,
       "Medial Head Triceps": 4,
@@ -212,7 +212,7 @@ export const triceps = {
     name: "Decline Close Grip Push Up",
     bodyPart: "Triceps",
     section: "lateral-head",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       "Lateral Head Triceps": 12,
       "Medial Head Triceps": 4,
@@ -229,7 +229,7 @@ export const triceps = {
     name: "Reverse Grip Pushdown",
     bodyPart: "Triceps",
     section: "medial-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Medial Head Triceps": 17,
       forearms: 3,
@@ -240,7 +240,7 @@ export const triceps = {
     name: "Reverse Grip Cable Extension",
     bodyPart: "Triceps",
     section: "medial-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Medial Head Triceps": 17,
       forearms: 3,
@@ -251,7 +251,7 @@ export const triceps = {
     name: "Skull Crusher",
     bodyPart: "Triceps",
     section: "medial-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Medial Head Triceps": 12,
       "Long Head Triceps": 6,
@@ -262,7 +262,7 @@ export const triceps = {
     name: "EZ Bar Skull Crusher",
     bodyPart: "Triceps",
     section: "medial-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Medial Head Triceps": 12,
       "Long Head Triceps": 6,
@@ -273,7 +273,7 @@ export const triceps = {
     name: "Lying EZ Extension",
     bodyPart: "Triceps",
     section: "medial-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Medial Head Triceps": 11,
       "Long Head Triceps": 6,
@@ -284,7 +284,7 @@ export const triceps = {
     name: "Dumbbell Skull Crusher",
     bodyPart: "Triceps",
     section: "medial-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Medial Head Triceps": 11,
       "Long Head Triceps": 6,
@@ -295,7 +295,7 @@ export const triceps = {
     name: "JM Press",
     bodyPart: "Triceps",
     section: "medial-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Medial Head Triceps": 12,
       "Long Head Triceps": 4,
@@ -309,7 +309,7 @@ export const triceps = {
     name: "Close Grip Bench Press",
     bodyPart: "Triceps",
     section: "medial-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Medial Head Triceps": 10,
       "Lateral Head Triceps": 5,
@@ -323,7 +323,7 @@ export const triceps = {
     name: "Smith Close Grip Bench Press",
     bodyPart: "Triceps",
     section: "medial-head",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       "Medial Head Triceps": 10,
       "Lateral Head Triceps": 4,

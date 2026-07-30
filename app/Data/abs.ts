@@ -7,7 +7,7 @@ export const abs = {
     name: "Cable Crunch",
     bodyPart: "Abs",
     section: "upper-abs",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       upperAbs: 18,
     },
@@ -17,7 +17,7 @@ export const abs = {
     name: "Machine Crunch",
     bodyPart: "Abs",
     section: "upper-abs",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       upperAbs: 17,
     },
@@ -27,7 +27,7 @@ export const abs = {
     name: "Decline Sit Up",
     bodyPart: "Abs",
     section: "upper-abs",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       upperAbs: 18,
       hipFlexors: 4,
@@ -38,7 +38,7 @@ export const abs = {
     name: "Stability Ball Crunch",
     bodyPart: "Abs",
     section: "upper-abs",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       upperAbs: 17,
     },
@@ -48,7 +48,7 @@ export const abs = {
     name: "Weighted Crunch",
     bodyPart: "Abs",
     section: "upper-abs",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       upperAbs: 18,
     },
@@ -58,7 +58,7 @@ export const abs = {
     name: "Crunch",
     bodyPart: "Abs",
     section: "upper-abs",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       upperAbs: 16,
     },
@@ -68,7 +68,7 @@ export const abs = {
     name: "Ab Mat Sit Up",
     bodyPart: "Abs",
     section: "upper-abs",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       upperAbs: 17,
     },
@@ -78,7 +78,7 @@ export const abs = {
     name: "Kneeling Rope Crunch",
     bodyPart: "Abs",
     section: "upper-abs",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       upperAbs: 18,
     },
@@ -88,7 +88,7 @@ export const abs = {
     name: "Medicine Ball Crunch",
     bodyPart: "Abs",
     section: "upper-abs",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       upperAbs: 17,
     },
@@ -101,7 +101,7 @@ export const abs = {
     name: "Hanging Leg Raise",
     bodyPart: "Abs",
     section: "lower-abs",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       lowerAbs: 18,
       hipFlexors: 6,
@@ -112,7 +112,7 @@ export const abs = {
     name: "Captain's Chair Leg Raise",
     bodyPart: "Abs",
     section: "lower-abs",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       lowerAbs: 17,
       hipFlexors: 6,
@@ -123,7 +123,7 @@ export const abs = {
     name: "Reverse Crunch",
     bodyPart: "Abs",
     section: "lower-abs",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       lowerAbs: 17,
     },
@@ -133,7 +133,7 @@ export const abs = {
     name: "Lying Leg Raise",
     bodyPart: "Abs",
     section: "lower-abs",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       lowerAbs: 17,
       hipFlexors: 5,
@@ -144,7 +144,7 @@ export const abs = {
     name: "Garhammer Raise",
     bodyPart: "Abs",
     section: "lower-abs",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       lowerAbs: 18,
       hipFlexors: 4,
@@ -155,7 +155,7 @@ export const abs = {
     name: "Flutter Kicks",
     bodyPart: "Abs",
     section: "lower-abs",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       lowerAbs: 16,
       hipFlexors: 6,
@@ -166,7 +166,7 @@ export const abs = {
     name: "Scissor Kicks",
     bodyPart: "Abs",
     section: "lower-abs",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       lowerAbs: 16,
       hipFlexors: 6,
@@ -177,7 +177,7 @@ export const abs = {
     name: "Toes To Bar",
     bodyPart: "Abs",
     section: "lower-abs",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       lowerAbs: 19,
       hipFlexors: 7,
@@ -189,7 +189,7 @@ export const abs = {
     name: "Bench Leg Raise",
     bodyPart: "Abs",
     section: "lower-abs",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       lowerAbs: 17,
       hipFlexors: 5,
@@ -200,7 +200,7 @@ export const abs = {
     name: "Frog Crunch",
     bodyPart: "Abs",
     section: "lower-abs",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       lowerAbs: 16,
     },
@@ -213,7 +213,7 @@ export const abs = {
     name: "Russian Twist",
     bodyPart: "Abs",
     section: "obliques",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       obliques: 18,
       upperAbs: 6,
@@ -224,7 +224,7 @@ export const abs = {
     name: "Cable Woodchopper",
     bodyPart: "Abs",
     section: "obliques",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       obliques: 19,
       upperAbs: 5,
@@ -235,7 +235,7 @@ export const abs = {
     name: "Landmine Rotation",
     bodyPart: "Abs",
     section: "obliques",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       obliques: 18,
       upperAbs: 4,
@@ -246,7 +246,7 @@ export const abs = {
     name: "Side Plank",
     bodyPart: "Abs",
     section: "obliques",
-    requiresWeight: false,
+    trackingType: "duration" as const,
     fatigue: {
       obliques: 16,
     },
@@ -256,7 +256,7 @@ export const abs = {
     name: "Dumbbell Side Bend",
     bodyPart: "Abs",
     section: "obliques",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       obliques: 17,
     },
@@ -266,7 +266,7 @@ export const abs = {
     name: "Oblique Crunch",
     bodyPart: "Abs",
     section: "obliques",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       obliques: 17,
       upperAbs: 4,
@@ -277,7 +277,7 @@ export const abs = {
     name: "Cross Body Mountain Climber",
     bodyPart: "Abs",
     section: "obliques",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       obliques: 16,
       lowerAbs: 5,
@@ -288,7 +288,7 @@ export const abs = {
     name: "Windshield Wiper",
     bodyPart: "Abs",
     section: "obliques",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       obliques: 19,
       lowerAbs: 7,
@@ -299,7 +299,7 @@ export const abs = {
     name: "Standing Cable Twist",
     bodyPart: "Abs",
     section: "obliques",
-    requiresWeight: true,
+    trackingType: "weight" as const,
     fatigue: {
       obliques: 17,
     },
@@ -309,7 +309,7 @@ export const abs = {
     name: "Bicycle Crunch",
     bodyPart: "Abs",
     section: "obliques",
-    requiresWeight: false,
+    trackingType: "bodyweight" as const,
     fatigue: {
       obliques: 17,
       lowerAbs: 5,
