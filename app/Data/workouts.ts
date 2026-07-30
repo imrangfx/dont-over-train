@@ -235,6 +235,14 @@ export const workouts = {
         ).length,
         image: "/abs/obliques.webp",
       },
+      {
+        title: "Core",
+        slug: "core",
+        exerciseCount: Object.values(abs).filter(
+          (exercise) => exercise.section === "core"
+        ).length,
+        image: "/abs/core.webp",
+      },
     ],
   },
 
