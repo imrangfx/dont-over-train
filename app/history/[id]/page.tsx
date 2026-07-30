@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { ArrowLeft, ChevronRight, Dumbbell } from "lucide-react";
 import { loadWorkoutHistoryById, formatWorkoutSetsSummary, normalizeWorkoutSets, type WorkoutHistoryEntry, type WorkoutExercise } from "@/lib/workouts";
+import { getExerciseTrackingType } from "@/app/Data/exercises";
 import { exerciseHref } from "@/lib/exerciseAnalytics";
 import EmptyState from "@/components/ui/EmptyState";
 import LoadingCard from "@/components/ui/LoadingCard";
@@ -164,7 +165,10 @@ export default function WorkoutDetailsPage() {
                 </Link>
 
                 <p className="mt-2 text-zinc-400">
-                  {formatWorkoutSetsSummary(normalizeWorkoutSets(exercise))}
+                  {formatWorkoutSetsSummary(
+                    normalizeWorkoutSets(exercise),
+                    getExerciseTrackingType(exercise.name)
+                  )}
                 </p>
 
                 {exercise.fatigueBreakdown && (

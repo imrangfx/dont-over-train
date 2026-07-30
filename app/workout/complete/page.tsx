@@ -18,6 +18,7 @@ import {
   type WorkoutHistoryEntry,
   type InProgressWorkoutItem,
 } from "@/lib/workouts";
+import { getExerciseTrackingType } from "@/app/Data/exercises";
 import { recordWorkoutPersonalRecords } from "@/lib/personalRecords";
 import { calculateBodyPartLevel } from "@/lib/bodyPartProgression";
 import { buildPersonalRecordShareCard, type ShareCardData } from "@/lib/shareCard";
@@ -455,7 +456,10 @@ export default function CompletePage() {
                 </h3>
 
                 <p className="text-zinc-400">
-                  {formatWorkoutSetsSummary(item.sets)}
+                  {formatWorkoutSetsSummary(
+                    item.sets,
+                    getExerciseTrackingType(item.slug)
+                  )}
                 </p>
               </div>
 

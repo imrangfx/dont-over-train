@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import type { ExerciseTrackingType } from "@/app/Data/exercises";
 
 /**
  * Canonical per-set logging entry.
@@ -186,21 +187,48 @@ export function workoutWeights(sets: WorkoutSet[]): (number | "")[] {
 }
 
 /**
- * Compact gym-style set summary from WorkoutSet[].
- * Weighted: `60×10 • 60×10 • 60×8`
- * Bodyweight (empty/0 weight): `12 • 10 • 8`
- * Order is preserved; identical weights are never merged.
+ * Compact gym-style set summary from WorkoutSet[], driven by trackingType.
+ *
+ * - weight: `60×10 • 70×8 • 80×6`
+ * - bodyweight: `15 • 12 • 10`
+ * - duration: `25s • 30s • 35s`
+ *
+ * Empty / zero values are omitted. Order is preserved; sets are never merged.
  */
-export function formatWorkoutSetsSummary(sets: WorkoutSet[]): string {
+export function formatWorkoutSetsSummary(
+  sets: WorkoutSet[],
+  trackingType: ExerciseTrackingType = "weight"
+): string {
   return sets
-    .map((set) => {
-      const reps = Number(set.reps) || 0;
-      const weight = set.weight;
-      const hasWeight = typeof weight === "number" && weight > 0;
-      if (!hasWeight) return String(reps);
-      return `${weight}×${reps}`;
-    })
+    .map((set) => formatWorkoutSetSummaryPart(set, trackingType))
+    .filter((part): part is string => part != null && part !== "")
     .join(" • ");
+}
+
+function formatWorkoutSetSummaryPart(
+  set: WorkoutSet,
+  trackingType: ExerciseTrackingType
+): string | null {
+  if (trackingType === "duration") {
+    const seconds = Number(set.durationSeconds);
+    if (!Number.isFinite(seconds) || seconds <= 0) return null;
+    return `${seconds}s`;
+  }
+
+  if (trackingType === "bodyweight") {
+    const reps = Number(set.reps);
+    if (!Number.isFinite(reps) || reps <= 0) return null;
+    return String(reps);
+  }
+
+  // weight — require both weight and reps; never fall back to reps-only.
+  const weight = set.weight;
+  const reps = Number(set.reps);
+  if (typeof weight !== "number" || !Number.isFinite(weight) || weight <= 0) {
+    return null;
+  }
+  if (!Number.isFinite(reps) || reps <= 0) return null;
+  return `${weight}×${reps}`;
 }
 
 /** Serialize one set for persistence, preserving optional durationSeconds. */

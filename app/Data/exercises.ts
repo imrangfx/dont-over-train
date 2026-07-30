@@ -35,3 +35,22 @@ export const exercises = {
   ...abs,
   ...forearms,
 } as const satisfies Record<string, ExerciseData>;
+
+/** Resolve trackingType from an exercise slug or display name. Defaults to weight. */
+export function getExerciseTrackingType(
+  slugOrName?: string | null
+): ExerciseTrackingType {
+  if (!slugOrName) return "weight";
+
+  const bySlug = exercises[slugOrName as keyof typeof exercises];
+  if (bySlug) return bySlug.trackingType;
+
+  const needle = slugOrName.trim().toLowerCase();
+  for (const exercise of Object.values(exercises)) {
+    if (exercise.name.toLowerCase() === needle) {
+      return exercise.trackingType;
+    }
+  }
+
+  return "weight";
+}

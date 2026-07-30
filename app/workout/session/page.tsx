@@ -18,6 +18,7 @@ import {
   workoutSetCount,
   type InProgressWorkoutItem,
 } from "@/lib/workouts";
+import { getExerciseTrackingType } from "@/app/Data/exercises";
 import {
   formatElapsedClock,
   getActiveWorkoutSession,
@@ -209,7 +210,10 @@ export default function SessionPage() {
                   </h3>
 
                   <p className="mt-1 text-sm text-zinc-400">
-                    {formatWorkoutSetsSummary(exercise.sets)}
+                    {formatWorkoutSetsSummary(
+                      exercise.sets,
+                      getExerciseTrackingType(exercise.slug)
+                    )}
                   </p>
                 </div>
 
