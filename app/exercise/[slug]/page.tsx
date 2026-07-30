@@ -54,6 +54,8 @@ export default function ExercisePage() {
   const BASELINE_SETS = 3;
   const BASELINE_REPS = 10;
   const DEFAULT_DURATION_SECONDS = 30;
+  const DURATION_STEP_SECONDS = 5;
+  const MIN_DURATION_SECONDS = 5;
 
   const exercises = {
     ...chest,
@@ -142,7 +144,7 @@ export default function ExercisePage() {
       const next = [...prev];
       if (!next[index]) return prev;
       next[index] = {
-        durationSeconds: Math.max(1, value),
+        durationSeconds: Math.max(MIN_DURATION_SECONDS, value),
       };
       return next;
     });
@@ -534,17 +536,19 @@ export default function ExercisePage() {
                             updateSetDuration(
                               index,
                               Math.max(
-                                1,
+                                MIN_DURATION_SECONDS,
                                 (set.durationSeconds ??
-                                  DEFAULT_DURATION_SECONDS) - 1
+                                  DEFAULT_DURATION_SECONDS) -
+                                  DURATION_STEP_SECONDS
                               )
                             )
                           }
                           disabled={
                             (set.durationSeconds ??
-                              DEFAULT_DURATION_SECONDS) <= 1
+                              DEFAULT_DURATION_SECONDS) <=
+                            MIN_DURATION_SECONDS
                           }
-                          aria-label={`Decrease set ${index + 1} duration`}
+                          aria-label={`Decrease set ${index + 1} duration by 5 seconds`}
                           className="btn-base absolute left-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white disabled:opacity-40"
                         >
                           −
@@ -552,8 +556,8 @@ export default function ExercisePage() {
 
                         <input
                           type="number"
-                          min="1"
-                          step="1"
+                          min={MIN_DURATION_SECONDS}
+                          step={DURATION_STEP_SECONDS}
                           value={
                             set.durationSeconds ?? DEFAULT_DURATION_SECONDS
                           }
@@ -561,7 +565,7 @@ export default function ExercisePage() {
                             updateSetDuration(
                               index,
                               e.target.value === ""
-                                ? 1
+                                ? MIN_DURATION_SECONDS
                                 : Number(e.target.value)
                             )
                           }
@@ -575,10 +579,11 @@ export default function ExercisePage() {
                             updateSetDuration(
                               index,
                               (set.durationSeconds ??
-                                DEFAULT_DURATION_SECONDS) + 1
+                                DEFAULT_DURATION_SECONDS) +
+                                DURATION_STEP_SECONDS
                             )
                           }
-                          aria-label={`Increase set ${index + 1} duration`}
+                          aria-label={`Increase set ${index + 1} duration by 5 seconds`}
                           className="btn-base absolute right-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white"
                         >
                           +
