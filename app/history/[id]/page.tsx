@@ -1,11 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { useParams, useSearchParams } from "next/navigation";
 import { ArrowLeft, ChevronRight, Dumbbell } from "lucide-react";
 import { loadWorkoutHistoryById, formatWorkoutSetsSummary, normalizeWorkoutSets, type WorkoutHistoryEntry, type WorkoutExercise } from "@/lib/workouts";
 import { getExerciseTrackingType } from "@/app/Data/exercises";
+import {
+  bodyPartHistoryTitle,
+  projectWorkoutForBodyPart,
+} from "@/lib/historyFilter";
 import { exerciseHref } from "@/lib/exerciseAnalytics";
 import EmptyState from "@/components/ui/EmptyState";
 import LoadingCard from "@/components/ui/LoadingCard";
@@ -24,7 +28,9 @@ function getFatigueColor(value: number): { text: string; bg: string } {
 
 export default function WorkoutDetailsPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const id = params.id as string;
+  const bodyPartSlug = searchParams.get("bodyPart");
 
   const [workout, setWorkout] = useState<WorkoutHistoryEntry | null>(null);
   const [loading, setLoading] = useState(true);
@@ -44,6 +50,20 @@ export default function WorkoutDetailsPage() {
       active = false;
     };
   }, [id]);
+
+  const displayedWorkout = useMemo(() => {
+    if (!workout) return null;
+    if (!bodyPartSlug) return workout;
+    return projectWorkoutForBodyPart(workout, bodyPartSlug) ?? workout;
+  }, [workout, bodyPartSlug]);
+
+  const historyBackHref = bodyPartSlug
+    ? `/history?bodyPart=${encodeURIComponent(bodyPartSlug)}`
+    : "/history";
+
+  const historyBackLabel = bodyPartSlug
+    ? `← ${bodyPartHistoryTitle(bodyPartSlug)}`
+    : "← History";
 
   if (loading) {
     return (
@@ -66,18 +86,18 @@ export default function WorkoutDetailsPage() {
             description="Something went wrong while loading this workout. Please go back and try again."
           />
           <Link
-            href="/history"
+            href={historyBackHref}
             className="btn-base mt-6 inline-flex items-center gap-2 rounded-lg text-zinc-400 hover:text-white"
           >
             <ArrowLeft size={18} aria-hidden="true" />
-            ← History
+            {historyBackLabel}
           </Link>
         </div>
       </main>
     );
   }
 
-  if (!workout) {
+  if (!workout || !displayedWorkout) {
     return (
       <main className="min-h-screen bg-black px-6 py-8 text-white">
         <div className="mx-auto max-w-[390px]">
@@ -87,11 +107,11 @@ export default function WorkoutDetailsPage() {
             description="This workout may have been deleted or is unavailable."
           />
           <Link
-            href="/history"
+            href={historyBackHref}
             className="btn-base mt-6 inline-flex items-center gap-2 rounded-lg text-zinc-400 hover:text-white"
           >
             <ArrowLeft size={18} aria-hidden="true" />
-            ← History
+            {historyBackLabel}
           </Link>
         </div>
       </main>
@@ -105,11 +125,11 @@ export default function WorkoutDetailsPage() {
 
 
         <Link
-          href="/history"
+          href={historyBackHref}
           className="btn-base inline-flex items-center gap-2 rounded-lg text-zinc-400 hover:text-white"
         >
           <ArrowLeft size={18} aria-hidden="true" />
-          ← History
+          {historyBackLabel}
         </Link>
 
         <h1 className="mt-8 text-4xl font-bold">
@@ -125,17 +145,17 @@ export default function WorkoutDetailsPage() {
           </div>
 
           <div className="mt-2 text-2xl font-bold">
-            {workout.date}
+            {displayedWorkout.date}
           </div>
 
           <div className="mt-5 text-lg font-semibold text-lime-400">
-            {workout.bodyParts?.join(" + ") || "Workout"}
+            {displayedWorkout.bodyParts?.join(" + ") || "Workout"}
           </div>
 
           <div className="mt-2 text-zinc-400">
-            {workout.exercises} Exercise
-            {workout.exercises > 1 ? "s" : ""} •{" "}
-            {workout.durationMinutes || 0} Minutes
+            {displayedWorkout.exercises} Exercise
+            {displayedWorkout.exercises > 1 ? "s" : ""} •{" "}
+            {displayedWorkout.durationMinutes || 0} Minutes
           </div>
 
         </div>
@@ -148,7 +168,7 @@ export default function WorkoutDetailsPage() {
             Exercises
           </h2>
 
-          {(workout.exerciseList || []).map(
+          {(displayedWorkout.exerciseList || []).map(
             (exercise: WorkoutExercise, index: number) => (
 
               <div
@@ -227,7 +247,7 @@ export default function WorkoutDetailsPage() {
 
         {/* Fatigue */}
 
-        {Object.keys(workout.fatigueBreakdown || {}).length > 0 && (
+        {Object.keys(displayedWorkout.fatigueBreakdown || {}).length > 0 && (
 
           <div className="card-surface mt-8 p-6">
 
@@ -236,7 +256,7 @@ export default function WorkoutDetailsPage() {
             </h2>
 
             {
-              Object.entries(workout.fatigueBreakdown)
+              Object.entries(displayedWorkout.fatigueBreakdown)
                 .filter(([, value]) => Number(value) > 0)
                 .map(([muscle, value]) => {
                   const fatigueColor = getFatigueColor(Number(value));

@@ -80,7 +80,7 @@ export default function WorkoutClient({
 
           <div className="mt-5">
             <Link
-              href="/history"
+              href={`/history?bodyPart=${encodeURIComponent(slug)}`}
               className="btn-base block w-full rounded-2xl border border-[#222] bg-[#111] py-4 text-center text-white transition-all hover:border-[#39ff14]/40"
             >
               Workout History
