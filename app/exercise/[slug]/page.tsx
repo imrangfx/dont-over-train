@@ -52,9 +52,41 @@ export default function ExercisePage() {
 
   const BASELINE_SETS = 3;
   const BASELINE_REPS = 10;
+  const DEFAULT_DURATION_SECONDS = 30;
+
+  const exercises = {
+    ...chest,
+    ...back,
+    ...biceps,
+    ...triceps,
+    ...shoulders,
+    ...legs,
+    ...abs,
+    ...forearms,
+  };
+
+  const exerciseLookup =
+    exercises[slug as keyof typeof exercises];
+  const trackingType =
+    exerciseLookup && "trackingType" in exerciseLookup
+      ? exerciseLookup.trackingType
+      : "weight";
+  const showWeight = trackingType === "weight";
+  const showReps =
+    trackingType === "weight" || trackingType === "bodyweight";
+  const showDuration = trackingType === "duration";
 
   const sets = workoutSetCount(loggedSets);
   const totalReps = workoutTotalReps(loggedSets);
+
+  useEffect(() => {
+    // Reset logger defaults when the exercise (and its tracking type) changes.
+    const defaultValue =
+      trackingType === "duration" ? DEFAULT_DURATION_SECONDS : 10;
+    queueMicrotask(() =>
+      setLoggedSets(buildWorkoutSets(3, defaultValue))
+    );
+  }, [slug, trackingType]);
 
   function updateSets(newSets: number) {
     setLoggedSets((prev) => {
@@ -62,7 +94,9 @@ export default function ExercisePage() {
       if (newSets < prev.length) return prev.slice(0, newSets);
 
       const last = prev[prev.length - 1];
-      const defaultReps = last?.reps || 10;
+      const defaultReps =
+        last?.reps ||
+        (trackingType === "duration" ? DEFAULT_DURATION_SECONDS : 10);
       const defaultWeight = last?.weight ?? "";
       const additions: WorkoutSet[] = Array.from(
         { length: newSets - prev.length },
@@ -93,6 +127,11 @@ export default function ExercisePage() {
     });
   }
 
+  /** Duration is stored in `reps` so save / history / fatigue stay unchanged. */
+  function updateSetDuration(index: number, value: number) {
+    updateSetReps(index, Math.max(1, value));
+  }
+
   const WEIGHT_STEP = 2.5;
 
   function adjustSetWeight(index: number, delta: number) {
@@ -108,17 +147,6 @@ export default function ExercisePage() {
       return next;
     });
   }
-
-  const exercises = {
-    ...chest,
-    ...back,
-    ...biceps,
-    ...triceps,
-    ...shoulders,
-    ...legs,
-    ...abs,
-    ...forearms,
-  };
 
   useEffect(() => {
     const savedWorkout = JSON.parse(
@@ -190,10 +218,6 @@ export default function ExercisePage() {
     );
   }
   const exerciseName = exerciseData.name;
-  const requiresWeight =
-    "trackingType" in exerciseData
-      ? exerciseData.trackingType === "weight"
-      : true;
   const qualifyingPR = getQualifyingPersonalRecord(exerciseName, history, PR_MIN_REPS);
   const sortedMuscles = Object.entries(
     exerciseData.fatigue
@@ -379,12 +403,12 @@ export default function ExercisePage() {
 
                 <div
                   className={
-                    requiresWeight
+                    showWeight
                       ? "grid grid-cols-2 gap-3"
                       : "grid grid-cols-1 gap-3"
                   }
                 >
-                  {requiresWeight && (
+                  {showWeight && (
                     <div>
                       <p className="mb-2 text-xs text-zinc-500">Weight (kg)</p>
                       <div className="relative">
@@ -428,48 +452,99 @@ export default function ExercisePage() {
                     </div>
                   )}
 
-                  <div>
-                    <p className="mb-2 text-xs text-zinc-500">Reps</p>
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          updateSetReps(index, Math.max(1, set.reps - 1))
-                        }
-                        disabled={set.reps <= 1}
-                        aria-label={`Decrease set ${index + 1} reps`}
-                        className="btn-base absolute left-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white disabled:opacity-40"
-                      >
-                        −
-                      </button>
+                  {showReps && (
+                    <div>
+                      <p className="mb-2 text-xs text-zinc-500">Reps</p>
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            updateSetReps(index, Math.max(1, set.reps - 1))
+                          }
+                          disabled={set.reps <= 1}
+                          aria-label={`Decrease set ${index + 1} reps`}
+                          className="btn-base absolute left-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white disabled:opacity-40"
+                        >
+                          −
+                        </button>
 
-                      <input
-                        type="number"
-                        min="1"
-                        step="1"
-                        value={set.reps}
-                        onChange={(e) =>
-                          updateSetReps(
-                            index,
-                            e.target.value === ""
-                              ? 1
-                              : Number(e.target.value)
-                          )
-                        }
-                        aria-label={`Set ${index + 1} reps`}
-                        className="w-full [appearance:textfield] rounded-2xl border border-[#333] bg-[#111] px-11 py-3 text-center text-xl font-semibold text-white outline-none focus:border-lime-400 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                      />
+                        <input
+                          type="number"
+                          min="1"
+                          step="1"
+                          value={set.reps}
+                          onChange={(e) =>
+                            updateSetReps(
+                              index,
+                              e.target.value === ""
+                                ? 1
+                                : Number(e.target.value)
+                            )
+                          }
+                          aria-label={`Set ${index + 1} reps`}
+                          className="w-full [appearance:textfield] rounded-2xl border border-[#333] bg-[#111] px-11 py-3 text-center text-xl font-semibold text-white outline-none focus:border-lime-400 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                        />
 
-                      <button
-                        type="button"
-                        onClick={() => updateSetReps(index, set.reps + 1)}
-                        aria-label={`Increase set ${index + 1} reps`}
-                        className="btn-base absolute right-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white"
-                      >
-                        +
-                      </button>
+                        <button
+                          type="button"
+                          onClick={() => updateSetReps(index, set.reps + 1)}
+                          aria-label={`Increase set ${index + 1} reps`}
+                          className="btn-base absolute right-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white"
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                  )}
+
+                  {showDuration && (
+                    <div>
+                      <p className="mb-2 text-xs text-zinc-500">
+                        Duration (seconds)
+                      </p>
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            updateSetDuration(index, Math.max(1, set.reps - 1))
+                          }
+                          disabled={set.reps <= 1}
+                          aria-label={`Decrease set ${index + 1} duration`}
+                          className="btn-base absolute left-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white disabled:opacity-40"
+                        >
+                          −
+                        </button>
+
+                        <input
+                          type="number"
+                          min="1"
+                          step="1"
+                          value={set.reps}
+                          onChange={(e) =>
+                            updateSetDuration(
+                              index,
+                              e.target.value === ""
+                                ? 1
+                                : Number(e.target.value)
+                            )
+                          }
+                          aria-label={`Set ${index + 1} duration in seconds`}
+                          className="w-full [appearance:textfield] rounded-2xl border border-[#333] bg-[#111] px-11 py-3 text-center text-xl font-semibold text-white outline-none focus:border-lime-400 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                        />
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            updateSetDuration(index, set.reps + 1)
+                          }
+                          aria-label={`Increase set ${index + 1} duration`}
+                          className="btn-base absolute right-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
