@@ -191,8 +191,8 @@ export default function ExercisePage() {
   }
   const exerciseName = exerciseData.name;
   const requiresWeight =
-    "requiresWeight" in exerciseData
-      ? Boolean(exerciseData.requiresWeight)
+    "trackingType" in exerciseData
+      ? exerciseData.trackingType === "weight"
       : true;
   const qualifyingPR = getQualifyingPersonalRecord(exerciseName, history, PR_MIN_REPS);
   const sortedMuscles = Object.entries(

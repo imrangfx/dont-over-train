@@ -21,7 +21,7 @@ import { countExercisePerformances } from "@/lib/exerciseAnalytics";
 type Exercise = {
   name: string;
   section: string;
-  requiresWeight: boolean;
+  trackingType: "weight" | "bodyweight" | "duration";
   fatigue: Record<string, number>;
 };
 

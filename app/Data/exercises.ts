@@ -7,13 +7,20 @@ import { legs } from "./legs";
 import { abs } from "./abs";
 import { forearms } from "./forearms";
 
+/** How an exercise is logged in the workout logger. */
+export type ExerciseTrackingType = "weight" | "bodyweight" | "duration";
+
 /** Shared shape for every exercise in the database. */
 export type ExerciseData = {
   name: string;
   bodyPart: string;
   section: string;
-  /** True when the exercise needs external load (barbell, dumbbell, machine, cable, etc.). */
-  requiresWeight: boolean;
+  /**
+   * weight → weight + reps
+   * bodyweight → reps only
+   * duration → seconds only
+   */
+  trackingType: ExerciseTrackingType;
   fatigue: Record<string, number>;
   image?: string;
 };
