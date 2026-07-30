@@ -187,11 +187,28 @@ export function workoutWeights(sets: WorkoutSet[]): (number | "")[] {
 }
 
 /**
+ * Display formatting for a duration in seconds.
+ * Below 60s: `30s`. At 60+: `1m`, `1m 5s`, `2m`, etc.
+ * Does not alter stored values.
+ */
+export function formatDurationSeconds(totalSeconds: number): string {
+  const seconds = Math.floor(Number(totalSeconds));
+  if (!Number.isFinite(seconds) || seconds <= 0) return "";
+
+  if (seconds < 60) return `${seconds}s`;
+
+  const minutes = Math.floor(seconds / 60);
+  const remainder = seconds % 60;
+  if (remainder === 0) return `${minutes}m`;
+  return `${minutes}m ${remainder}s`;
+}
+
+/**
  * Compact gym-style set summary from WorkoutSet[], driven by trackingType.
  *
  * - weight: `60×10 • 70×8 • 80×6`
  * - bodyweight: `15 • 12 • 10`
- * - duration: `25s • 30s • 35s`
+ * - duration: `30s • 1m • 1m 30s`
  *
  * Empty / zero values are omitted. Order is preserved; sets are never merged.
  */
@@ -212,7 +229,8 @@ function formatWorkoutSetSummaryPart(
   if (trackingType === "duration") {
     const seconds = Number(set.durationSeconds);
     if (!Number.isFinite(seconds) || seconds <= 0) return null;
-    return `${seconds}s`;
+    const formatted = formatDurationSeconds(seconds);
+    return formatted || null;
   }
 
   if (trackingType === "bodyweight") {
