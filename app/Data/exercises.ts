@@ -22,6 +22,10 @@ export type ExerciseData = {
    */
   trackingType: ExerciseTrackingType;
   fatigue: Record<string, number>;
+  /** Display muscle groups emphasized by the movement (Training Today, etc.). */
+  primaryMuscles?: string[];
+  /** Assisting display muscle groups (shown after primaries). */
+  secondaryMuscles?: string[];
   image?: string;
 };
 

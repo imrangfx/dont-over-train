@@ -9,6 +9,8 @@ export const back = {
     bodyPart: "Back",
     section: "upper-back",
     trackingType: "weight" as const,
+    primaryMuscles: ["Rear Delts"],
+    secondaryMuscles: ["Upper Back"],
     fatigue: {
       upperBack: 18,
       rearDelts: 12,
