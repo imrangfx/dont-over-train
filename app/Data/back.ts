@@ -4,19 +4,6 @@ export const back = {
   // UPPER BACK
   // =====================
 
-  "face-pull": {
-    name: "Face Pull",
-    bodyPart: "Back",
-    section: "upper-back",
-    trackingType: "weight" as const,
-    primaryMuscles: ["Rear Delts"],
-    secondaryMuscles: ["Upper Back"],
-    fatigue: {
-      upperBack: 18,
-      rearDelts: 12,
-    },
-  },
-
   "seal-row": {
     name: "Seal Row",
     bodyPart: "Back",
@@ -68,6 +55,36 @@ export const back = {
       biceps: 4,
     },
   },
+
+"machine-row": {
+  name: "Machine Row",
+  bodyPart: "Back",
+  section: "upper-back",
+  trackingType: "weight" as const,
+  fatigue: {
+    upperBack: 17,
+    lats: 7,
+    "Long Head Biceps": 3,
+    "Short Head Biceps": 3,
+    Brachialis: 2,
+  },
+},
+
+"meadows-row": {
+  name: "Meadows Row",
+  bodyPart: "Back",
+  section: "upper-back",
+  trackingType: "weight" as const,
+  fatigue: {
+    upperBack: 17,
+    lats: 8,
+    rearDelts: 5,
+    lowerBack: 4,
+    "Long Head Biceps": 3,
+    "Short Head Biceps": 3,
+    Brachialis: 2,
+  },
+},
 
   // =====================
   // LATS
