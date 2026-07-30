@@ -1,18 +1,26 @@
 import { supabase } from "@/lib/supabase";
 
 /**
- * Canonical per-set logging entry. Each set stores its own weight and reps.
+ * Canonical per-set logging entry.
+ *
+ * - Weight exercises: `weight` + `reps`
+ * - Bodyweight exercises: `reps` only
+ * - Duration exercises: `durationSeconds` only
+ *
  * Empty weight uses "" while the user is still filling in the logger UI.
+ * Older history entries may omit `durationSeconds`; those keep working as-is.
  */
 export type WorkoutSet = {
-  weight: number | "";
-  reps: number;
+  weight?: number | "";
+  reps?: number;
+  durationSeconds?: number;
 };
 
 /**
  * Persisted history exercise shape.
  * Legacy entries use `sets` (count) + shared `reps` + `weights`.
- * Newer entries also store `loggedSets` so each set keeps its own reps.
+ * Newer entries also store `loggedSets` so each set keeps its own reps
+ * (and optional `durationSeconds` for duration-tracked exercises).
  */
 export type WorkoutExercise = {
   name: string;
@@ -21,7 +29,7 @@ export type WorkoutExercise = {
   sets: number;
   reps: number;
   weights: (number | "")[];
-  /** Canonical per-set weight + reps (preferred when present). */
+  /** Canonical per-set load data (preferred when present). */
   loggedSets?: WorkoutSet[];
   fatigueBreakdown: Record<string, number>;
 };
@@ -40,7 +48,7 @@ export type WorkoutExercise = {
 export type InProgressWorkoutItem = {
   exercise: string;
   slug: string;
-  /** Per-set weight + reps (new logging foundation). */
+  /** Per-set load data (new logging foundation). */
   sets: WorkoutSet[];
   bodyPart: string;
   section?: string;
@@ -66,7 +74,7 @@ export type ExerciseLoadInput = {
   loggedSets?: WorkoutSet[];
 };
 
-/** Build N sets that share the same reps (current logger UX). */
+/** Build N weight/bodyweight sets that share the same reps. */
 export function buildWorkoutSets(
   count: number,
   reps: number,
@@ -80,17 +88,55 @@ export function buildWorkoutSets(
   }));
 }
 
+/** Build N duration-only sets that share the same duration. */
+export function buildDurationWorkoutSets(
+  count: number,
+  durationSeconds: number
+): WorkoutSet[] {
+  const n = Math.max(0, Math.floor(count));
+  const seconds = Math.max(0, Number(durationSeconds) || 0);
+  return Array.from({ length: n }, () => ({
+    durationSeconds: seconds,
+  }));
+}
+
+function coerceWorkoutSet(raw: unknown): WorkoutSet {
+  const set = (raw && typeof raw === "object" ? raw : {}) as Partial<WorkoutSet>;
+
+  const hasDuration =
+    typeof set.durationSeconds === "number" &&
+    !Number.isNaN(set.durationSeconds);
+  const weight =
+    typeof set.weight === "number" || set.weight === ""
+      ? set.weight
+      : "";
+  const reps = Number(set.reps) || 0;
+  const hasMeaningfulWeight = typeof weight === "number" && weight > 0;
+  const hasMeaningfulReps = reps > 0;
+
+  // Duration-only payloads stay duration-only (no invented weight/reps).
+  if (hasDuration && !hasMeaningfulWeight && !hasMeaningfulReps) {
+    return { durationSeconds: set.durationSeconds };
+  }
+
+  // Legacy / weight / bodyweight sets — omit durationSeconds when absent.
+  const next: WorkoutSet = {
+    weight,
+    reps,
+  };
+
+  if (hasDuration) {
+    next.durationSeconds = set.durationSeconds;
+  }
+
+  return next;
+}
+
 function coerceWorkoutSetList(raw: WorkoutSet[] | undefined): WorkoutSet[] | null {
   if (!Array.isArray(raw) || raw.length === 0) return null;
   if (typeof raw[0] !== "object" || raw[0] == null) return null;
 
-  return raw.map((set) => ({
-    weight:
-      typeof set?.weight === "number" || set?.weight === ""
-        ? set.weight
-        : "",
-    reps: Number(set?.reps) || 0,
-  }));
+  return raw.map((set) => coerceWorkoutSet(set));
 }
 
 /**
@@ -136,7 +182,7 @@ export function workoutDisplayReps(sets: WorkoutSet[]): number {
 }
 
 export function workoutWeights(sets: WorkoutSet[]): (number | "")[] {
-  return sets.map((set) => set.weight);
+  return sets.map((set) => set.weight ?? "");
 }
 
 /**
@@ -157,6 +203,31 @@ export function formatWorkoutSetsSummary(sets: WorkoutSet[]): string {
     .join(" • ");
 }
 
+/** Serialize one set for persistence, preserving optional durationSeconds. */
+export function serializeWorkoutSet(set: WorkoutSet): WorkoutSet {
+  const hasDuration =
+    typeof set.durationSeconds === "number" &&
+    !Number.isNaN(set.durationSeconds);
+  const hasWeight = typeof set.weight === "number" && set.weight > 0;
+  const hasReps = (Number(set.reps) || 0) > 0;
+
+  // Duration exercises store durationSeconds only.
+  if (hasDuration && !hasWeight && !hasReps) {
+    return { durationSeconds: set.durationSeconds };
+  }
+
+  const serialized: WorkoutSet = {
+    weight: set.weight ?? "",
+    reps: Number(set.reps) || 0,
+  };
+
+  if (hasDuration) {
+    serialized.durationSeconds = set.durationSeconds;
+  }
+
+  return serialized;
+}
+
 /** Map canonical sets to persisted history exercise load fields. */
 export function toLegacyExerciseFields(sets: WorkoutSet[]): {
   sets: number;
@@ -168,11 +239,8 @@ export function toLegacyExerciseFields(sets: WorkoutSet[]): {
     sets: workoutSetCount(sets),
     reps: workoutDisplayReps(sets),
     weights: workoutWeights(sets),
-    // Preserve each set's own reps (fixes shared-reps collapse on save).
-    loggedSets: sets.map((set) => ({
-      weight: set.weight,
-      reps: Number(set.reps) || 0,
-    })),
+    // Preserve each set's own reps / duration (fixes shared-reps collapse on save).
+    loggedSets: sets.map((set) => serializeWorkoutSet(set)),
   };
 }
 

@@ -20,6 +20,7 @@ import { Dumbbell } from "lucide-react";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { useMinimumLoadingDelay } from "@/lib/hooks/useMinimumLoadingDelay";
 import {
+  buildDurationWorkoutSets,
   buildWorkoutSets,
   loadWorkoutHistory,
   workoutSetCount,
@@ -81,11 +82,15 @@ export default function ExercisePage() {
 
   useEffect(() => {
     // Reset logger defaults when the exercise (and its tracking type) changes.
-    const defaultValue =
-      trackingType === "duration" ? DEFAULT_DURATION_SECONDS : 10;
-    queueMicrotask(() =>
-      setLoggedSets(buildWorkoutSets(3, defaultValue))
-    );
+    queueMicrotask(() => {
+      if (trackingType === "duration") {
+        setLoggedSets(
+          buildDurationWorkoutSets(3, DEFAULT_DURATION_SECONDS)
+        );
+      } else {
+        setLoggedSets(buildWorkoutSets(3, 10));
+      }
+    });
   }, [slug, trackingType]);
 
   function updateSets(newSets: number) {
@@ -94,16 +99,21 @@ export default function ExercisePage() {
       if (newSets < prev.length) return prev.slice(0, newSets);
 
       const last = prev[prev.length - 1];
-      const defaultReps =
-        last?.reps ||
-        (trackingType === "duration" ? DEFAULT_DURATION_SECONDS : 10);
-      const defaultWeight = last?.weight ?? "";
       const additions: WorkoutSet[] = Array.from(
         { length: newSets - prev.length },
-        () => ({
-          weight: defaultWeight,
-          reps: defaultReps,
-        })
+        () => {
+          if (trackingType === "duration") {
+            return {
+              durationSeconds:
+                last?.durationSeconds || DEFAULT_DURATION_SECONDS,
+            };
+          }
+
+          return {
+            weight: last?.weight ?? "",
+            reps: last?.reps || 10,
+          };
+        }
       );
       return [...prev, ...additions];
     });
@@ -127,9 +137,15 @@ export default function ExercisePage() {
     });
   }
 
-  /** Duration is stored in `reps` so save / history / fatigue stay unchanged. */
   function updateSetDuration(index: number, value: number) {
-    updateSetReps(index, Math.max(1, value));
+    setLoggedSets((prev) => {
+      const next = [...prev];
+      if (!next[index]) return prev;
+      next[index] = {
+        durationSeconds: Math.max(1, value),
+      };
+      return next;
+    });
   }
 
   const WEIGHT_STEP = 2.5;
@@ -139,7 +155,7 @@ export default function ExercisePage() {
       const next = [...prev];
       if (!next[index]) return prev;
       const current = next[index].weight;
-      const base = current === "" ? 0 : current;
+      const base = current === "" || current == null ? 0 : current;
       next[index] = {
         ...next[index],
         weight: Math.max(0, Math.round((base + delta) * 10) / 10),
@@ -415,7 +431,11 @@ export default function ExercisePage() {
                         <button
                           type="button"
                           onClick={() => adjustSetWeight(index, -WEIGHT_STEP)}
-                          disabled={set.weight === "" || set.weight <= 0}
+                          disabled={
+                            set.weight === "" ||
+                            set.weight == null ||
+                            set.weight <= 0
+                          }
                           aria-label={`Decrease set ${index + 1} weight by 2.5 kilograms`}
                           className="btn-base absolute left-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white disabled:opacity-40"
                         >
@@ -427,7 +447,7 @@ export default function ExercisePage() {
                           min="0"
                           step="0.5"
                           placeholder="60"
-                          value={set.weight}
+                          value={set.weight ?? ""}
                           onChange={(e) =>
                             updateSetWeight(
                               index,
@@ -459,9 +479,12 @@ export default function ExercisePage() {
                         <button
                           type="button"
                           onClick={() =>
-                            updateSetReps(index, Math.max(1, set.reps - 1))
+                            updateSetReps(
+                              index,
+                              Math.max(1, (set.reps ?? 1) - 1)
+                            )
                           }
-                          disabled={set.reps <= 1}
+                          disabled={(set.reps ?? 1) <= 1}
                           aria-label={`Decrease set ${index + 1} reps`}
                           className="btn-base absolute left-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white disabled:opacity-40"
                         >
@@ -472,7 +495,7 @@ export default function ExercisePage() {
                           type="number"
                           min="1"
                           step="1"
-                          value={set.reps}
+                          value={set.reps ?? 1}
                           onChange={(e) =>
                             updateSetReps(
                               index,
@@ -487,7 +510,9 @@ export default function ExercisePage() {
 
                         <button
                           type="button"
-                          onClick={() => updateSetReps(index, set.reps + 1)}
+                          onClick={() =>
+                            updateSetReps(index, (set.reps ?? 1) + 1)
+                          }
                           aria-label={`Increase set ${index + 1} reps`}
                           className="btn-base absolute right-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white"
                         >
@@ -506,9 +531,19 @@ export default function ExercisePage() {
                         <button
                           type="button"
                           onClick={() =>
-                            updateSetDuration(index, Math.max(1, set.reps - 1))
+                            updateSetDuration(
+                              index,
+                              Math.max(
+                                1,
+                                (set.durationSeconds ??
+                                  DEFAULT_DURATION_SECONDS) - 1
+                              )
+                            )
                           }
-                          disabled={set.reps <= 1}
+                          disabled={
+                            (set.durationSeconds ??
+                              DEFAULT_DURATION_SECONDS) <= 1
+                          }
                           aria-label={`Decrease set ${index + 1} duration`}
                           className="btn-base absolute left-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white disabled:opacity-40"
                         >
@@ -519,7 +554,9 @@ export default function ExercisePage() {
                           type="number"
                           min="1"
                           step="1"
-                          value={set.reps}
+                          value={
+                            set.durationSeconds ?? DEFAULT_DURATION_SECONDS
+                          }
                           onChange={(e) =>
                             updateSetDuration(
                               index,
@@ -535,7 +572,11 @@ export default function ExercisePage() {
                         <button
                           type="button"
                           onClick={() =>
-                            updateSetDuration(index, set.reps + 1)
+                            updateSetDuration(
+                              index,
+                              (set.durationSeconds ??
+                                DEFAULT_DURATION_SECONDS) + 1
+                            )
                           }
                           aria-label={`Increase set ${index + 1} duration`}
                           className="btn-base absolute right-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white"
