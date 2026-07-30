@@ -1,0 +1,160 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { ChevronRight, Dumbbell } from "lucide-react";
+import { loadWorkoutHistory, type WorkoutHistoryEntry } from "@/lib/workouts";
+import {
+  bodyPartDisplayName,
+  bodyPartHistoryTitle,
+  filterHistoryByBodyPart,
+} from "@/lib/historyFilter";
+import BottomNav from "@/components/BottomNav";
+import EmptyState from "@/components/ui/EmptyState";
+import LoadingCard from "@/components/ui/LoadingCard";
+
+export default function HistoryContent() {
+  const searchParams = useSearchParams();
+  const bodyPartSlug = searchParams.get("bodyPart");
+
+  const [history, setHistory] = useState<WorkoutHistoryEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const bodyPartSlugMap: Record<string, string> = {
+    Chest: "chest",
+    Back: "back",
+    Shoulders: "shoulders",
+    Triceps: "triceps",
+    Biceps: "biceps",
+    Legs: "legs",
+    Forearms: "forearms",
+    Abs: "abs",
+  };
+
+  const filteredHistory = useMemo(
+    () => filterHistoryByBodyPart(history, bodyPartSlug),
+    [history, bodyPartSlug]
+  );
+
+  const pageTitle = bodyPartSlug
+    ? bodyPartHistoryTitle(bodyPartSlug)
+    : "Workout History";
+
+  const pageSubtitle = bodyPartSlug
+    ? `Workouts that include ${bodyPartDisplayName(bodyPartSlug).toLowerCase()}`
+    : "All your completed workouts";
+
+  useEffect(() => {
+    let active = true;
+
+    loadWorkoutHistory().then((result) => {
+      if (!active) return;
+      setHistory(result.history);
+      setError(result.error);
+      setLoading(false);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  function detailsHref(workoutId: string) {
+    if (!bodyPartSlug) return `/history/${workoutId}`;
+    return `/history/${workoutId}?bodyPart=${encodeURIComponent(bodyPartSlug)}`;
+  }
+
+  return (
+    <main className="min-h-screen bg-black px-6 py-6 pb-[calc(72px+env(safe-area-inset-bottom)+1.5rem)] text-white animate-[fade-in_200ms_ease-out]">
+      <div className="mx-auto w-full max-w-[390px]">
+
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold">
+            {pageTitle}
+          </h1>
+
+          <p className="mt-2 text-zinc-500">
+            {pageSubtitle}
+          </p>
+        </div>
+
+        {loading ? (
+          <div className="space-y-4" aria-busy="true">
+            <LoadingCard rows={3} />
+            <LoadingCard rows={2} />
+            <LoadingCard rows={2} />
+          </div>
+        ) : error ? (
+          <EmptyState
+            icon={<Dumbbell size={22} />}
+            title="Couldn't load workouts"
+            description="Something went wrong while loading your history. Please try again."
+          />
+        ) : filteredHistory.length === 0 ? (
+          <EmptyState
+            icon={<Dumbbell size={22} />}
+            title={bodyPartSlug ? "No workouts yet" : "No workouts yet"}
+            description={
+              bodyPartSlug
+                ? `Finish a ${bodyPartDisplayName(bodyPartSlug).toLowerCase()} workout and it will appear here.`
+                : "Finish your first workout and it will appear here."
+            }
+          />
+        ) : (
+          <div className="space-y-4">
+            {filteredHistory.map((workout) => (
+              <article
+                key={workout.id}
+                className="card-surface p-5 transition hover:border-zinc-700"
+              >
+                <p className="text-sm text-zinc-500">
+                  {workout.date}
+                </p>
+
+                <h2 className="mt-3 flex flex-wrap items-center text-2xl font-bold">
+                  {workout.bodyParts && workout.bodyParts.length > 0 ? (
+                    workout.bodyParts.map((part, index) => (
+                      <span key={part} className="flex items-center">
+                        <Link
+                          href={`/workout/${bodyPartSlugMap[part] ?? part.toLowerCase()}`}
+                          className="text-lime-400 transition-colors hover:text-lime-300"
+                        >
+                          {part}
+                        </Link>
+
+                        {index < workout.bodyParts.length - 1 && (
+                          <span className="mx-1 text-white">+</span>
+                        )}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-lime-400">Workout</span>
+                  )}
+                </h2>
+
+                <p className="mt-2 text-zinc-400">
+                  {workout.exercises} Exercises • {workout.durationMinutes} min
+                </p>
+
+                <div className="mt-5 flex items-center justify-end gap-3">
+                  <Link
+                    href={detailsHref(workout.id)}
+                    className="btn-base inline-flex items-center gap-2 rounded-lg text-zinc-300 hover:text-white"
+                    aria-label={`View details for ${workout.bodyParts?.join(" + ") || "workout"} on ${workout.date}`}
+                  >
+                    View Details
+                    <ChevronRight size={18} aria-hidden="true" />
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <BottomNav />
+    </main>
+  );
+}
