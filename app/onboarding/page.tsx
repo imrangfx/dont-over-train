@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Info } from "lucide-react";
+import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { supabase } from "@/lib/supabase";
 import { FcGoogle } from "react-icons/fc";
 import { useToast } from "@/components/ui/Toast";
@@ -88,29 +89,38 @@ export default function OnboardingPage() {
                     across all your devices.
                 </p>
 
-                <section className="mt-10 w-full" aria-labelledby="featured-on-heading">
-                    <h2
-                        id="featured-on-heading"
-                        className="mb-3 text-center text-sm font-medium uppercase tracking-wide text-gray-500"
+                <nav
+                    className="mt-10 flex items-center justify-center gap-6"
+                    aria-label="Social media"
+                >
+                    <a
+                        href="https://www.instagram.com/dontovertrain/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Instagram"
+                        className="text-gray-500 transition-colors duration-200 hover:text-[#39ff14]"
                     >
-                        Featured On
-                    </h2>
-                    <div className="flex justify-center">
-                        <a
-                            href="https://fazier.com/launches/www.dontovertrain.com"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                                src="https://fazier.com/api/v1/public/badges/launch_badges.svg?badge_type=launched&theme=neutral"
-                                width="120"
-                                alt="Launched on Fazier"
-                                className="h-auto w-[120px] max-w-full"
-                            />
-                        </a>
-                    </div>
-                </section>
+                        <FaInstagram size={21} aria-hidden="true" />
+                    </a>
+                    <a
+                        href="https://www.facebook.com/people/Dont-Over-Train/61592736236945/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Facebook"
+                        className="text-gray-500 transition-colors duration-200 hover:text-[#39ff14]"
+                    >
+                        <FaFacebook size={21} aria-hidden="true" />
+                    </a>
+                    <a
+                        href="https://www.linkedin.com/in/imran-mallik-820a99137/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="LinkedIn"
+                        className="text-gray-500 transition-colors duration-200 hover:text-[#39ff14]"
+                    >
+                        <FaLinkedin size={21} aria-hidden="true" />
+                    </a>
+                </nav>
 
                 {/* Info */}
                 <div className="mt-12 flex w-full items-start gap-3 rounded-2xl border border-gray-900 bg-neutral-950 p-5">
