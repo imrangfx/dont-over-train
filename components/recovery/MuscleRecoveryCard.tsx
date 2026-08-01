@@ -9,17 +9,20 @@ export default function MuscleRecoveryCard({ status }: MuscleRecoveryCardProps) 
 
   return (
     <div className="card-surface p-4">
-      <div className="mb-2 flex items-start justify-between gap-3">
+      <div className="mb-3 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="truncate text-base font-semibold text-white">
             {status.muscle}
           </h3>
-          <p
-            className="mt-0.5 text-sm font-medium"
-            style={{ color: status.color }}
+          <span
+            className="mt-1.5 inline-flex rounded-full px-2.5 py-1 text-xs font-semibold"
+            style={{
+              color: status.color,
+              backgroundColor: `${status.color}1A`,
+            }}
           >
             {status.label}
-          </p>
+          </span>
         </div>
 
         <span

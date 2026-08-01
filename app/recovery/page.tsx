@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { BatteryCharging } from "lucide-react";
 import {
   loadWorkoutHistory,
@@ -14,7 +15,10 @@ import SectionHeader from "@/components/ui/SectionHeader";
 import OverallRecoveryCard from "@/components/recovery/OverallRecoveryCard";
 import MuscleRecoveryCard from "@/components/recovery/MuscleRecoveryCard";
 import RecommendationCard from "@/components/recovery/RecommendationCard";
-import { buildOverallSummary } from "@/components/recovery/buildOverallSummary";
+import {
+  buildOverallSummary,
+  sortMusclesByLowestRecovery,
+} from "@/components/recovery/buildOverallSummary";
 
 function hasRecoverySnapshot(
   entry: WorkoutHistoryEntry | null | undefined,
@@ -51,11 +55,24 @@ export default function RecoveryPage() {
   }, []);
 
   const snapshot = hasRecoverySnapshot(latest) ? latest.recovery : null;
-  const muscles = snapshot?.recovery ?? [];
+
+  const muscles = useMemo(
+    () =>
+      snapshot
+        ? sortMusclesByLowestRecovery(snapshot.recovery)
+        : [],
+    [snapshot],
+  );
+
   const recommendations = snapshot?.recommendations ?? [];
-  const summary = snapshot
-    ? buildOverallSummary(muscles, snapshot.generatedAt)
-    : null;
+
+  const summary = useMemo(
+    () =>
+      snapshot
+        ? buildOverallSummary(snapshot.recovery, snapshot.generatedAt)
+        : null,
+    [snapshot],
+  );
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -78,12 +95,19 @@ export default function RecoveryPage() {
             description={error}
           />
         ) : !snapshot || !summary ? (
-          <div className="flex min-h-[50vh] items-center justify-center">
+          <div className="flex min-h-[50vh] flex-col items-center justify-center gap-5">
             <EmptyState
               icon={<BatteryCharging size={22} aria-hidden="true" />}
-              title="No Recovery Data"
-              description="Complete a workout to generate your first recovery snapshot."
+              title="No recovery data yet"
+              description="Complete a workout to see muscle recovery."
+              className="w-full"
             />
+            <Link
+              href="/home"
+              className="btn-base w-full rounded-2xl bg-lime-400 py-4 text-center text-lg font-semibold text-black hover:brightness-110"
+            >
+              Start Workout
+            </Link>
           </div>
         ) : (
           <div className="space-y-8">
