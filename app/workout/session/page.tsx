@@ -22,7 +22,6 @@ import {
 } from "@/lib/workouts";
 import { getExerciseTrackingType } from "@/app/Data/exercises";
 import {
-  formatElapsedClock,
   getActiveWorkoutSession,
   getLiveElapsedMs,
   clearWorkoutSession,
@@ -31,6 +30,7 @@ import {
   type ActiveWorkoutSession,
 } from "@/lib/workoutSession";
 import ManualDurationModal from "@/components/ui/ManualDurationModal";
+import WorkoutSessionTimerDisplay from "@/components/WorkoutSessionTimerDisplay";
 import {
   buildLiveRecoveryView,
   findLatestRecoverySnapshot,
@@ -193,18 +193,7 @@ export default function SessionPage() {
           </div>
 
           {session && (
-            <div
-              className="shrink-0 rounded-2xl border border-lime-400/40 bg-lime-400/10 px-3 py-2 text-right"
-              aria-live="polite"
-              aria-label="Workout timer"
-            >
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-lime-400/80">
-                Time
-              </p>
-              <p className="font-mono text-lg font-semibold tabular-nums text-lime-400">
-                {formatElapsedClock(displayElapsedMs)}
-              </p>
-            </div>
+            <WorkoutSessionTimerDisplay elapsedMs={displayElapsedMs} />
           )}
         </div>
 
