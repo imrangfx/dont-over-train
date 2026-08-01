@@ -35,9 +35,7 @@ export type TodaysRecommendation =
 
 const PICK_PRIORITY: Record<BodyPartRecommendationBadge["id"], number> = {
   best: 0,
-  recommended: 1,
-  "train-light": 2,
-  recovering: 3,
+  recovering: 1,
 };
 
 function musclesForPartName(name: string): readonly MuscleName[] | null {

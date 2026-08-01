@@ -3,6 +3,11 @@
  *
  * Presentation only — uses LiveRecoveryView from the Recovery Engine
  * (recommendations + muscle recovery %). No fatigue/decay recalculation.
+ *
+ * Only two badges are shown:
+ *   ⭐ Best Choice — single safest / highest-average body part
+ *   🔴 Recovering  — body part still in AVOID (should not train heavily)
+ * Safe / caution body parts render with no badge.
  */
 
 import { MUSCLES_BY_BODY_PART, type MuscleName } from "@/app/Data/muscles";
@@ -12,7 +17,7 @@ import type { LiveRecoveryView } from "@/components/recovery/liveRecovery";
 import { sanitizeRecoveryPercent } from "@/components/recovery/buildOverallSummary";
 
 export type BodyPartRecommendationBadge = {
-  readonly id: "best" | "recommended" | "train-light" | "recovering";
+  readonly id: "best" | "recovering";
   /** Full badge label including emoji. */
   readonly label: string;
   /** Tailwind classes for badge text / ring (matches prior badge chrome). */
@@ -30,27 +35,10 @@ const LEVEL_RANK: Record<RecommendationLevel, number> = {
   SAFE: 2,
 };
 
-const BADGE_BY_WORST: Record<
-  RecommendationLevel,
-  Omit<BodyPartRecommendationBadge, "id"> & {
-    id: BodyPartRecommendationBadge["id"];
-  }
-> = {
-  AVOID: {
-    id: "recovering",
-    label: "🔴 Recovering",
-    className: "text-red-400 ring-red-500/25",
-  },
-  CAUTION: {
-    id: "train-light",
-    label: "🟡 Train Light",
-    className: "text-yellow-300 ring-yellow-500/25",
-  },
-  SAFE: {
-    id: "recommended",
-    label: "🟢 Recommended",
-    className: "text-lime-400 ring-lime-500/25",
-  },
+const RECOVERING: BodyPartRecommendationBadge = {
+  id: "recovering",
+  label: "🔴 Recovering",
+  className: "text-red-400 ring-red-500/25",
 };
 
 const BEST_CHOICE: BodyPartRecommendationBadge = {
@@ -115,8 +103,10 @@ function worstLevel(
 }
 
 /**
- * Build a slug → badge map for every body part card.
+ * Build a slug → badge map for body part cards that need attention.
  * Order of `bodyParts` is preserved for Best Choice tie-breaks (first wins).
+ *
+ * Only entries with a badge are present; safe/available parts are omitted.
  */
 export function buildBodyPartRecommendationBadges(
   live: LiveRecoveryView | null,
@@ -141,9 +131,13 @@ export function buildBodyPartRecommendationBadges(
     const average = averageRecoveryForPart(live, muscles);
     scores.push({ slug: part.slug, worst, average });
 
-    result.set(part.slug, BADGE_BY_WORST[worst]);
+    // Only highlight parts that should not be trained heavily.
+    if (worst === "AVOID") {
+      result.set(part.slug, RECOVERING);
+    }
   }
 
+  // Same Best Choice selection as before: highest average among fully SAFE parts.
   const allSafe = scores.filter((score) => score.worst === "SAFE");
   if (allSafe.length === 0) return result;
 
@@ -154,6 +148,7 @@ export function buildBodyPartRecommendationBadges(
     }
   }
 
+  // BEST CHOICE wins over any other badge on that card (SAFE parts never recover).
   result.set(best.slug, BEST_CHOICE);
   return result;
 }
