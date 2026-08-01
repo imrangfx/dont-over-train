@@ -4,7 +4,8 @@ import type { ExerciseData } from "./exerciseTypes";
 /**
  * Shoulders exercise database — recovery-engine foundation.
  *
- * Fatigue keys use MUSCLES only. Legacy `upperBack` mapped to Mid Back
+ * Fatigue keys use MUSCLES only. Legacy `upperBack` mapped to Rhomboids
+ * (scapular retraction assist on rear-delt work).
  * with the same numeric values (no rebalance).
  * Sections are UI-only: front-delts | side-delts | rear-delts.
  */
@@ -380,11 +381,11 @@ export const shoulders = {
     trackingType: "weight" as const,
     movement: "isolation",
     primaryMuscles: [MUSCLES.REAR_DELTS],
-    secondaryMuscles: [MUSCLES.MID_BACK],
-    // Legacy upperBack: 7 → Mid Back (same value; no rebalance).
+    secondaryMuscles: [MUSCLES.RHOMBOIDS],
+    // Legacy upperBack: 7 → Rhomboids (same value; no rebalance).
     fatigue: {
       [MUSCLES.REAR_DELTS]: 16,
-      [MUSCLES.MID_BACK]: 7,
+      [MUSCLES.RHOMBOIDS]: 7,
     },
   },
 
@@ -395,11 +396,11 @@ export const shoulders = {
     trackingType: "weight" as const,
     movement: "isolation",
     primaryMuscles: [MUSCLES.REAR_DELTS],
-    secondaryMuscles: [MUSCLES.MID_BACK],
-    // Legacy upperBack: 5 → Mid Back (same value).
+    secondaryMuscles: [MUSCLES.RHOMBOIDS],
+    // Legacy upperBack: 5 → Rhomboids (same value).
     fatigue: {
       [MUSCLES.REAR_DELTS]: 17,
-      [MUSCLES.MID_BACK]: 5,
+      [MUSCLES.RHOMBOIDS]: 5,
     },
   },
 
@@ -462,11 +463,11 @@ export const shoulders = {
     trackingType: "weight" as const,
     movement: "isolation",
     primaryMuscles: [MUSCLES.REAR_DELTS],
-    secondaryMuscles: [MUSCLES.MID_BACK],
-    // Legacy upperBack: 5 → Mid Back (same value).
+    secondaryMuscles: [MUSCLES.RHOMBOIDS],
+    // Legacy upperBack: 5 → Rhomboids (same value).
     fatigue: {
       [MUSCLES.REAR_DELTS]: 15,
-      [MUSCLES.MID_BACK]: 5,
+      [MUSCLES.RHOMBOIDS]: 5,
     },
   },
 } as const satisfies Record<string, ExerciseData>;

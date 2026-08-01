@@ -7,15 +7,14 @@ import type { ExerciseData } from "./exerciseTypes";
  * Fatigue keys use MUSCLES only (never body-region keys like "Upper Back").
  * Sections are UI-only: upper-back | lats | lower-back.
  *
- * Upper Back covers traps / rhomboids-biased work.
- * Lats covers lat-focused vertical pulls.
- * Lower Back covers hinge / erector work.
+ * Final Back muscles:
+ *   Upper Traps | Middle Traps | Lower Traps | Rhomboids | Lats | Lower Back
  *
  * Fatigue scale (≈3×10 baseline):
  *   Primary 16–18 | Strong secondary 6–10 | Minor 2–5 | Stabilizer 1–3
  *
- * Totals are calibrated to stay ≈ legacy fatigue budgets (± a few points)
- * while redistributing invalid region keys into real muscles.
+ * Totals stay ≈ legacy budgets; former mid-scapular fatigue is redistributed into
+ * Rhomboids / Middle Traps / Lower Traps.
  */
 export const back = {
   // =====================
@@ -28,21 +27,22 @@ export const back = {
     section: "upper-back",
     trackingType: "weight" as const,
     movement: "horizontal-pull",
-    // Chest pad unloads erectors → scapular retraction (mid-back) is the driver.
-    primaryMuscles: [MUSCLES.MID_BACK],
+    // Chest pad unloads erectors → scapular retraction drives the row.
+    primaryMuscles: [MUSCLES.RHOMBOIDS, MUSCLES.MIDDLE_TRAPS],
     secondaryMuscles: [
+      MUSCLES.LOWER_TRAPS,
       MUSCLES.LATS,
-      MUSCLES.UPPER_TRAPS,
       MUSCLES.LONG_HEAD_BICEPS,
       MUSCLES.SHORT_HEAD_BICEPS,
       MUSCLES.BRACHIALIS,
       MUSCLES.BRACHIORADIALIS,
     ],
-    // Legacy total 30 (upperBack 18 → Mid Back + small Upper Traps share).
+    // Legacy total 30 (MID_BACK 16 + UT 2 → Rhomboids / Mid / Lower Traps).
     fatigue: {
-      [MUSCLES.MID_BACK]: 16,
+      [MUSCLES.RHOMBOIDS]: 9,
+      [MUSCLES.MIDDLE_TRAPS]: 7,
+      [MUSCLES.LOWER_TRAPS]: 2,
       [MUSCLES.LATS]: 6,
-      [MUSCLES.UPPER_TRAPS]: 2,
       [MUSCLES.LONG_HEAD_BICEPS]: 2,
       [MUSCLES.SHORT_HEAD_BICEPS]: 2,
       [MUSCLES.BRACHIALIS]: 1,
@@ -56,20 +56,25 @@ export const back = {
     section: "upper-back",
     trackingType: "weight" as const,
     movement: "horizontal-pull",
-    // High-elbow path: upper traps + rear delts share the scapular load.
-    primaryMuscles: [MUSCLES.UPPER_TRAPS, MUSCLES.REAR_DELTS],
+    // High-elbow path: scapular retractors + rear delts share the load.
+    primaryMuscles: [
+      MUSCLES.RHOMBOIDS,
+      MUSCLES.MIDDLE_TRAPS,
+      MUSCLES.REAR_DELTS,
+    ],
     secondaryMuscles: [
-      MUSCLES.MID_BACK,
+      MUSCLES.LOWER_TRAPS,
       MUSCLES.LATS,
       MUSCLES.LONG_HEAD_BICEPS,
       MUSCLES.SHORT_HEAD_BICEPS,
       MUSCLES.BRACHIALIS,
     ],
-    // Legacy total 35 (upperBack 17 + rearDelts 8 + lats 5 + biceps 5).
+    // Legacy total 35 (MID_BACK 6 + UT 10 → Rhomboids / Mid / Lower Traps).
     fatigue: {
-      [MUSCLES.UPPER_TRAPS]: 10,
+      [MUSCLES.RHOMBOIDS]: 7,
+      [MUSCLES.MIDDLE_TRAPS]: 6,
       [MUSCLES.REAR_DELTS]: 10,
-      [MUSCLES.MID_BACK]: 6,
+      [MUSCLES.LOWER_TRAPS]: 3,
       [MUSCLES.LATS]: 4,
       [MUSCLES.LONG_HEAD_BICEPS]: 2,
       [MUSCLES.SHORT_HEAD_BICEPS]: 2,
@@ -83,21 +88,21 @@ export const back = {
     section: "upper-back",
     trackingType: "weight" as const,
     movement: "horizontal-pull",
-    // Wide grip shortens lat moment arm → mid-back / trap retraction dominates.
-    primaryMuscles: [MUSCLES.MID_BACK, MUSCLES.UPPER_TRAPS],
+    // Wide grip shortens lat moment arm → retraction dominates.
+    primaryMuscles: [MUSCLES.RHOMBOIDS, MUSCLES.MIDDLE_TRAPS],
     secondaryMuscles: [
+      MUSCLES.LOWER_TRAPS,
       MUSCLES.LATS,
-      MUSCLES.REAR_DELTS,
       MUSCLES.LONG_HEAD_BICEPS,
       MUSCLES.SHORT_HEAD_BICEPS,
       MUSCLES.BRACHIALIS,
     ],
-    // Legacy total 28 (upperBack 17 + lats 6 + biceps 5).
+    // Legacy total 28 (MID_BACK 12 + UT 6 + RD 2 → Rhomboids / Mid / Lower Traps).
     fatigue: {
-      [MUSCLES.MID_BACK]: 12,
-      [MUSCLES.UPPER_TRAPS]: 6,
+      [MUSCLES.RHOMBOIDS]: 8,
+      [MUSCLES.MIDDLE_TRAPS]: 7,
+      [MUSCLES.LOWER_TRAPS]: 5,
       [MUSCLES.LATS]: 5,
-      [MUSCLES.REAR_DELTS]: 2,
       [MUSCLES.LONG_HEAD_BICEPS]: 1,
       [MUSCLES.SHORT_HEAD_BICEPS]: 1,
       [MUSCLES.BRACHIALIS]: 1,
@@ -113,18 +118,19 @@ export const back = {
     // Elbows high/flared → posterior deltoid is the prime mover (section kept for UI).
     primaryMuscles: [MUSCLES.REAR_DELTS],
     secondaryMuscles: [
-      MUSCLES.MID_BACK,
-      MUSCLES.UPPER_TRAPS,
+      MUSCLES.RHOMBOIDS,
+      MUSCLES.MIDDLE_TRAPS,
+      MUSCLES.LOWER_TRAPS,
       MUSCLES.LONG_HEAD_BICEPS,
       MUSCLES.SHORT_HEAD_BICEPS,
       MUSCLES.BRACHIALIS,
     ],
-    // Legacy total 30 (upperBack 16 + rearDelts 10 + biceps 4).
-    // Reassigned former upperBack mass toward Rear Delts (biomechanically correct).
+    // Legacy total 30 (MID_BACK 8 + UT 4 → Rhomboids / Mid / Lower Traps).
     fatigue: {
       [MUSCLES.REAR_DELTS]: 14,
-      [MUSCLES.MID_BACK]: 8,
-      [MUSCLES.UPPER_TRAPS]: 4,
+      [MUSCLES.RHOMBOIDS]: 5,
+      [MUSCLES.MIDDLE_TRAPS]: 4,
+      [MUSCLES.LOWER_TRAPS]: 3,
       [MUSCLES.LONG_HEAD_BICEPS]: 1,
       [MUSCLES.SHORT_HEAD_BICEPS]: 1,
       [MUSCLES.BRACHIALIS]: 2,
@@ -137,20 +143,21 @@ export const back = {
     section: "upper-back",
     trackingType: "weight" as const,
     movement: "horizontal-pull",
-    // Fixed path + support → mid-back retraction with lat assistance.
-    primaryMuscles: [MUSCLES.MID_BACK],
+    // Fixed path + support → clean scapular retraction with lat assistance.
+    primaryMuscles: [MUSCLES.RHOMBOIDS, MUSCLES.MIDDLE_TRAPS],
     secondaryMuscles: [
       MUSCLES.LATS,
-      MUSCLES.UPPER_TRAPS,
+      MUSCLES.LOWER_TRAPS,
       MUSCLES.LONG_HEAD_BICEPS,
       MUSCLES.SHORT_HEAD_BICEPS,
       MUSCLES.BRACHIALIS,
     ],
-    // Legacy total 32.
+    // Legacy total 32 (MID_BACK 16 + UT 3 → Rhomboids / Mid / Lower Traps).
     fatigue: {
-      [MUSCLES.MID_BACK]: 16,
+      [MUSCLES.RHOMBOIDS]: 10,
+      [MUSCLES.MIDDLE_TRAPS]: 7,
       [MUSCLES.LATS]: 7,
-      [MUSCLES.UPPER_TRAPS]: 3,
+      [MUSCLES.LOWER_TRAPS]: 2,
       [MUSCLES.LONG_HEAD_BICEPS]: 2,
       [MUSCLES.SHORT_HEAD_BICEPS]: 2,
       [MUSCLES.BRACHIALIS]: 2,
@@ -163,22 +170,22 @@ export const back = {
     section: "upper-back",
     trackingType: "weight" as const,
     movement: "horizontal-pull",
-    // Landmine single-arm: mid-back + lat; braced torso → lower-back stabilizer.
-    primaryMuscles: [MUSCLES.MID_BACK, MUSCLES.LATS],
+    // Landmine single-arm: lat + rhomboid drive; braced torso → lower-back stabilizer.
+    primaryMuscles: [MUSCLES.LATS, MUSCLES.RHOMBOIDS],
     secondaryMuscles: [
-      MUSCLES.REAR_DELTS,
-      MUSCLES.UPPER_TRAPS,
+      MUSCLES.MIDDLE_TRAPS,
+      MUSCLES.LOWER_TRAPS,
       MUSCLES.LOWER_BACK,
       MUSCLES.LONG_HEAD_BICEPS,
       MUSCLES.SHORT_HEAD_BICEPS,
       MUSCLES.BRACHIALIS,
     ],
-    // Legacy total 42.
+    // Legacy total 42 (MID_BACK 14 + UT 4 + RD 5 → Rhomboids / Mid / Lower Traps).
     fatigue: {
-      [MUSCLES.MID_BACK]: 14,
       [MUSCLES.LATS]: 8,
-      [MUSCLES.REAR_DELTS]: 5,
-      [MUSCLES.UPPER_TRAPS]: 4,
+      [MUSCLES.RHOMBOIDS]: 10,
+      [MUSCLES.MIDDLE_TRAPS]: 7,
+      [MUSCLES.LOWER_TRAPS]: 6,
       [MUSCLES.LOWER_BACK]: 4,
       [MUSCLES.LONG_HEAD_BICEPS]: 3,
       [MUSCLES.SHORT_HEAD_BICEPS]: 2,
@@ -197,23 +204,20 @@ export const back = {
     trackingType: "bodyweight" as const,
     movement: "vertical-pull",
     // Frontal-plane shoulder adduction → latissimus primary.
-    // Lower traps depress scapulae (replaces generic "upperBack").
     primaryMuscles: [MUSCLES.LATS],
     secondaryMuscles: [
       MUSCLES.LOWER_TRAPS,
-      MUSCLES.MID_BACK,
-      MUSCLES.UPPER_TRAPS,
+      MUSCLES.RHOMBOIDS,
       MUSCLES.LONG_HEAD_BICEPS,
       MUSCLES.SHORT_HEAD_BICEPS,
       MUSCLES.BRACHIALIS,
       MUSCLES.BRACHIORADIALIS,
     ],
-    // Legacy total 29.
+    // Legacy total 29 (MID_BACK 2 + UT 1 → Rhomboids / Lower Traps).
     fatigue: {
       [MUSCLES.LATS]: 18,
-      [MUSCLES.LOWER_TRAPS]: 4,
-      [MUSCLES.MID_BACK]: 2,
-      [MUSCLES.UPPER_TRAPS]: 1,
+      [MUSCLES.LOWER_TRAPS]: 5,
+      [MUSCLES.RHOMBOIDS]: 2,
       [MUSCLES.LONG_HEAD_BICEPS]: 1,
       [MUSCLES.SHORT_HEAD_BICEPS]: 1,
       [MUSCLES.BRACHIALIS]: 1,
@@ -231,16 +235,16 @@ export const back = {
     primaryMuscles: [MUSCLES.LATS],
     secondaryMuscles: [
       MUSCLES.LOWER_TRAPS,
-      MUSCLES.MID_BACK,
+      MUSCLES.RHOMBOIDS,
       MUSCLES.LONG_HEAD_BICEPS,
       MUSCLES.SHORT_HEAD_BICEPS,
       MUSCLES.BRACHIALIS,
     ],
-    // Legacy total 27.
+    // Legacy total 27 (MID_BACK 2 → Rhomboids).
     fatigue: {
       [MUSCLES.LATS]: 17,
       [MUSCLES.LOWER_TRAPS]: 4,
-      [MUSCLES.MID_BACK]: 2,
+      [MUSCLES.RHOMBOIDS]: 2,
       [MUSCLES.LONG_HEAD_BICEPS]: 2,
       [MUSCLES.SHORT_HEAD_BICEPS]: 1,
       [MUSCLES.BRACHIALIS]: 1,
@@ -257,17 +261,17 @@ export const back = {
     primaryMuscles: [MUSCLES.LATS],
     secondaryMuscles: [
       MUSCLES.LOWER_TRAPS,
-      MUSCLES.MID_BACK,
+      MUSCLES.RHOMBOIDS,
       MUSCLES.BRACHIALIS,
       MUSCLES.LONG_HEAD_BICEPS,
       MUSCLES.SHORT_HEAD_BICEPS,
       MUSCLES.BRACHIORADIALIS,
     ],
-    // Legacy total 26.
+    // Legacy total 26 (MID_BACK 2 → Rhomboids).
     fatigue: {
       [MUSCLES.LATS]: 16,
       [MUSCLES.LOWER_TRAPS]: 3,
-      [MUSCLES.MID_BACK]: 2,
+      [MUSCLES.RHOMBOIDS]: 2,
       [MUSCLES.BRACHIALIS]: 2,
       [MUSCLES.LONG_HEAD_BICEPS]: 1,
       [MUSCLES.SHORT_HEAD_BICEPS]: 1,
@@ -283,8 +287,8 @@ export const back = {
     movement: "isolation",
     // Locked elbows → shoulder extension isolates the lats.
     primaryMuscles: [MUSCLES.LATS],
-    secondaryMuscles: [MUSCLES.LOWER_TRAPS, MUSCLES.REAR_DELTS],
-    // Legacy total 20 (lats 18 + upperBack 2 → Lower Traps).
+    secondaryMuscles: [MUSCLES.LOWER_TRAPS],
+    // Legacy total 20.
     fatigue: {
       [MUSCLES.LATS]: 18,
       [MUSCLES.LOWER_TRAPS]: 2,
@@ -301,17 +305,17 @@ export const back = {
     primaryMuscles: [MUSCLES.LATS],
     secondaryMuscles: [
       MUSCLES.LOWER_TRAPS,
-      MUSCLES.MID_BACK,
+      MUSCLES.RHOMBOIDS,
       MUSCLES.OBLIQUES,
       MUSCLES.LONG_HEAD_BICEPS,
       MUSCLES.SHORT_HEAD_BICEPS,
       MUSCLES.BRACHIALIS,
     ],
-    // Legacy total 25 (biceps 4 split across heads).
+    // Legacy total 25 (MID_BACK 1 → Rhomboids).
     fatigue: {
       [MUSCLES.LATS]: 17,
       [MUSCLES.LOWER_TRAPS]: 3,
-      [MUSCLES.MID_BACK]: 1,
+      [MUSCLES.RHOMBOIDS]: 1,
       [MUSCLES.OBLIQUES]: 1,
       [MUSCLES.LONG_HEAD_BICEPS]: 1,
       [MUSCLES.SHORT_HEAD_BICEPS]: 1,
@@ -320,8 +324,7 @@ export const back = {
   },
 
   // =====================
-  // UPPER BACK continued (former mid-back UI section)
-  // Rows whose primary target is traps / mid-scapular retraction.
+  // UPPER BACK continued (rows)
   // =====================
 
   "barbell-row": {
@@ -330,24 +333,25 @@ export const back = {
     section: "upper-back",
     trackingType: "weight" as const,
     movement: "horizontal-pull",
-    // Hinged torso: mid-back + lats pull; erectors stabilize isometrically.
-    // Legacy double-counted upperBack+midBack — consolidated into Mid Back + Upper Traps.
-    primaryMuscles: [MUSCLES.MID_BACK, MUSCLES.LATS],
+    // Hinged torso: lat + rhomboid pull; erectors stabilize isometrically.
+    primaryMuscles: [MUSCLES.LATS, MUSCLES.RHOMBOIDS],
     secondaryMuscles: [
+      MUSCLES.MIDDLE_TRAPS,
+      MUSCLES.LOWER_TRAPS,
       MUSCLES.LOWER_BACK,
-      MUSCLES.UPPER_TRAPS,
       MUSCLES.REAR_DELTS,
       MUSCLES.LONG_HEAD_BICEPS,
       MUSCLES.SHORT_HEAD_BICEPS,
       MUSCLES.BRACHIALIS,
       MUSCLES.BRACHIORADIALIS,
     ],
-    // Legacy total 57.
+    // Legacy total 57 (MID_BACK 18 + UT 10 → Rhomboids / Mid / Lower Traps).
     fatigue: {
-      [MUSCLES.MID_BACK]: 18,
       [MUSCLES.LATS]: 10,
+      [MUSCLES.RHOMBOIDS]: 12,
+      [MUSCLES.MIDDLE_TRAPS]: 10,
+      [MUSCLES.LOWER_TRAPS]: 6,
       [MUSCLES.LOWER_BACK]: 8,
-      [MUSCLES.UPPER_TRAPS]: 10,
       [MUSCLES.REAR_DELTS]: 3,
       [MUSCLES.LONG_HEAD_BICEPS]: 3,
       [MUSCLES.SHORT_HEAD_BICEPS]: 2,
@@ -362,21 +366,22 @@ export const back = {
     section: "upper-back",
     trackingType: "weight" as const,
     movement: "horizontal-pull",
-    // Mid-back biased row; less free axial load than a strict barbell row.
-    primaryMuscles: [MUSCLES.MID_BACK],
+    // Retraction-biased row; less free axial load than a strict barbell row.
+    primaryMuscles: [MUSCLES.RHOMBOIDS, MUSCLES.MIDDLE_TRAPS],
     secondaryMuscles: [
       MUSCLES.LATS,
-      MUSCLES.UPPER_TRAPS,
+      MUSCLES.LOWER_TRAPS,
       MUSCLES.LOWER_BACK,
       MUSCLES.LONG_HEAD_BICEPS,
       MUSCLES.SHORT_HEAD_BICEPS,
       MUSCLES.BRACHIALIS,
     ],
-    // Legacy total 54 (midBack 18 + upperBack 15 + lats 8 + lowerBack 6 + biceps 7).
+    // Legacy total 54 (MID_BACK 18 + UT 12 → Rhomboids / Mid / Lower Traps).
     fatigue: {
-      [MUSCLES.MID_BACK]: 18,
-      [MUSCLES.UPPER_TRAPS]: 12,
+      [MUSCLES.RHOMBOIDS]: 12,
+      [MUSCLES.MIDDLE_TRAPS]: 12,
       [MUSCLES.LATS]: 8,
+      [MUSCLES.LOWER_TRAPS]: 6,
       [MUSCLES.LOWER_BACK]: 6,
       [MUSCLES.LONG_HEAD_BICEPS]: 4,
       [MUSCLES.SHORT_HEAD_BICEPS]: 3,
@@ -390,21 +395,22 @@ export const back = {
     section: "upper-back",
     trackingType: "weight" as const,
     movement: "horizontal-pull",
-    // Pad removes erector demand → clean mid-back prescription.
-    primaryMuscles: [MUSCLES.MID_BACK],
+    // Pad removes erector demand → clean retraction prescription.
+    primaryMuscles: [MUSCLES.RHOMBOIDS, MUSCLES.MIDDLE_TRAPS],
     secondaryMuscles: [
-      MUSCLES.UPPER_TRAPS,
       MUSCLES.LATS,
+      MUSCLES.LOWER_TRAPS,
       MUSCLES.REAR_DELTS,
       MUSCLES.LONG_HEAD_BICEPS,
       MUSCLES.SHORT_HEAD_BICEPS,
       MUSCLES.BRACHIALIS,
     ],
-    // Legacy total 46 (midBack 18 + upperBack 15 + lats 7 + biceps 6).
+    // Legacy total 46 (MID_BACK 18 + UT 12 → Rhomboids / Mid / Lower Traps).
     fatigue: {
-      [MUSCLES.MID_BACK]: 18,
-      [MUSCLES.UPPER_TRAPS]: 12,
+      [MUSCLES.RHOMBOIDS]: 12,
+      [MUSCLES.MIDDLE_TRAPS]: 12,
       [MUSCLES.LATS]: 7,
+      [MUSCLES.LOWER_TRAPS]: 6,
       [MUSCLES.REAR_DELTS]: 3,
       [MUSCLES.LONG_HEAD_BICEPS]: 2,
       [MUSCLES.SHORT_HEAD_BICEPS]: 2,
@@ -418,20 +424,22 @@ export const back = {
     section: "upper-back",
     trackingType: "weight" as const,
     movement: "horizontal-pull",
-    // Constant tension; mid-back + lat share by elbow path.
-    primaryMuscles: [MUSCLES.MID_BACK, MUSCLES.LATS],
+    // Constant tension; rhomboid + lat share by elbow path.
+    primaryMuscles: [MUSCLES.RHOMBOIDS, MUSCLES.LATS],
     secondaryMuscles: [
-      MUSCLES.UPPER_TRAPS,
+      MUSCLES.MIDDLE_TRAPS,
+      MUSCLES.LOWER_TRAPS,
       MUSCLES.REAR_DELTS,
       MUSCLES.LONG_HEAD_BICEPS,
       MUSCLES.SHORT_HEAD_BICEPS,
       MUSCLES.BRACHIALIS,
     ],
-    // Legacy total 45.
+    // Legacy total 45 (MID_BACK 17 + UT 10 → Rhomboids / Mid / Lower Traps).
     fatigue: {
-      [MUSCLES.MID_BACK]: 17,
-      [MUSCLES.UPPER_TRAPS]: 10,
+      [MUSCLES.RHOMBOIDS]: 12,
       [MUSCLES.LATS]: 8,
+      [MUSCLES.MIDDLE_TRAPS]: 10,
+      [MUSCLES.LOWER_TRAPS]: 5,
       [MUSCLES.REAR_DELTS]: 2,
       [MUSCLES.LONG_HEAD_BICEPS]: 3,
       [MUSCLES.SHORT_HEAD_BICEPS]: 3,
@@ -453,17 +461,21 @@ export const back = {
     primaryMuscles: [MUSCLES.LOWER_BACK, MUSCLES.GLUTES, MUSCLES.HAMSTRINGS],
     secondaryMuscles: [
       MUSCLES.UPPER_TRAPS,
-      MUSCLES.MID_BACK,
+      MUSCLES.RHOMBOIDS,
+      MUSCLES.MIDDLE_TRAPS,
+      MUSCLES.LOWER_TRAPS,
       MUSCLES.LATS,
       MUSCLES.FOREARM_FLEXORS,
     ],
-    // Legacy total 60 (lowerBack was 20 → capped to primary band at 18).
+    // Legacy total 60 (MID_BACK 6 → Rhomboids / Mid / Lower Traps).
     fatigue: {
       [MUSCLES.LOWER_BACK]: 18,
       [MUSCLES.GLUTES]: 12,
       [MUSCLES.HAMSTRINGS]: 10,
       [MUSCLES.UPPER_TRAPS]: 8,
-      [MUSCLES.MID_BACK]: 6,
+      [MUSCLES.RHOMBOIDS]: 3,
+      [MUSCLES.MIDDLE_TRAPS]: 2,
+      [MUSCLES.LOWER_TRAPS]: 1,
       [MUSCLES.LATS]: 4,
       [MUSCLES.FOREARM_FLEXORS]: 2,
     },
@@ -477,13 +489,18 @@ export const back = {
     movement: "hip-hinge",
     // Soft-knee hinge lengthens hamstrings under load; erectors isometric.
     primaryMuscles: [MUSCLES.HAMSTRINGS, MUSCLES.LOWER_BACK, MUSCLES.GLUTES],
-    secondaryMuscles: [MUSCLES.MID_BACK, MUSCLES.FOREARM_FLEXORS],
-    // Legacy total 40.
+    secondaryMuscles: [
+      MUSCLES.RHOMBOIDS,
+      MUSCLES.MIDDLE_TRAPS,
+      MUSCLES.FOREARM_FLEXORS,
+    ],
+    // Legacy total 40 (MID_BACK 2 → Rhomboids / Middle Traps).
     fatigue: {
       [MUSCLES.HAMSTRINGS]: 14,
       [MUSCLES.LOWER_BACK]: 14,
       [MUSCLES.GLUTES]: 10,
-      [MUSCLES.MID_BACK]: 2,
+      [MUSCLES.RHOMBOIDS]: 1,
+      [MUSCLES.MIDDLE_TRAPS]: 1,
       [MUSCLES.FOREARM_FLEXORS]: 1,
     },
   },
@@ -513,13 +530,18 @@ export const back = {
     movement: "hip-hinge",
     // Bar on back ↑ spinal moment arm + posterior-chain hinge.
     primaryMuscles: [MUSCLES.LOWER_BACK, MUSCLES.HAMSTRINGS],
-    secondaryMuscles: [MUSCLES.GLUTES, MUSCLES.MID_BACK],
-    // Legacy total 40.
+    secondaryMuscles: [
+      MUSCLES.GLUTES,
+      MUSCLES.RHOMBOIDS,
+      MUSCLES.MIDDLE_TRAPS,
+    ],
+    // Legacy total 40 (MID_BACK 2 → Rhomboids / Middle Traps).
     fatigue: {
       [MUSCLES.LOWER_BACK]: 16,
       [MUSCLES.HAMSTRINGS]: 14,
       [MUSCLES.GLUTES]: 10,
-      [MUSCLES.MID_BACK]: 2,
+      [MUSCLES.RHOMBOIDS]: 1,
+      [MUSCLES.MIDDLE_TRAPS]: 1,
     },
   },
 
@@ -533,17 +555,19 @@ export const back = {
     primaryMuscles: [MUSCLES.LOWER_BACK, MUSCLES.UPPER_TRAPS],
     secondaryMuscles: [
       MUSCLES.GLUTES,
-      MUSCLES.MID_BACK,
+      MUSCLES.RHOMBOIDS,
+      MUSCLES.MIDDLE_TRAPS,
       MUSCLES.LATS,
       MUSCLES.FOREARM_FLEXORS,
     ],
-    // Legacy total 42 (upperBack 10 → Upper Traps).
+    // Legacy total 42 (MID_BACK 2 → Rhomboids / Middle Traps).
     fatigue: {
       [MUSCLES.LOWER_BACK]: 16,
       [MUSCLES.UPPER_TRAPS]: 10,
       [MUSCLES.GLUTES]: 8,
       [MUSCLES.LATS]: 4,
-      [MUSCLES.MID_BACK]: 2,
+      [MUSCLES.RHOMBOIDS]: 1,
+      [MUSCLES.MIDDLE_TRAPS]: 1,
       [MUSCLES.FOREARM_FLEXORS]: 2,
     },
   },

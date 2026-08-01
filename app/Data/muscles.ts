@@ -16,9 +16,10 @@ export const MUSCLES = {
 
   // Back
   LATS: "Lats",
-  MID_BACK: "Mid Back",
   UPPER_TRAPS: "Upper Traps",
+  MIDDLE_TRAPS: "Middle Traps",
   LOWER_TRAPS: "Lower Traps",
+  RHOMBOIDS: "Rhomboids",
   LOWER_BACK: "Lower Back",
 
   // Shoulders
@@ -94,10 +95,11 @@ export function isMuscleName(value: string): value is MuscleName {
 export const MUSCLES_BY_BODY_PART = {
   Chest: [MUSCLES.UPPER_CHEST, MUSCLES.MIDDLE_CHEST, MUSCLES.LOWER_CHEST],
   Back: [
-    MUSCLES.LATS,
-    MUSCLES.MID_BACK,
     MUSCLES.UPPER_TRAPS,
+    MUSCLES.MIDDLE_TRAPS,
     MUSCLES.LOWER_TRAPS,
+    MUSCLES.RHOMBOIDS,
+    MUSCLES.LATS,
     MUSCLES.LOWER_BACK,
   ],
   Shoulders: [MUSCLES.FRONT_DELTS, MUSCLES.SIDE_DELTS, MUSCLES.REAR_DELTS],
