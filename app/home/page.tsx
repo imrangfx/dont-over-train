@@ -51,8 +51,6 @@ import {
   buildBodyPartRecommendationBadges,
   type BodyPartRecommendationBadge,
 } from "@/components/recovery/bodyPartRecommendationBadges";
-import { selectTodaysRecommendation } from "@/components/recovery/todaysRecommendation";
-import TodaysRecommendationCard from "@/components/recovery/TodaysRecommendationCard";
 
 type BodyPart = {
   name: string;
@@ -830,11 +828,6 @@ export default function Home() {
     [liveRecovery],
   );
 
-  const todaysRecommendation = useMemo(
-    () => selectTodaysRecommendation(liveRecovery, BODY_PARTS),
-    [liveRecovery],
-  );
-
   return (
     <main className="min-h-screen bg-black px-6 pt-8 pb-[calc(72px+env(safe-area-inset-bottom)+1.5rem)] text-white animate-[fade-in_200ms_ease-out]">
       <div className="mx-auto w-full max-w-[390px]">
@@ -857,14 +850,7 @@ export default function Home() {
           </p>
         </header>
 
-        {/* Today's Recommendation */}
-        {todaysRecommendation ? (
-          <section className="mt-5">
-            <TodaysRecommendationCard recommendation={todaysRecommendation} />
-          </section>
-        ) : null}
-
-        {/* 6. Weekly Progress */}
+        {/* Weekly Progress */}
         <section aria-label="Weekly progress" className="mt-5">
           {isLoading ? (
             <LoadingCard rows={2} />
