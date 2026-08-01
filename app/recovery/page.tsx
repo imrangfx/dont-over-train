@@ -7,7 +7,6 @@ import {
   loadWorkoutHistory,
   type WorkoutHistoryEntry,
 } from "@/lib/workouts";
-import type { RecoveryEngineResult } from "@/app/lib/recovery";
 import BottomNav from "@/components/BottomNav";
 import EmptyState from "@/components/ui/EmptyState";
 import LoadingCard from "@/components/ui/LoadingCard";
@@ -16,20 +15,16 @@ import OverallRecoveryCard from "@/components/recovery/OverallRecoveryCard";
 import MuscleRecoveryCard from "@/components/recovery/MuscleRecoveryCard";
 import RecommendationCard from "@/components/recovery/RecommendationCard";
 import {
-  buildOverallSummary,
-  sortMusclesByLowestRecovery,
-} from "@/components/recovery/buildOverallSummary";
-
-function hasRecoverySnapshot(
-  entry: WorkoutHistoryEntry | null | undefined,
-): entry is WorkoutHistoryEntry & { recovery: RecoveryEngineResult } {
-  return entry?.recovery != null;
-}
+  buildLiveRecoveryView,
+  findLatestRecoverySnapshot,
+} from "@/components/recovery/liveRecovery";
 
 export default function RecoveryPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [latest, setLatest] = useState<WorkoutHistoryEntry | null>(null);
+  const [history, setHistory] = useState<readonly WorkoutHistoryEntry[]>([]);
+  /** Fixed at load so decay is stable for this page view. */
+  const [evaluatedAt, setEvaluatedAt] = useState(() => Date.now());
 
   useEffect(() => {
     let active = true;
@@ -39,11 +34,11 @@ export default function RecoveryPage() {
 
       if (result.error) {
         setError(result.error);
-        setLatest(null);
+        setHistory([]);
       } else {
         setError(null);
-        // Newest first from loadWorkoutHistory / local storage.
-        setLatest(result.history[0] ?? null);
+        setHistory(result.history);
+        setEvaluatedAt(Date.now());
       }
 
       setLoading(false);
@@ -54,24 +49,15 @@ export default function RecoveryPage() {
     };
   }, []);
 
-  const snapshot = hasRecoverySnapshot(latest) ? latest.recovery : null;
-
-  const muscles = useMemo(
-    () =>
-      snapshot
-        ? sortMusclesByLowestRecovery(snapshot.recovery)
-        : [],
-    [snapshot],
+  const snapshot = useMemo(
+    () => findLatestRecoverySnapshot(history),
+    [history],
   );
 
-  const recommendations = snapshot?.recommendations ?? [];
-
-  const summary = useMemo(
+  const live = useMemo(
     () =>
-      snapshot
-        ? buildOverallSummary(snapshot.recovery, snapshot.generatedAt)
-        : null,
-    [snapshot],
+      snapshot ? buildLiveRecoveryView(snapshot, evaluatedAt) : null,
+    [snapshot, evaluatedAt],
   );
 
   return (
@@ -94,7 +80,7 @@ export default function RecoveryPage() {
             title="Couldn't load recovery"
             description={error}
           />
-        ) : !snapshot || !summary ? (
+        ) : !live ? (
           <div className="flex min-h-[50vh] flex-col items-center justify-center gap-5">
             <EmptyState
               icon={<BatteryCharging size={22} aria-hidden="true" />}
@@ -111,12 +97,12 @@ export default function RecoveryPage() {
           </div>
         ) : (
           <div className="space-y-8">
-            <OverallRecoveryCard summary={summary} />
+            <OverallRecoveryCard summary={live.summary} />
 
             <section aria-labelledby="muscle-recovery-heading">
               <SectionHeader id="muscle-recovery-heading" title="Muscles" />
               <div className="space-y-3">
-                {muscles.map((status) => (
+                {live.muscles.map((status) => (
                   <MuscleRecoveryCard
                     key={status.muscle}
                     status={status}
@@ -125,14 +111,14 @@ export default function RecoveryPage() {
               </div>
             </section>
 
-            {recommendations.length > 0 && (
+            {live.recommendations.length > 0 && (
               <section aria-labelledby="recommendations-heading">
                 <SectionHeader
                   id="recommendations-heading"
                   title="Recommendations"
                 />
                 <div className="space-y-3">
-                  {recommendations.map((recommendation) => (
+                  {live.recommendations.map((recommendation) => (
                     <RecommendationCard
                       key={recommendation.muscle}
                       recommendation={recommendation}
