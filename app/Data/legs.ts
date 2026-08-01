@@ -1,16 +1,33 @@
-export const legs = {
+import { MUSCLES } from "./muscles";
+import type { ExerciseData } from "./exerciseTypes";
 
-  // QUADS //
+/**
+ * Legs exercise database — recovery-engine foundation.
+ *
+ * Fatigue keys use MUSCLES only. Numeric values preserved from legacy.
+ * Legacy remaps (same values):
+ *   quads → Quads, glutes → Glutes, hamstrings → Hamstrings, calves → Calves
+ *   lowerBack → Lower Back
+ *   core: 6 → Abs 4 + Obliques 2; core: 5 → Abs 3 + Obliques 2
+ * Section is UI-only: quads | hamstrings | glutes | calves.
+ */
+export const legs = {
+  // =====================
+  // QUADS (UI section)
+  // =====================
 
   "barbell-back-squat": {
     name: "Barbell Back Squat",
     bodyPart: "Legs",
     section: "quads",
     trackingType: "weight" as const,
+    movement: "squat",
+    primaryMuscles: [MUSCLES.QUADS],
+    secondaryMuscles: [MUSCLES.GLUTES, MUSCLES.HAMSTRINGS],
     fatigue: {
-      quads: 20,
-      glutes: 10,
-      hamstrings: 6,
+      [MUSCLES.QUADS]: 20,
+      [MUSCLES.GLUTES]: 10,
+      [MUSCLES.HAMSTRINGS]: 6,
     },
   },
 
@@ -19,10 +36,13 @@ export const legs = {
     bodyPart: "Legs",
     section: "quads",
     trackingType: "weight" as const,
+    movement: "squat",
+    primaryMuscles: [MUSCLES.QUADS],
+    secondaryMuscles: [MUSCLES.GLUTES, MUSCLES.HAMSTRINGS],
     fatigue: {
-      quads: 19,
-      glutes: 8,
-      hamstrings: 5,
+      [MUSCLES.QUADS]: 19,
+      [MUSCLES.GLUTES]: 8,
+      [MUSCLES.HAMSTRINGS]: 5,
     },
   },
 
@@ -31,9 +51,12 @@ export const legs = {
     bodyPart: "Legs",
     section: "quads",
     trackingType: "weight" as const,
+    movement: "squat",
+    primaryMuscles: [MUSCLES.QUADS],
+    secondaryMuscles: [MUSCLES.GLUTES],
     fatigue: {
-      quads: 19,
-      glutes: 6,
+      [MUSCLES.QUADS]: 19,
+      [MUSCLES.GLUTES]: 6,
     },
   },
 
@@ -42,8 +65,11 @@ export const legs = {
     bodyPart: "Legs",
     section: "quads",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.QUADS],
+    secondaryMuscles: [],
     fatigue: {
-      quads: 18,
+      [MUSCLES.QUADS]: 18,
     },
   },
 
@@ -52,10 +78,14 @@ export const legs = {
     bodyPart: "Legs",
     section: "quads",
     trackingType: "weight" as const,
+    movement: "lunge",
+    primaryMuscles: [MUSCLES.QUADS],
+    secondaryMuscles: [MUSCLES.GLUTES, MUSCLES.HAMSTRINGS, MUSCLES.ADDUCTORS],
+    // ADDUCTORS listed in secondary metadata only (no fatigue invent).
     fatigue: {
-      quads: 18,
-      glutes: 10,
-      hamstrings: 5,
+      [MUSCLES.QUADS]: 18,
+      [MUSCLES.GLUTES]: 10,
+      [MUSCLES.HAMSTRINGS]: 5,
     },
   },
 
@@ -64,10 +94,19 @@ export const legs = {
     bodyPart: "Legs",
     section: "quads",
     trackingType: "weight" as const,
+    movement: "squat",
+    primaryMuscles: [MUSCLES.QUADS],
+    secondaryMuscles: [
+      MUSCLES.GLUTES,
+      MUSCLES.RECTUS_ABDOMINIS,
+      MUSCLES.OBLIQUES,
+    ],
+    // Legacy core: 6 → Abs 4 + Obliques 2.
     fatigue: {
-      quads: 20,
-      glutes: 8,
-      core: 6,
+      [MUSCLES.QUADS]: 20,
+      [MUSCLES.GLUTES]: 8,
+      [MUSCLES.RECTUS_ABDOMINIS]: 4,
+      [MUSCLES.OBLIQUES]: 2,
     },
   },
 
@@ -76,9 +115,12 @@ export const legs = {
     bodyPart: "Legs",
     section: "quads",
     trackingType: "weight" as const,
+    movement: "squat",
+    primaryMuscles: [MUSCLES.QUADS],
+    secondaryMuscles: [MUSCLES.GLUTES],
     fatigue: {
-      quads: 18,
-      glutes: 7,
+      [MUSCLES.QUADS]: 18,
+      [MUSCLES.GLUTES]: 7,
     },
   },
 
@@ -87,10 +129,13 @@ export const legs = {
     bodyPart: "Legs",
     section: "quads",
     trackingType: "weight" as const,
+    movement: "lunge",
+    primaryMuscles: [MUSCLES.QUADS],
+    secondaryMuscles: [MUSCLES.GLUTES, MUSCLES.HAMSTRINGS],
     fatigue: {
-      quads: 17,
-      glutes: 9,
-      hamstrings: 5,
+      [MUSCLES.QUADS]: 17,
+      [MUSCLES.GLUTES]: 9,
+      [MUSCLES.HAMSTRINGS]: 5,
     },
   },
 
@@ -99,10 +144,19 @@ export const legs = {
     bodyPart: "Legs",
     section: "quads",
     trackingType: "weight" as const,
+    movement: "squat",
+    primaryMuscles: [MUSCLES.QUADS],
+    secondaryMuscles: [
+      MUSCLES.GLUTES,
+      MUSCLES.RECTUS_ABDOMINIS,
+      MUSCLES.OBLIQUES,
+    ],
+    // Legacy core: 6 → Abs 4 + Obliques 2.
     fatigue: {
-      quads: 17,
-      glutes: 7,
-      core: 5,
+      [MUSCLES.QUADS]: 17,
+      [MUSCLES.GLUTES]: 7,
+      [MUSCLES.RECTUS_ABDOMINIS]: 4,
+      [MUSCLES.OBLIQUES]: 2,
     },
   },
 
@@ -111,21 +165,30 @@ export const legs = {
     bodyPart: "Legs",
     section: "quads",
     trackingType: "bodyweight" as const,
+    movement: "squat",
+    primaryMuscles: [MUSCLES.QUADS],
+    secondaryMuscles: [],
     fatigue: {
-      quads: 18,
+      [MUSCLES.QUADS]: 18,
     },
   },
 
-  //HAMSTRINGS//
+  // =====================
+  // HAMSTRINGS (UI section)
+  // =====================
+
   "romanian-deadlift": {
     name: "Romanian Deadlift",
     bodyPart: "Legs",
     section: "hamstrings",
     trackingType: "weight" as const,
+    movement: "hip-hinge",
+    primaryMuscles: [MUSCLES.HAMSTRINGS],
+    secondaryMuscles: [MUSCLES.GLUTES, MUSCLES.LOWER_BACK],
     fatigue: {
-      hamstrings: 18,
-      glutes: 10,
-      lowerBack: 6,
+      [MUSCLES.HAMSTRINGS]: 18,
+      [MUSCLES.GLUTES]: 10,
+      [MUSCLES.LOWER_BACK]: 6,
     },
   },
 
@@ -134,10 +197,13 @@ export const legs = {
     bodyPart: "Legs",
     section: "hamstrings",
     trackingType: "weight" as const,
+    movement: "hip-hinge",
+    primaryMuscles: [MUSCLES.HAMSTRINGS],
+    secondaryMuscles: [MUSCLES.GLUTES, MUSCLES.LOWER_BACK],
     fatigue: {
-      hamstrings: 18,
-      glutes: 8,
-      lowerBack: 7,
+      [MUSCLES.HAMSTRINGS]: 18,
+      [MUSCLES.GLUTES]: 8,
+      [MUSCLES.LOWER_BACK]: 7,
     },
   },
 
@@ -146,8 +212,11 @@ export const legs = {
     bodyPart: "Legs",
     section: "hamstrings",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.HAMSTRINGS],
+    secondaryMuscles: [],
     fatigue: {
-      hamstrings: 18,
+      [MUSCLES.HAMSTRINGS]: 18,
     },
   },
 
@@ -156,8 +225,11 @@ export const legs = {
     bodyPart: "Legs",
     section: "hamstrings",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.HAMSTRINGS],
+    secondaryMuscles: [],
     fatigue: {
-      hamstrings: 17,
+      [MUSCLES.HAMSTRINGS]: 17,
     },
   },
 
@@ -166,8 +238,11 @@ export const legs = {
     bodyPart: "Legs",
     section: "hamstrings",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.HAMSTRINGS],
+    secondaryMuscles: [],
     fatigue: {
-      hamstrings: 17,
+      [MUSCLES.HAMSTRINGS]: 17,
     },
   },
 
@@ -176,10 +251,13 @@ export const legs = {
     bodyPart: "Legs",
     section: "hamstrings",
     trackingType: "weight" as const,
+    movement: "hip-hinge",
+    primaryMuscles: [MUSCLES.HAMSTRINGS],
+    secondaryMuscles: [MUSCLES.GLUTES, MUSCLES.LOWER_BACK],
     fatigue: {
-      hamstrings: 16,
-      glutes: 8,
-      lowerBack: 8,
+      [MUSCLES.HAMSTRINGS]: 16,
+      [MUSCLES.GLUTES]: 8,
+      [MUSCLES.LOWER_BACK]: 8,
     },
   },
 
@@ -188,9 +266,12 @@ export const legs = {
     bodyPart: "Legs",
     section: "hamstrings",
     trackingType: "bodyweight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.HAMSTRINGS],
+    secondaryMuscles: [MUSCLES.GLUTES],
     fatigue: {
-      hamstrings: 18,
-      glutes: 6,
+      [MUSCLES.HAMSTRINGS]: 18,
+      [MUSCLES.GLUTES]: 6,
     },
   },
 
@@ -199,8 +280,11 @@ export const legs = {
     bodyPart: "Legs",
     section: "hamstrings",
     trackingType: "bodyweight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.HAMSTRINGS],
+    secondaryMuscles: [],
     fatigue: {
-      hamstrings: 20,
+      [MUSCLES.HAMSTRINGS]: 20,
     },
   },
 
@@ -209,8 +293,11 @@ export const legs = {
     bodyPart: "Legs",
     section: "hamstrings",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.HAMSTRINGS],
+    secondaryMuscles: [],
     fatigue: {
-      hamstrings: 16,
+      [MUSCLES.HAMSTRINGS]: 16,
     },
   },
 
@@ -219,19 +306,29 @@ export const legs = {
     bodyPart: "Legs",
     section: "hamstrings",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.HAMSTRINGS],
+    secondaryMuscles: [],
     fatigue: {
-      hamstrings: 15,
+      [MUSCLES.HAMSTRINGS]: 15,
     },
   },
-  //GLUTES//
+
+  // =====================
+  // GLUTES (UI section)
+  // =====================
+
   "barbell-hip-thrust": {
     name: "Barbell Hip Thrust",
     bodyPart: "Legs",
     section: "glutes",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.GLUTES],
+    secondaryMuscles: [MUSCLES.HAMSTRINGS],
     fatigue: {
-      glutes: 20,
-      hamstrings: 6,
+      [MUSCLES.GLUTES]: 20,
+      [MUSCLES.HAMSTRINGS]: 6,
     },
   },
 
@@ -240,8 +337,11 @@ export const legs = {
     bodyPart: "Legs",
     section: "glutes",
     trackingType: "bodyweight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.GLUTES],
+    secondaryMuscles: [],
     fatigue: {
-      glutes: 17,
+      [MUSCLES.GLUTES]: 17,
     },
   },
 
@@ -250,8 +350,11 @@ export const legs = {
     bodyPart: "Legs",
     section: "glutes",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.GLUTES],
+    secondaryMuscles: [],
     fatigue: {
-      glutes: 18,
+      [MUSCLES.GLUTES]: 18,
     },
   },
 
@@ -260,8 +363,12 @@ export const legs = {
     bodyPart: "Legs",
     section: "glutes",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.GLUTES],
+    secondaryMuscles: [MUSCLES.HAMSTRINGS],
+    // HAMSTRINGS in secondary metadata only (no fatigue invent).
     fatigue: {
-      glutes: 19,
+      [MUSCLES.GLUTES]: 19,
     },
   },
 
@@ -270,8 +377,11 @@ export const legs = {
     bodyPart: "Legs",
     section: "glutes",
     trackingType: "bodyweight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.GLUTES],
+    secondaryMuscles: [],
     fatigue: {
-      glutes: 16,
+      [MUSCLES.GLUTES]: 16,
     },
   },
 
@@ -280,10 +390,13 @@ export const legs = {
     bodyPart: "Legs",
     section: "glutes",
     trackingType: "weight" as const,
+    movement: "hip-hinge",
+    primaryMuscles: [MUSCLES.GLUTES],
+    secondaryMuscles: [MUSCLES.HAMSTRINGS, MUSCLES.LOWER_BACK],
     fatigue: {
-      glutes: 18,
-      hamstrings: 8,
-      lowerBack: 6,
+      [MUSCLES.GLUTES]: 18,
+      [MUSCLES.HAMSTRINGS]: 8,
+      [MUSCLES.LOWER_BACK]: 6,
     },
   },
 
@@ -292,8 +405,12 @@ export const legs = {
     bodyPart: "Legs",
     section: "glutes",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.GLUTES],
+    secondaryMuscles: [MUSCLES.HAMSTRINGS],
+    // HAMSTRINGS in secondary metadata only (no fatigue invent).
     fatigue: {
-      glutes: 18,
+      [MUSCLES.GLUTES]: 18,
     },
   },
 
@@ -302,8 +419,11 @@ export const legs = {
     bodyPart: "Legs",
     section: "glutes",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.GLUTES],
+    secondaryMuscles: [],
     fatigue: {
-      glutes: 17,
+      [MUSCLES.GLUTES]: 17,
     },
   },
 
@@ -312,9 +432,12 @@ export const legs = {
     bodyPart: "Legs",
     section: "glutes",
     trackingType: "weight" as const,
+    movement: "lunge",
+    primaryMuscles: [MUSCLES.GLUTES],
+    secondaryMuscles: [MUSCLES.QUADS],
     fatigue: {
-      glutes: 17,
-      quads: 8,
+      [MUSCLES.GLUTES]: 17,
+      [MUSCLES.QUADS]: 8,
     },
   },
 
@@ -323,18 +446,29 @@ export const legs = {
     bodyPart: "Legs",
     section: "glutes",
     trackingType: "weight" as const,
+    movement: "lunge",
+    primaryMuscles: [MUSCLES.GLUTES],
+    secondaryMuscles: [MUSCLES.ADDUCTORS, MUSCLES.ABDUCTORS],
+    // ADDUCTORS / ABDUCTORS in secondary metadata only (no fatigue invent).
     fatigue: {
-      glutes: 16,
+      [MUSCLES.GLUTES]: 16,
     },
   },
-  //CALVES//
+
+  // =====================
+  // CALVES (UI section)
+  // =====================
+
   "standing-calf-raise": {
     name: "Standing Calf Raise",
     bodyPart: "Legs",
     section: "calves",
     trackingType: "weight" as const,
+    movement: "calf-raise",
+    primaryMuscles: [MUSCLES.CALVES],
+    secondaryMuscles: [],
     fatigue: {
-      calves: 18,
+      [MUSCLES.CALVES]: 18,
     },
   },
 
@@ -343,8 +477,11 @@ export const legs = {
     bodyPart: "Legs",
     section: "calves",
     trackingType: "weight" as const,
+    movement: "calf-raise",
+    primaryMuscles: [MUSCLES.CALVES],
+    secondaryMuscles: [],
     fatigue: {
-      calves: 18,
+      [MUSCLES.CALVES]: 18,
     },
   },
 
@@ -353,8 +490,11 @@ export const legs = {
     bodyPart: "Legs",
     section: "calves",
     trackingType: "weight" as const,
+    movement: "calf-raise",
+    primaryMuscles: [MUSCLES.CALVES],
+    secondaryMuscles: [],
     fatigue: {
-      calves: 17,
+      [MUSCLES.CALVES]: 17,
     },
   },
 
@@ -363,8 +503,11 @@ export const legs = {
     bodyPart: "Legs",
     section: "calves",
     trackingType: "weight" as const,
+    movement: "calf-raise",
+    primaryMuscles: [MUSCLES.CALVES],
+    secondaryMuscles: [],
     fatigue: {
-      calves: 17,
+      [MUSCLES.CALVES]: 17,
     },
   },
 
@@ -373,8 +516,11 @@ export const legs = {
     bodyPart: "Legs",
     section: "calves",
     trackingType: "bodyweight" as const,
+    movement: "calf-raise",
+    primaryMuscles: [MUSCLES.CALVES],
+    secondaryMuscles: [],
     fatigue: {
-      calves: 17,
+      [MUSCLES.CALVES]: 17,
     },
   },
 
@@ -383,8 +529,11 @@ export const legs = {
     bodyPart: "Legs",
     section: "calves",
     trackingType: "weight" as const,
+    movement: "calf-raise",
+    primaryMuscles: [MUSCLES.CALVES],
+    secondaryMuscles: [],
     fatigue: {
-      calves: 18,
+      [MUSCLES.CALVES]: 18,
     },
   },
 
@@ -393,8 +542,11 @@ export const legs = {
     bodyPart: "Legs",
     section: "calves",
     trackingType: "weight" as const,
+    movement: "calf-raise",
+    primaryMuscles: [MUSCLES.CALVES],
+    secondaryMuscles: [],
     fatigue: {
-      calves: 17,
+      [MUSCLES.CALVES]: 17,
     },
   },
 
@@ -403,8 +555,11 @@ export const legs = {
     bodyPart: "Legs",
     section: "calves",
     trackingType: "bodyweight" as const,
+    movement: "calf-raise",
+    primaryMuscles: [MUSCLES.CALVES],
+    secondaryMuscles: [],
     fatigue: {
-      calves: 14,
+      [MUSCLES.CALVES]: 14,
     },
   },
 
@@ -413,8 +568,11 @@ export const legs = {
     bodyPart: "Legs",
     section: "calves",
     trackingType: "weight" as const,
+    movement: "calf-raise",
+    primaryMuscles: [MUSCLES.CALVES],
+    secondaryMuscles: [],
     fatigue: {
-      calves: 15,
+      [MUSCLES.CALVES]: 15,
     },
   },
 
@@ -423,8 +581,11 @@ export const legs = {
     bodyPart: "Legs",
     section: "calves",
     trackingType: "bodyweight" as const,
+    movement: "calf-raise",
+    primaryMuscles: [MUSCLES.CALVES],
+    secondaryMuscles: [],
     fatigue: {
-      calves: 15,
+      [MUSCLES.CALVES]: 15,
     },
   },
-};
+} as const satisfies Record<string, ExerciseData>;
