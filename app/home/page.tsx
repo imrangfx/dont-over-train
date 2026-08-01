@@ -43,6 +43,14 @@ import {
   type WorkoutRecommendation,
 } from "@/lib/recoveryIntelligence";
 import { workouts } from "@/app/Data/workouts";
+import {
+  buildLiveRecoveryView,
+  findLatestRecoverySnapshot,
+} from "@/components/recovery/liveRecovery";
+import {
+  buildBodyPartRecommendationBadges,
+  type BodyPartRecommendationBadge,
+} from "@/components/recovery/bodyPartRecommendationBadges";
 
 type BodyPart = {
   name: string;
@@ -92,20 +100,21 @@ function BodyPartCard({
   name,
   slug,
   image,
-  isLastTrained = false,
-}: BodyPart & { isLastTrained?: boolean }) {
+  badge = null,
+}: BodyPart & { badge?: BodyPartRecommendationBadge | null }) {
   const meta = BODY_PART_META.get(name);
 
   return (
     <Link
       href={`/workout/${slug}`}
       transitionTypes={["nav-forward"]}
-      className={`group relative flex items-center gap-3 overflow-hidden rounded-xl bg-[#111111] border px-5 py-3 transition-all duration-200 hover:border-[#39ff14] hover:shadow-[0_0_0_1px_#39ff14] active:scale-[0.98] active:border-[#39ff14] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#39ff14] focus-visible:ring-offset-2 focus-visible:ring-offset-black ${isLastTrained ? "border-orange-500/30 animate-last-trained-glow" : "border-[#1a1a1a]"
-        }`}
+      className="group relative flex items-center gap-3 overflow-hidden rounded-xl bg-[#111111] border border-[#1a1a1a] px-5 py-3 transition-all duration-200 hover:border-[#39ff14] hover:shadow-[0_0_0_1px_#39ff14] active:scale-[0.98] active:border-[#39ff14] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#39ff14] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
     >
-      {isLastTrained && (
-        <span className="absolute right-2 top-2 z-10 rounded-full bg-black/70 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-orange-300 ring-1 ring-orange-500/25 backdrop-blur-sm">
-          Last Trained
+      {badge && (
+        <span
+          className={`absolute right-2 top-2 z-10 rounded-full bg-black/70 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide ring-1 backdrop-blur-sm ${badge.className}`}
+        >
+          {badge.label}
         </span>
       )}
 
@@ -808,10 +817,14 @@ export default function Home() {
 
   const lastWorkoutBodyPartSlug = lastWorkout?.bodyParts?.[0]?.toLowerCase() || "chest";
 
-  const lastTrainedBodyParts = useMemo(
-    () => new Set(lastWorkout?.bodyParts ?? []),
-    [lastWorkout]
-  );
+  const bodyPartBadges = useMemo(() => {
+    const snapshot = findLatestRecoverySnapshot(history);
+    if (!snapshot) {
+      return new Map<string, BodyPartRecommendationBadge>();
+    }
+    const live = buildLiveRecoveryView(snapshot, Date.now());
+    return buildBodyPartRecommendationBadges(live, BODY_PARTS);
+  }, [history]);
 
   return (
     <main className="min-h-screen bg-black px-6 pt-8 pb-[calc(72px+env(safe-area-inset-bottom)+1.5rem)] text-white animate-[fade-in_200ms_ease-out]">
@@ -869,7 +882,7 @@ export default function Home() {
                 <BodyPartCard
                   key={part.name}
                   {...part}
-                  isLastTrained={lastTrainedBodyParts.has(part.name)}
+                  badge={bodyPartBadges.get(part.slug) ?? null}
                 />
               ))}
             </section>
