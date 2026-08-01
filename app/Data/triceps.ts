@@ -1,7 +1,17 @@
-export const triceps = {
+import { MUSCLES } from "./muscles";
+import type { ExerciseData } from "./exerciseTypes";
 
+/**
+ * Triceps exercise database — recovery-engine foundation.
+ *
+ * Fatigue keys use MUSCLES only. Numeric values preserved from legacy.
+ * Legacy region keys: chest → Middle Chest, forearms → Forearm Flexors,
+ * camelCase triceps heads → spaced MUSCLES constants (same values).
+ * Sections are UI-only: long-head | lateral-head | medial-head.
+ */
+export const triceps = {
   // =====================
-  // LONG HEAD
+  // LONG HEAD (UI section)
   // =====================
 
   "overhead-cable-extension": {
@@ -9,8 +19,11 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "long-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
+    secondaryMuscles: [],
     fatigue: {
-      "Long Head Triceps": 18,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 18,
     },
   },
 
@@ -19,8 +32,11 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "long-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
+    secondaryMuscles: [],
     fatigue: {
-      "Long Head Triceps": 18,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 18,
     },
   },
 
@@ -29,8 +45,11 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "long-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
+    secondaryMuscles: [],
     fatigue: {
-      "Long Head Triceps": 18,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 18,
     },
   },
 
@@ -39,8 +58,11 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "long-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
+    secondaryMuscles: [],
     fatigue: {
-      "Long Head Triceps": 17,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 17,
     },
   },
 
@@ -49,8 +71,11 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "long-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
+    secondaryMuscles: [],
     fatigue: {
-      "Long Head Triceps": 17,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 17,
     },
   },
 
@@ -59,30 +84,43 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "long-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
+    secondaryMuscles: [],
     fatigue: {
-      "Long Head Triceps": 17,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 17,
     },
   },
 
   "incline-skull-crusher": {
-  name: "Incline Skull Crusher",
-  bodyPart: "Triceps",
-  section: "long-head",
-  trackingType: "weight" as const,
-  fatigue: {
-    longHeadTriceps: 18,
-    medialHeadTriceps: 10,
-    lateralHeadTriceps: 10,
+    name: "Incline Skull Crusher",
+    bodyPart: "Triceps",
+    section: "long-head",
+    trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
+    secondaryMuscles: [
+      MUSCLES.MEDIAL_HEAD_TRICEPS,
+      MUSCLES.LATERAL_HEAD_TRICEPS,
+    ],
+    // Legacy camelCase heads → MUSCLES (same values).
+    fatigue: {
+      [MUSCLES.LONG_HEAD_TRICEPS]: 18,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 10,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 10,
+    },
   },
-},
 
   "pjr-pullover": {
     name: "PJR Pullover",
     bodyPart: "Triceps",
     section: "long-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
+    secondaryMuscles: [],
     fatigue: {
-      "Long Head Triceps": 16,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 16,
     },
   },
 
@@ -91,8 +129,11 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "long-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
+    secondaryMuscles: [],
     fatigue: {
-      "Long Head Triceps": 17,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 17,
     },
   },
 
@@ -101,8 +142,11 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "long-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
+    secondaryMuscles: [],
     fatigue: {
-      "Long Head Triceps": 17,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 17,
     },
   },
 
@@ -111,13 +155,16 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "long-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
+    secondaryMuscles: [],
     fatigue: {
-      "Long Head Triceps": 16,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 16,
     },
   },
 
   // =====================
-  // LATERAL HEAD
+  // LATERAL HEAD (UI section)
   // =====================
 
   "rope-pushdown": {
@@ -125,8 +172,11 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "lateral-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LATERAL_HEAD_TRICEPS],
+    secondaryMuscles: [],
     fatigue: {
-      "Lateral Head Triceps": 18,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 18,
     },
   },
 
@@ -135,8 +185,11 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "lateral-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LATERAL_HEAD_TRICEPS],
+    secondaryMuscles: [],
     fatigue: {
-      "Lateral Head Triceps": 18,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 18,
     },
   },
 
@@ -145,8 +198,11 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "lateral-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LATERAL_HEAD_TRICEPS],
+    secondaryMuscles: [],
     fatigue: {
-      "Lateral Head Triceps": 18,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 18,
     },
   },
 
@@ -155,8 +211,11 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "lateral-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LATERAL_HEAD_TRICEPS],
+    secondaryMuscles: [],
     fatigue: {
-      "Lateral Head Triceps": 17,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 17,
     },
   },
 
@@ -165,8 +224,11 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "lateral-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LATERAL_HEAD_TRICEPS],
+    secondaryMuscles: [],
     fatigue: {
-      "Lateral Head Triceps": 17,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 17,
     },
   },
 
@@ -175,10 +237,13 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "lateral-head",
     trackingType: "bodyweight" as const,
+    movement: "vertical-push",
+    primaryMuscles: [MUSCLES.LATERAL_HEAD_TRICEPS],
+    secondaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS, MUSCLES.FRONT_DELTS],
     fatigue: {
-      "Lateral Head Triceps": 14,
-      "Long Head Triceps": 3,
-      frontDelts: 2,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 14,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 3,
+      [MUSCLES.FRONT_DELTS]: 2,
     },
   },
 
@@ -187,10 +252,14 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "lateral-head",
     trackingType: "bodyweight" as const,
+    movement: "vertical-push",
+    primaryMuscles: [MUSCLES.LATERAL_HEAD_TRICEPS],
+    secondaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS, MUSCLES.MIDDLE_CHEST],
+    // Legacy chest → Middle Chest (same value).
     fatigue: {
-      "Lateral Head Triceps": 14,
-      "Long Head Triceps": 3,
-      chest: 2,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 14,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 3,
+      [MUSCLES.MIDDLE_CHEST]: 2,
     },
   },
 
@@ -199,11 +268,18 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "lateral-head",
     trackingType: "bodyweight" as const,
+    movement: "vertical-push",
+    primaryMuscles: [MUSCLES.LATERAL_HEAD_TRICEPS],
+    secondaryMuscles: [
+      MUSCLES.LONG_HEAD_TRICEPS,
+      MUSCLES.MIDDLE_CHEST,
+      MUSCLES.FRONT_DELTS,
+    ],
     fatigue: {
-      "Lateral Head Triceps": 13,
-      "Long Head Triceps": 5,
-      chest: 4,
-      frontDelts: 3,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 13,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 5,
+      [MUSCLES.MIDDLE_CHEST]: 4,
+      [MUSCLES.FRONT_DELTS]: 3,
     },
   },
 
@@ -212,11 +288,18 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "lateral-head",
     trackingType: "bodyweight" as const,
+    movement: "horizontal-push",
+    primaryMuscles: [MUSCLES.LATERAL_HEAD_TRICEPS],
+    secondaryMuscles: [
+      MUSCLES.MEDIAL_HEAD_TRICEPS,
+      MUSCLES.MIDDLE_CHEST,
+      MUSCLES.FRONT_DELTS,
+    ],
     fatigue: {
-      "Lateral Head Triceps": 12,
-      "Medial Head Triceps": 4,
-      chest: 4,
-      frontDelts: 3,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 12,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 4,
+      [MUSCLES.MIDDLE_CHEST]: 4,
+      [MUSCLES.FRONT_DELTS]: 3,
     },
   },
 
@@ -225,16 +308,23 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "lateral-head",
     trackingType: "bodyweight" as const,
+    movement: "horizontal-push",
+    primaryMuscles: [MUSCLES.LATERAL_HEAD_TRICEPS],
+    secondaryMuscles: [
+      MUSCLES.MEDIAL_HEAD_TRICEPS,
+      MUSCLES.MIDDLE_CHEST,
+      MUSCLES.FRONT_DELTS,
+    ],
     fatigue: {
-      "Lateral Head Triceps": 12,
-      "Medial Head Triceps": 4,
-      chest: 3,
-      frontDelts: 4,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 12,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 4,
+      [MUSCLES.MIDDLE_CHEST]: 3,
+      [MUSCLES.FRONT_DELTS]: 4,
     },
   },
 
   // =====================
-  // MEDIAL HEAD
+  // MEDIAL HEAD (UI section)
   // =====================
 
   "reverse-grip-pushdown": {
@@ -242,9 +332,13 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "medial-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.MEDIAL_HEAD_TRICEPS],
+    secondaryMuscles: [MUSCLES.FOREARM_FLEXORS],
+    // Legacy forearms → Forearm Flexors (same value).
     fatigue: {
-      "Medial Head Triceps": 17,
-      forearms: 3,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 17,
+      [MUSCLES.FOREARM_FLEXORS]: 3,
     },
   },
 
@@ -253,9 +347,12 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "medial-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.MEDIAL_HEAD_TRICEPS],
+    secondaryMuscles: [MUSCLES.FOREARM_FLEXORS],
     fatigue: {
-      "Medial Head Triceps": 17,
-      forearms: 3,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 17,
+      [MUSCLES.FOREARM_FLEXORS]: 3,
     },
   },
 
@@ -264,9 +361,13 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "medial-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    // Slight long-head contribution kept as secondary (legacy values).
+    primaryMuscles: [MUSCLES.MEDIAL_HEAD_TRICEPS],
+    secondaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
     fatigue: {
-      "Medial Head Triceps": 12,
-      "Long Head Triceps": 6,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 12,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 6,
     },
   },
 
@@ -275,9 +376,12 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "medial-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.MEDIAL_HEAD_TRICEPS],
+    secondaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
     fatigue: {
-      "Medial Head Triceps": 12,
-      "Long Head Triceps": 6,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 12,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 6,
     },
   },
 
@@ -286,9 +390,12 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "medial-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.MEDIAL_HEAD_TRICEPS],
+    secondaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
     fatigue: {
-      "Medial Head Triceps": 11,
-      "Long Head Triceps": 6,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 11,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 6,
     },
   },
 
@@ -297,9 +404,12 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "medial-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.MEDIAL_HEAD_TRICEPS],
+    secondaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
     fatigue: {
-      "Medial Head Triceps": 11,
-      "Long Head Triceps": 6,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 11,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 6,
     },
   },
 
@@ -308,12 +418,20 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "medial-head",
     trackingType: "weight" as const,
+    movement: "horizontal-push",
+    primaryMuscles: [MUSCLES.MEDIAL_HEAD_TRICEPS],
+    secondaryMuscles: [
+      MUSCLES.LONG_HEAD_TRICEPS,
+      MUSCLES.LATERAL_HEAD_TRICEPS,
+      MUSCLES.FRONT_DELTS,
+      MUSCLES.MIDDLE_CHEST,
+    ],
     fatigue: {
-      "Medial Head Triceps": 12,
-      "Long Head Triceps": 4,
-      "Lateral Head Triceps": 2,
-      frontDelts: 3,
-      chest: 2,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 12,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 4,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 2,
+      [MUSCLES.FRONT_DELTS]: 3,
+      [MUSCLES.MIDDLE_CHEST]: 2,
     },
   },
 
@@ -322,12 +440,19 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "medial-head",
     trackingType: "weight" as const,
+    movement: "horizontal-push",
+    primaryMuscles: [MUSCLES.MEDIAL_HEAD_TRICEPS, MUSCLES.LATERAL_HEAD_TRICEPS],
+    secondaryMuscles: [
+      MUSCLES.LONG_HEAD_TRICEPS,
+      MUSCLES.MIDDLE_CHEST,
+      MUSCLES.FRONT_DELTS,
+    ],
     fatigue: {
-      "Medial Head Triceps": 10,
-      "Lateral Head Triceps": 5,
-      "Long Head Triceps": 3,
-      chest: 5,
-      frontDelts: 4,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 10,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 5,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 3,
+      [MUSCLES.MIDDLE_CHEST]: 5,
+      [MUSCLES.FRONT_DELTS]: 4,
     },
   },
 
@@ -336,12 +461,19 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "medial-head",
     trackingType: "weight" as const,
+    movement: "horizontal-push",
+    primaryMuscles: [MUSCLES.MEDIAL_HEAD_TRICEPS, MUSCLES.LATERAL_HEAD_TRICEPS],
+    secondaryMuscles: [
+      MUSCLES.LONG_HEAD_TRICEPS,
+      MUSCLES.MIDDLE_CHEST,
+      MUSCLES.FRONT_DELTS,
+    ],
     fatigue: {
-      "Medial Head Triceps": 10,
-      "Lateral Head Triceps": 4,
-      "Long Head Triceps": 3,
-      chest: 4,
-      frontDelts: 3,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 10,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 4,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 3,
+      [MUSCLES.MIDDLE_CHEST]: 4,
+      [MUSCLES.FRONT_DELTS]: 3,
     },
   },
-};
+} as const satisfies Record<string, ExerciseData>;
