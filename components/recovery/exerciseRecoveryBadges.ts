@@ -1,15 +1,16 @@
 /**
  * Recovery-aware exercise badges for body-part section lists.
- * Presentation only — uses LiveRecoveryView recommendation levels.
+ * Presentation only — weighted by catalog fatigue contribution values.
  *
- * Primary muscles drive Recommended / Recovering.
- * Secondary muscles may only downgrade to Train Light (never Recovering alone).
+ * Does not modify the Recovery Engine. Uses live recovery % + exercise.fatigue
+ * weights, and RECOMMENDATION_RULES thresholds for classification.
  */
 
 import { isMuscleName, type MuscleName } from "@/app/Data/muscles";
-import { generateRecommendations } from "@/app/lib/recovery/recommendationEngine";
+import { RECOMMENDATION_RULES } from "@/app/Data/recoveryConfig";
 import type { RecommendationLevel } from "@/app/lib/recovery/recoveryTypes";
 import type { LiveRecoveryView } from "@/components/recovery/liveRecovery";
+import { sanitizeRecoveryPercent } from "@/components/recovery/buildOverallSummary";
 
 export type ExerciseRecoveryBadgeId =
   | "recommended"
@@ -30,10 +31,10 @@ type ExerciseMuscleInput = {
   readonly fatigue?: Readonly<Partial<Record<string, number>>>;
 };
 
-const LEVEL_RANK: Record<RecommendationLevel, number> = {
-  AVOID: 0,
-  CAUTION: 1,
-  SAFE: 2,
+type MuscleContribution = {
+  readonly muscle: MuscleName;
+  readonly weight: number;
+  readonly recoveryPercent: number;
 };
 
 const BADGE_BY_ID: Record<
@@ -66,86 +67,115 @@ const TIER_ORDER: Record<ExerciseRecoveryBadgeId, number> = {
   recovering: 2,
 };
 
-function fatigueMuscles(exercise: ExerciseMuscleInput): MuscleName[] {
-  const fromFatigue: MuscleName[] = [];
-  for (const key of Object.keys(exercise.fatigue ?? {})) {
-    if (isMuscleName(key)) fromFatigue.push(key);
-  }
-  return fromFatigue;
-}
-
-/**
- * Prefer catalog primary/secondary lists.
- * If primary is missing, treat fatigue-map muscles as primary (no silent empty).
- */
-function resolvePrimarySecondary(exercise: ExerciseMuscleInput): {
-  primary: MuscleName[];
-  secondary: MuscleName[];
-} {
-  const primary = [...(exercise.primaryMuscles ?? [])];
-  const secondary = [...(exercise.secondaryMuscles ?? [])];
-  if (primary.length > 0) {
-    return { primary, secondary };
-  }
-  return { primary: fatigueMuscles(exercise), secondary: [] };
-}
-
-function levelForMuscle(
+function recoveryPercentForMuscle(
   live: LiveRecoveryView,
   muscle: MuscleName,
-): RecommendationLevel {
-  const existing = live.recommendations.find((item) => item.muscle === muscle);
-  if (existing) return existing.level;
-
+): number {
   const status = live.muscles.find((item) => item.muscle === muscle);
   if (status) {
-    return generateRecommendations([status])[0].level;
+    return sanitizeRecoveryPercent(status.recoveryPercent);
   }
-
-  return "SAFE";
-}
-
-function worstLevel(
-  live: LiveRecoveryView,
-  muscles: readonly MuscleName[],
-): { level: RecommendationLevel; muscle: MuscleName | null } {
-  if (muscles.length === 0) {
-    return { level: "SAFE", muscle: null };
-  }
-
-  let worst: RecommendationLevel = "SAFE";
-  let worstMuscle: MuscleName = muscles[0];
-
-  for (const muscle of muscles) {
-    const level = levelForMuscle(live, muscle);
-    if (LEVEL_RANK[level] < LEVEL_RANK[worst]) {
-      worst = level;
-      worstMuscle = muscle;
-    }
-  }
-
-  return { level: worst, muscle: worstMuscle };
+  // Not in live snapshot → treat as fully recovered.
+  return 100;
 }
 
 /**
- * Reason from PRIMARY when possible.
- * Secondary is mentioned only when it alone causes Train Light.
+ * Fatigue contribution entries (MuscleName → catalog weight > 0).
  */
-function reasonForMuscle(
-  muscle: MuscleName,
-  level: RecommendationLevel,
-): string {
-  if (level === "AVOID") return `${muscle} still recovering`;
-  if (level === "CAUTION") return `${muscle} needs more recovery`;
-  return `${muscle} fully recovered`;
+function readContributions(
+  live: LiveRecoveryView,
+  exercise: ExerciseMuscleInput,
+): MuscleContribution[] {
+  const contributions: MuscleContribution[] = [];
+  const fatigue = exercise.fatigue ?? {};
+
+  for (const [key, raw] of Object.entries(fatigue)) {
+    if (!isMuscleName(key)) continue;
+    if (typeof raw !== "number" || !Number.isFinite(raw) || raw <= 0) {
+      continue;
+    }
+    contributions.push({
+      muscle: key,
+      weight: raw,
+      recoveryPercent: recoveryPercentForMuscle(live, key),
+    });
+  }
+
+  return contributions;
 }
 
 /**
- * Classify one exercise:
- * 1. All PRIMARY SAFE → Recommended (unless Rule 2)
- * 2. PRIMARY SAFE + secondary CAUTION/AVOID → Train Light (never Recovering)
- * 3. Any PRIMARY AVOID → Recovering
- * 4. Any PRIMARY CAUTION (no AVOID) → Train Light
+ * Σ(recovery × weight) / Σ(weight)
+ */
+function weightedRecoveryScore(
+  contributions: readonly MuscleContribution[],
+): number {
+  let weightedSum = 0;
+  let totalWeight = 0;
+
+  for (const entry of contributions) {
+    weightedSum += entry.recoveryPercent * entry.weight;
+    totalWeight += entry.weight;
+  }
+
+  if (totalWeight <= 0) return 100;
+  return sanitizeRecoveryPercent(weightedSum / totalWeight);
+}
+
+/**
+ * Headline muscle = largest contribution weight (primary fatigue naturally wins).
+ * Tie-break: lower recovery (more fatigued) so the reason stays meaningful.
+ */
+function highestImpactMuscle(
+  contributions: readonly MuscleContribution[],
+): MuscleContribution {
+  return contributions.reduce((best, entry) => {
+    if (entry.weight > best.weight) return entry;
+    if (entry.weight < best.weight) return best;
+    return entry.recoveryPercent < best.recoveryPercent ? entry : best;
+  });
+}
+
+function levelFromRecoveryPercent(
+  recoveryPercent: number,
+): RecommendationLevel {
+  if (recoveryPercent >= RECOMMENDATION_RULES.SAFE_TO_TRAIN_AT) {
+    return "SAFE";
+  }
+  if (recoveryPercent >= RECOMMENDATION_RULES.CAUTION_AT) {
+    return "CAUTION";
+  }
+  return "AVOID";
+}
+
+function badgeIdFromWeightedScore(
+  score: number,
+): ExerciseRecoveryBadgeId {
+  if (score >= RECOMMENDATION_RULES.SAFE_TO_TRAIN_AT) {
+    return "recommended";
+  }
+  if (score >= RECOMMENDATION_RULES.CAUTION_AT) {
+    return "train-light";
+  }
+  return "recovering";
+}
+
+function reasonForImpactMuscle(entry: MuscleContribution): string {
+  const level = levelFromRecoveryPercent(entry.recoveryPercent);
+
+  // Prefer engine recommendation message level when status exists in live data.
+  // Phrasing stays tied to SAFE / CAUTION / AVOID thresholds (not new cutoffs).
+  if (level === "AVOID") return `${entry.muscle} recovering`;
+  if (level === "CAUTION") return `${entry.muscle} slightly fatigued`;
+  return `${entry.muscle} fully recovered`;
+}
+
+/**
+ * Classify one exercise using fatigue-contribution weighted recovery.
+ *
+ * Recommended  → weighted ≥ SAFE_TO_TRAIN_AT
+ * Train Light  → CAUTION_AT ≤ weighted < SAFE_TO_TRAIN_AT
+ * Recovering   → weighted < CAUTION_AT
  */
 export function getExerciseRecoveryBadge(
   live: LiveRecoveryView | null,
@@ -153,50 +183,16 @@ export function getExerciseRecoveryBadge(
 ): ExerciseRecoveryBadge | null {
   if (!live) return null;
 
-  const { primary, secondary } = resolvePrimarySecondary(exercise);
-  if (primary.length === 0) return null;
+  const contributions = readContributions(live, exercise);
+  if (contributions.length === 0) return null;
 
-  const primaryWorst = worstLevel(live, primary);
-  const secondaryWorst = worstLevel(live, secondary);
+  const score = weightedRecoveryScore(contributions);
+  const badgeId = badgeIdFromWeightedScore(score);
+  const impact = highestImpactMuscle(contributions);
 
-  // Rule 3 — primary AVOID wins Recovering.
-  if (primaryWorst.level === "AVOID" && primaryWorst.muscle) {
-    return {
-      ...BADGE_BY_ID.recovering,
-      reason: reasonForMuscle(primaryWorst.muscle, "AVOID"),
-    };
-  }
-
-  // Rule 4 — primary CAUTION → Train Light.
-  if (primaryWorst.level === "CAUTION" && primaryWorst.muscle) {
-    return {
-      ...BADGE_BY_ID["train-light"],
-      reason: reasonForMuscle(primaryWorst.muscle, "CAUTION"),
-    };
-  }
-
-  // Rule 1 + 2 — all primary SAFE.
-  // Secondary CAUTION/AVOID only downgrades to Train Light.
-  if (
-    secondaryWorst.level === "AVOID" ||
-    secondaryWorst.level === "CAUTION"
-  ) {
-    if (secondaryWorst.muscle) {
-      return {
-        ...BADGE_BY_ID["train-light"],
-        reason: reasonForMuscle(
-          secondaryWorst.muscle,
-          secondaryWorst.level,
-        ),
-      };
-    }
-  }
-
-  // Rule 1 — every primary SAFE (and secondary not forcing Train Light).
-  const reasonMuscle = primaryWorst.muscle ?? primary[0];
   return {
-    ...BADGE_BY_ID.recommended,
-    reason: reasonForMuscle(reasonMuscle, "SAFE"),
+    ...BADGE_BY_ID[badgeId],
+    reason: reasonForImpactMuscle(impact),
   };
 }
 
@@ -204,7 +200,7 @@ export function getExerciseRecoveryBadge(
 export function exerciseRecoveryTierSortKey(
   badge: ExerciseRecoveryBadge | null,
 ): number {
-  if (!badge) return 1; // neutral middle if unknown
+  if (!badge) return 1;
   return TIER_ORDER[badge.id];
 }
 
