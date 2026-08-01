@@ -1,6 +1,9 @@
 /**
  * Recovery-aware exercise badges for body-part section lists.
  * Presentation only — uses LiveRecoveryView recommendation levels.
+ *
+ * Primary muscles drive Recommended / Recovering.
+ * Secondary muscles may only downgrade to Train Light (never Recovering alone).
  */
 
 import { isMuscleName, type MuscleName } from "@/app/Data/muscles";
@@ -33,23 +36,23 @@ const LEVEL_RANK: Record<RecommendationLevel, number> = {
   SAFE: 2,
 };
 
-const BADGE: Record<
-  RecommendationLevel,
+const BADGE_BY_ID: Record<
+  ExerciseRecoveryBadgeId,
   Omit<ExerciseRecoveryBadge, "reason">
 > = {
-  AVOID: {
+  recovering: {
     id: "recovering",
     label: "🔴 Recovering",
     className: "text-red-400 ring-red-500/25",
     showWarning: true,
   },
-  CAUTION: {
+  "train-light": {
     id: "train-light",
     label: "🟡 Train Light",
     className: "text-yellow-300 ring-yellow-500/25",
     showWarning: false,
   },
-  SAFE: {
+  recommended: {
     id: "recommended",
     label: "🟢 Recommended",
     className: "text-lime-400 ring-lime-500/25",
@@ -63,20 +66,28 @@ const TIER_ORDER: Record<ExerciseRecoveryBadgeId, number> = {
   recovering: 2,
 };
 
-function involvedMuscles(exercise: ExerciseMuscleInput): MuscleName[] {
-  const fromLists = [
-    ...(exercise.primaryMuscles ?? []),
-    ...(exercise.secondaryMuscles ?? []),
-  ];
-  if (fromLists.length > 0) {
-    return [...new Set(fromLists)];
-  }
-
+function fatigueMuscles(exercise: ExerciseMuscleInput): MuscleName[] {
   const fromFatigue: MuscleName[] = [];
   for (const key of Object.keys(exercise.fatigue ?? {})) {
     if (isMuscleName(key)) fromFatigue.push(key);
   }
   return fromFatigue;
+}
+
+/**
+ * Prefer catalog primary/secondary lists.
+ * If primary is missing, treat fatigue-map muscles as primary (no silent empty).
+ */
+function resolvePrimarySecondary(exercise: ExerciseMuscleInput): {
+  primary: MuscleName[];
+  secondary: MuscleName[];
+} {
+  const primary = [...(exercise.primaryMuscles ?? [])];
+  const secondary = [...(exercise.secondaryMuscles ?? [])];
+  if (primary.length > 0) {
+    return { primary, secondary };
+  }
+  return { primary: fatigueMuscles(exercise), secondary: [] };
 }
 
 function levelForMuscle(
@@ -94,39 +105,13 @@ function levelForMuscle(
   return "SAFE";
 }
 
-function reasonForMuscle(
+function worstLevel(
   live: LiveRecoveryView,
-  muscle: MuscleName,
-  level: RecommendationLevel,
-): string {
-  const status = live.muscles.find((item) => item.muscle === muscle);
-  if (status) {
-    // Exact engine status label (Fresh, Recovered, High Fatigue, …).
-    return `${status.muscle} — ${status.label}`;
+  muscles: readonly MuscleName[],
+): { level: RecommendationLevel; muscle: MuscleName | null } {
+  if (muscles.length === 0) {
+    return { level: "SAFE", muscle: null };
   }
-
-  const rec = live.recommendations.find((item) => item.muscle === muscle);
-  if (rec) {
-    return `${rec.muscle} — ${rec.message}`;
-  }
-
-  // Muscle not in snapshot → fully recovered / SAFE phrasing from level.
-  if (level === "AVOID") return `${muscle} still recovering`;
-  if (level === "CAUTION") return `${muscle} needs more recovery`;
-  return `${muscle} fully recovered`;
-}
-
-/**
- * Classify one exercise from primary + secondary muscles (worst level wins).
- */
-export function getExerciseRecoveryBadge(
-  live: LiveRecoveryView | null,
-  exercise: ExerciseMuscleInput,
-): ExerciseRecoveryBadge | null {
-  if (!live) return null;
-
-  const muscles = involvedMuscles(exercise);
-  if (muscles.length === 0) return null;
 
   let worst: RecommendationLevel = "SAFE";
   let worstMuscle: MuscleName = muscles[0];
@@ -139,10 +124,79 @@ export function getExerciseRecoveryBadge(
     }
   }
 
-  const base = BADGE[worst];
+  return { level: worst, muscle: worstMuscle };
+}
+
+/**
+ * Reason from PRIMARY when possible.
+ * Secondary is mentioned only when it alone causes Train Light.
+ */
+function reasonForMuscle(
+  muscle: MuscleName,
+  level: RecommendationLevel,
+): string {
+  if (level === "AVOID") return `${muscle} still recovering`;
+  if (level === "CAUTION") return `${muscle} needs more recovery`;
+  return `${muscle} fully recovered`;
+}
+
+/**
+ * Classify one exercise:
+ * 1. All PRIMARY SAFE → Recommended (unless Rule 2)
+ * 2. PRIMARY SAFE + secondary CAUTION/AVOID → Train Light (never Recovering)
+ * 3. Any PRIMARY AVOID → Recovering
+ * 4. Any PRIMARY CAUTION (no AVOID) → Train Light
+ */
+export function getExerciseRecoveryBadge(
+  live: LiveRecoveryView | null,
+  exercise: ExerciseMuscleInput,
+): ExerciseRecoveryBadge | null {
+  if (!live) return null;
+
+  const { primary, secondary } = resolvePrimarySecondary(exercise);
+  if (primary.length === 0) return null;
+
+  const primaryWorst = worstLevel(live, primary);
+  const secondaryWorst = worstLevel(live, secondary);
+
+  // Rule 3 — primary AVOID wins Recovering.
+  if (primaryWorst.level === "AVOID" && primaryWorst.muscle) {
+    return {
+      ...BADGE_BY_ID.recovering,
+      reason: reasonForMuscle(primaryWorst.muscle, "AVOID"),
+    };
+  }
+
+  // Rule 4 — primary CAUTION → Train Light.
+  if (primaryWorst.level === "CAUTION" && primaryWorst.muscle) {
+    return {
+      ...BADGE_BY_ID["train-light"],
+      reason: reasonForMuscle(primaryWorst.muscle, "CAUTION"),
+    };
+  }
+
+  // Rule 1 + 2 — all primary SAFE.
+  // Secondary CAUTION/AVOID only downgrades to Train Light.
+  if (
+    secondaryWorst.level === "AVOID" ||
+    secondaryWorst.level === "CAUTION"
+  ) {
+    if (secondaryWorst.muscle) {
+      return {
+        ...BADGE_BY_ID["train-light"],
+        reason: reasonForMuscle(
+          secondaryWorst.muscle,
+          secondaryWorst.level,
+        ),
+      };
+    }
+  }
+
+  // Rule 1 — every primary SAFE (and secondary not forcing Train Light).
+  const reasonMuscle = primaryWorst.muscle ?? primary[0];
   return {
-    ...base,
-    reason: reasonForMuscle(live, worstMuscle, worst),
+    ...BADGE_BY_ID.recommended,
+    reason: reasonForMuscle(reasonMuscle, "SAFE"),
   };
 }
 
