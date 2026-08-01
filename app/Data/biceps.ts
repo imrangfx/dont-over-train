@@ -1,6 +1,16 @@
+import { MUSCLES } from "./muscles";
+import type { ExerciseData } from "./exerciseTypes";
+
+/**
+ * Biceps exercise database — recovery-engine foundation.
+ *
+ * Fatigue keys use MUSCLES only. Numeric values preserved from legacy.
+ * Sections are UI-only: long-head | short-head | brachialis.
+ * All curls use movement: "isolation".
+ */
 export const biceps = {
   // =====================
-  // LONG HEAD
+  // LONG HEAD (UI section)
   // =====================
 
   "incline-dumbbell-curl": {
@@ -8,11 +18,18 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "long-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LONG_HEAD_BICEPS],
+    secondaryMuscles: [
+      MUSCLES.SHORT_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+      MUSCLES.BRACHIORADIALIS,
+    ],
     fatigue: {
-      "Long Head Biceps": 14,
-      "Short Head Biceps": 2,
-      Brachialis: 2,
-      Brachioradialis: 3,
+      [MUSCLES.LONG_HEAD_BICEPS]: 14,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 2,
+      [MUSCLES.BRACHIALIS]: 2,
+      [MUSCLES.BRACHIORADIALIS]: 3,
     },
   },
 
@@ -21,11 +38,18 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "long-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LONG_HEAD_BICEPS],
+    secondaryMuscles: [
+      MUSCLES.SHORT_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+      MUSCLES.BRACHIORADIALIS,
+    ],
     fatigue: {
-      "Long Head Biceps": 15,
-      "Short Head Biceps": 2,
-      Brachialis: 1,
-      Brachioradialis: 2,
+      [MUSCLES.LONG_HEAD_BICEPS]: 15,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 2,
+      [MUSCLES.BRACHIALIS]: 1,
+      [MUSCLES.BRACHIORADIALIS]: 2,
     },
   },
 
@@ -34,11 +58,19 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "long-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    // Close grip slightly biases brachialis (reflected in secondary load).
+    primaryMuscles: [MUSCLES.LONG_HEAD_BICEPS],
+    secondaryMuscles: [
+      MUSCLES.SHORT_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+      MUSCLES.BRACHIORADIALIS,
+    ],
     fatigue: {
-      "Long Head Biceps": 14,
-      "Short Head Biceps": 2,
-      Brachialis: 2,
-      Brachioradialis: 4,
+      [MUSCLES.LONG_HEAD_BICEPS]: 14,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 2,
+      [MUSCLES.BRACHIALIS]: 2,
+      [MUSCLES.BRACHIORADIALIS]: 4,
     },
   },
 
@@ -47,11 +79,15 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "long-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    // Supinated curl loads both biceps heads.
+    primaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
+    secondaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.BRACHIORADIALIS],
     fatigue: {
-      "Long Head Biceps": 12,
-      "Short Head Biceps": 3,
-      Brachialis: 2,
-      Brachioradialis: 4,
+      [MUSCLES.LONG_HEAD_BICEPS]: 12,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 3,
+      [MUSCLES.BRACHIALIS]: 2,
+      [MUSCLES.BRACHIORADIALIS]: 4,
     },
   },
 
@@ -60,11 +96,14 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "long-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
+    secondaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.BRACHIORADIALIS],
     fatigue: {
-      "Long Head Biceps": 12,
-      "Short Head Biceps": 3,
-      Brachialis: 2,
-      Brachioradialis: 4,
+      [MUSCLES.LONG_HEAD_BICEPS]: 12,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 3,
+      [MUSCLES.BRACHIALIS]: 2,
+      [MUSCLES.BRACHIORADIALIS]: 4,
     },
   },
 
@@ -73,11 +112,18 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "long-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LONG_HEAD_BICEPS],
+    secondaryMuscles: [
+      MUSCLES.SHORT_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+      MUSCLES.BRACHIORADIALIS,
+    ],
     fatigue: {
-      "Long Head Biceps": 13,
-      "Short Head Biceps": 2,
-      Brachialis: 2,
-      Brachioradialis: 3,
+      [MUSCLES.LONG_HEAD_BICEPS]: 13,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 2,
+      [MUSCLES.BRACHIALIS]: 2,
+      [MUSCLES.BRACHIORADIALIS]: 3,
     },
   },
 
@@ -86,11 +132,18 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "long-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LONG_HEAD_BICEPS],
+    secondaryMuscles: [
+      MUSCLES.SHORT_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+      MUSCLES.BRACHIORADIALIS,
+    ],
     fatigue: {
-      "Long Head Biceps": 12,
-      "Short Head Biceps": 2,
-      Brachialis: 2,
-      Brachioradialis: 3,
+      [MUSCLES.LONG_HEAD_BICEPS]: 12,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 2,
+      [MUSCLES.BRACHIALIS]: 2,
+      [MUSCLES.BRACHIORADIALIS]: 3,
     },
   },
 
@@ -99,11 +152,18 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "long-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LONG_HEAD_BICEPS],
+    secondaryMuscles: [
+      MUSCLES.SHORT_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+      MUSCLES.BRACHIORADIALIS,
+    ],
     fatigue: {
-      "Long Head Biceps": 15,
-      "Short Head Biceps": 2,
-      Brachialis: 1,
-      Brachioradialis: 3,
+      [MUSCLES.LONG_HEAD_BICEPS]: 15,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 2,
+      [MUSCLES.BRACHIALIS]: 1,
+      [MUSCLES.BRACHIORADIALIS]: 3,
     },
   },
 
@@ -112,16 +172,23 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "long-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.LONG_HEAD_BICEPS],
+    secondaryMuscles: [
+      MUSCLES.SHORT_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+      MUSCLES.BRACHIORADIALIS,
+    ],
     fatigue: {
-      "Long Head Biceps": 13,
-      "Short Head Biceps": 2,
-      Brachialis: 2,
-      Brachioradialis: 4,
+      [MUSCLES.LONG_HEAD_BICEPS]: 13,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 2,
+      [MUSCLES.BRACHIALIS]: 2,
+      [MUSCLES.BRACHIORADIALIS]: 4,
     },
   },
 
   // =====================
-  // SHORT HEAD
+  // SHORT HEAD (UI section)
   // =====================
 
   "preacher-curl": {
@@ -129,11 +196,18 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "short-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.SHORT_HEAD_BICEPS],
+    secondaryMuscles: [
+      MUSCLES.LONG_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+      MUSCLES.BRACHIORADIALIS,
+    ],
     fatigue: {
-      "Short Head Biceps": 14,
-      "Long Head Biceps": 2,
-      Brachialis: 2,
-      Brachioradialis: 3,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 14,
+      [MUSCLES.LONG_HEAD_BICEPS]: 2,
+      [MUSCLES.BRACHIALIS]: 2,
+      [MUSCLES.BRACHIORADIALIS]: 3,
     },
   },
 
@@ -142,11 +216,18 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "short-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.SHORT_HEAD_BICEPS],
+    secondaryMuscles: [
+      MUSCLES.LONG_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+      MUSCLES.BRACHIORADIALIS,
+    ],
     fatigue: {
-      "Short Head Biceps": 15,
-      "Long Head Biceps": 2,
-      Brachialis: 1,
-      Brachioradialis: 2,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 15,
+      [MUSCLES.LONG_HEAD_BICEPS]: 2,
+      [MUSCLES.BRACHIALIS]: 1,
+      [MUSCLES.BRACHIORADIALIS]: 2,
     },
   },
 
@@ -155,11 +236,18 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "short-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.SHORT_HEAD_BICEPS],
+    secondaryMuscles: [
+      MUSCLES.LONG_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+      MUSCLES.BRACHIORADIALIS,
+    ],
     fatigue: {
-      "Short Head Biceps": 15,
-      "Long Head Biceps": 2,
-      Brachialis: 1,
-      Brachioradialis: 2,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 15,
+      [MUSCLES.LONG_HEAD_BICEPS]: 2,
+      [MUSCLES.BRACHIALIS]: 1,
+      [MUSCLES.BRACHIORADIALIS]: 2,
     },
   },
 
@@ -168,11 +256,18 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "short-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.SHORT_HEAD_BICEPS],
+    secondaryMuscles: [
+      MUSCLES.LONG_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+      MUSCLES.BRACHIORADIALIS,
+    ],
     fatigue: {
-      "Short Head Biceps": 13,
-      "Long Head Biceps": 2,
-      Brachialis: 2,
-      Brachioradialis: 4,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 13,
+      [MUSCLES.LONG_HEAD_BICEPS]: 2,
+      [MUSCLES.BRACHIALIS]: 2,
+      [MUSCLES.BRACHIORADIALIS]: 4,
     },
   },
 
@@ -181,11 +276,18 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "short-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.SHORT_HEAD_BICEPS],
+    secondaryMuscles: [
+      MUSCLES.LONG_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+      MUSCLES.BRACHIORADIALIS,
+    ],
     fatigue: {
-      "Short Head Biceps": 13,
-      "Long Head Biceps": 2,
-      Brachialis: 2,
-      Brachioradialis: 2,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 13,
+      [MUSCLES.LONG_HEAD_BICEPS]: 2,
+      [MUSCLES.BRACHIALIS]: 2,
+      [MUSCLES.BRACHIORADIALIS]: 2,
     },
   },
 
@@ -194,11 +296,18 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "short-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.SHORT_HEAD_BICEPS],
+    secondaryMuscles: [
+      MUSCLES.LONG_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+      MUSCLES.BRACHIORADIALIS,
+    ],
     fatigue: {
-      "Short Head Biceps": 13,
-      "Long Head Biceps": 2,
-      Brachialis: 2,
-      Brachioradialis: 2,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 13,
+      [MUSCLES.LONG_HEAD_BICEPS]: 2,
+      [MUSCLES.BRACHIALIS]: 2,
+      [MUSCLES.BRACHIORADIALIS]: 2,
     },
   },
 
@@ -207,11 +316,18 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "short-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.SHORT_HEAD_BICEPS],
+    secondaryMuscles: [
+      MUSCLES.LONG_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+      MUSCLES.BRACHIORADIALIS,
+    ],
     fatigue: {
-      "Short Head Biceps": 14,
-      "Long Head Biceps": 2,
-      Brachialis: 1,
-      Brachioradialis: 2,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 14,
+      [MUSCLES.LONG_HEAD_BICEPS]: 2,
+      [MUSCLES.BRACHIALIS]: 1,
+      [MUSCLES.BRACHIORADIALIS]: 2,
     },
   },
 
@@ -220,11 +336,18 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "short-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.SHORT_HEAD_BICEPS],
+    secondaryMuscles: [
+      MUSCLES.LONG_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+      MUSCLES.BRACHIORADIALIS,
+    ],
     fatigue: {
-      "Short Head Biceps": 13,
-      "Long Head Biceps": 2,
-      Brachialis: 2,
-      Brachioradialis: 2,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 13,
+      [MUSCLES.LONG_HEAD_BICEPS]: 2,
+      [MUSCLES.BRACHIALIS]: 2,
+      [MUSCLES.BRACHIORADIALIS]: 2,
     },
   },
 
@@ -233,11 +356,18 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "short-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.SHORT_HEAD_BICEPS],
+    secondaryMuscles: [
+      MUSCLES.LONG_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+      MUSCLES.BRACHIORADIALIS,
+    ],
     fatigue: {
-      "Short Head Biceps": 14,
-      "Long Head Biceps": 2,
-      Brachialis: 1,
-      Brachioradialis: 2,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 14,
+      [MUSCLES.LONG_HEAD_BICEPS]: 2,
+      [MUSCLES.BRACHIALIS]: 1,
+      [MUSCLES.BRACHIORADIALIS]: 2,
     },
   },
 
@@ -246,16 +376,19 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "short-head",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.SHORT_HEAD_BICEPS, MUSCLES.LONG_HEAD_BICEPS],
+    secondaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.BRACHIORADIALIS],
     fatigue: {
-      "Short Head Biceps": 12,
-      "Long Head Biceps": 3,
-      Brachialis: 2,
-      Brachioradialis: 3,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 12,
+      [MUSCLES.LONG_HEAD_BICEPS]: 3,
+      [MUSCLES.BRACHIALIS]: 2,
+      [MUSCLES.BRACHIORADIALIS]: 3,
     },
   },
 
   // =====================
-  // BRACHIALIS
+  // BRACHIALIS (UI section)
   // =====================
 
   "hammer-curl": {
@@ -263,11 +396,14 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "brachialis",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.BRACHIORADIALIS],
+    secondaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
     fatigue: {
-      Brachialis: 10,
-      Brachioradialis: 6,
-      "Long Head Biceps": 2,
-      "Short Head Biceps": 2,
+      [MUSCLES.BRACHIALIS]: 10,
+      [MUSCLES.BRACHIORADIALIS]: 6,
+      [MUSCLES.LONG_HEAD_BICEPS]: 2,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 2,
     },
   },
 
@@ -276,11 +412,14 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "brachialis",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.BRACHIORADIALIS],
+    secondaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
     fatigue: {
-      Brachialis: 11,
-      Brachioradialis: 5,
-      "Long Head Biceps": 2,
-      "Short Head Biceps": 2,
+      [MUSCLES.BRACHIALIS]: 11,
+      [MUSCLES.BRACHIORADIALIS]: 5,
+      [MUSCLES.LONG_HEAD_BICEPS]: 2,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 2,
     },
   },
 
@@ -289,11 +428,14 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "brachialis",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.BRACHIORADIALIS],
+    secondaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
     fatigue: {
-      Brachialis: 10,
-      Brachioradialis: 5,
-      "Long Head Biceps": 2,
-      "Short Head Biceps": 2,
+      [MUSCLES.BRACHIALIS]: 10,
+      [MUSCLES.BRACHIORADIALIS]: 5,
+      [MUSCLES.LONG_HEAD_BICEPS]: 2,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 2,
     },
   },
 
@@ -302,11 +444,14 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "brachialis",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.BRACHIORADIALIS, MUSCLES.BRACHIALIS],
+    secondaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
     fatigue: {
-      Brachioradialis: 10,
-      Brachialis: 6,
-      "Long Head Biceps": 1,
-      "Short Head Biceps": 1,
+      [MUSCLES.BRACHIORADIALIS]: 10,
+      [MUSCLES.BRACHIALIS]: 6,
+      [MUSCLES.LONG_HEAD_BICEPS]: 1,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 1,
     },
   },
 
@@ -315,11 +460,14 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "brachialis",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.BRACHIORADIALIS, MUSCLES.BRACHIALIS],
+    secondaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
     fatigue: {
-      Brachioradialis: 10,
-      Brachialis: 6,
-      "Long Head Biceps": 1,
-      "Short Head Biceps": 1,
+      [MUSCLES.BRACHIORADIALIS]: 10,
+      [MUSCLES.BRACHIALIS]: 6,
+      [MUSCLES.LONG_HEAD_BICEPS]: 1,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 1,
     },
   },
 
@@ -328,11 +476,14 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "brachialis",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.BRACHIORADIALIS, MUSCLES.BRACHIALIS],
+    secondaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
     fatigue: {
-      Brachioradialis: 9,
-      Brachialis: 6,
-      "Long Head Biceps": 1,
-      "Short Head Biceps": 1,
+      [MUSCLES.BRACHIORADIALIS]: 9,
+      [MUSCLES.BRACHIALIS]: 6,
+      [MUSCLES.LONG_HEAD_BICEPS]: 1,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 1,
     },
   },
 
@@ -341,11 +492,14 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "brachialis",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.BRACHIORADIALIS, MUSCLES.BRACHIALIS],
+    secondaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
     fatigue: {
-      Brachioradialis: 9,
-      Brachialis: 6,
-      "Long Head Biceps": 1,
-      "Short Head Biceps": 1,
+      [MUSCLES.BRACHIORADIALIS]: 9,
+      [MUSCLES.BRACHIALIS]: 6,
+      [MUSCLES.LONG_HEAD_BICEPS]: 1,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 1,
     },
   },
 
@@ -354,11 +508,14 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "brachialis",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.BRACHIORADIALIS],
+    secondaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
     fatigue: {
-      Brachialis: 8,
-      Brachioradialis: 8,
-      "Long Head Biceps": 2,
-      "Short Head Biceps": 2,
+      [MUSCLES.BRACHIALIS]: 8,
+      [MUSCLES.BRACHIORADIALIS]: 8,
+      [MUSCLES.LONG_HEAD_BICEPS]: 2,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 2,
     },
   },
 
@@ -367,11 +524,14 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "brachialis",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.BRACHIORADIALIS],
+    secondaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
     fatigue: {
-      Brachialis: 10,
-      Brachioradialis: 5,
-      "Long Head Biceps": 2,
-      "Short Head Biceps": 2,
+      [MUSCLES.BRACHIALIS]: 10,
+      [MUSCLES.BRACHIORADIALIS]: 5,
+      [MUSCLES.LONG_HEAD_BICEPS]: 2,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 2,
     },
   },
 
@@ -380,11 +540,14 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "brachialis",
     trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.BRACHIORADIALIS],
+    secondaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
     fatigue: {
-      Brachialis: 10,
-      Brachioradialis: 5,
-      "Long Head Biceps": 2,
-      "Short Head Biceps": 2,
+      [MUSCLES.BRACHIALIS]: 10,
+      [MUSCLES.BRACHIORADIALIS]: 5,
+      [MUSCLES.LONG_HEAD_BICEPS]: 2,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 2,
     },
   },
-};
+} as const satisfies Record<string, ExerciseData>;
