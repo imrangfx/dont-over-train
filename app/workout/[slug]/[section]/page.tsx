@@ -7,22 +7,33 @@ import { shoulders } from "@/app/Data/shoulders";
 import { legs } from "@/app/Data/legs";
 import { abs } from "@/app/Data/abs";
 import { forearms } from "@/app/Data/forearms";
+import type { MuscleName } from "@/app/Data/muscles";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePathname, useParams } from "next/navigation";
 import Image from "next/image";
-import { ArrowUpDown } from "lucide-react";
+import { AlertTriangle, ArrowUpDown } from "lucide-react";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { useMinimumLoadingDelay } from "@/lib/hooks/useMinimumLoadingDelay";
 import { loadWorkoutHistory, type WorkoutHistoryEntry } from "@/lib/workouts";
 import { countExercisePerformances } from "@/lib/exerciseAnalytics";
+import {
+  buildLiveRecoveryView,
+  findLatestRecoverySnapshot,
+} from "@/components/recovery/liveRecovery";
+import {
+  getExerciseRecoveryBadge,
+  sortExercisesByRecoveryTier,
+} from "@/components/recovery/exerciseRecoveryBadges";
 
 type Exercise = {
   name: string;
   section: string;
   trackingType: "weight" | "bodyweight" | "duration";
   fatigue: Record<string, number>;
+  primaryMuscles?: MuscleName[];
+  secondaryMuscles?: MuscleName[];
 };
 
 type SortOption = "recommended" | "mostPerformed" | "az";
@@ -71,6 +82,12 @@ export default function SectionPage() {
     };
   }, []);
 
+  const liveRecovery = useMemo(() => {
+    const snapshot = findLatestRecoverySnapshot(history);
+    if (!snapshot) return null;
+    return buildLiveRecoveryView(snapshot, Date.now());
+  }, [history]);
+
   function handleSelectSort(option: SortOption) {
     setSortOption(option);
     sessionStorage.setItem(SORT_STORAGE_KEY, option);
@@ -113,7 +130,7 @@ export default function SectionPage() {
     slug as keyof typeof DATABASE
   ] || {}) as Record<string, Exercise>;
 
-  // "Recommended" = the existing/natural exercise order - no sort applied.
+  // Natural catalog order for this section (filter only).
   const recommendedExercises = Object.entries(allExercises)
     .filter(([, exercise]) => exercise.section === section)
     .filter(([, exercise]) =>
@@ -145,6 +162,12 @@ export default function SectionPage() {
       // Ties fall back to the Recommended order (original index).
       .sort((a, b) => b.count - a.count || a.index - b.index)
       .map((item) => item.entry);
+  } else {
+    // Default "Recommended" = recovery tiers, preserving catalog order within each.
+    filteredExercises = sortExercisesByRecoveryTier(
+      recommendedExercises,
+      ([, exercise]) => getExerciseRecoveryBadge(liveRecovery, exercise),
+    );
   }
 
   return (
@@ -222,27 +245,52 @@ export default function SectionPage() {
             </div>
           )}
 
-          {filteredExercises.map(([slug, exercise]) => {
+          {filteredExercises.map(([exerciseSlug, exercise]) => {
               const muscles = Object.entries(exercise.fatigue).sort(
                 (a, b) => b[1] - a[1]
               );
 
-
               const primary = muscles[0];
               const secondary = muscles[1];
               const timesCompleted = performanceCountByName.get(exercise.name) ?? 0;
+              const recoveryBadge = getExerciseRecoveryBadge(
+                liveRecovery,
+                exercise,
+              );
 
               return (
                 <Link
                   key={exercise.name}
-                  href={`/exercise/${slug}?from=${encodeURIComponent(pathname)}`}
+                  href={`/exercise/${exerciseSlug}?from=${encodeURIComponent(pathname)}`}
                   className="block rounded-3xl bg-[#111] p-4 transition hover:bg-[#161616]"
                 >
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex-1">
-                      <h3 className="text-lg font-medium">
-                        {exercise.name}
-                      </h3>
+                      <div className="flex items-start gap-2">
+                        <h3 className="text-lg font-medium">
+                          {exercise.name}
+                        </h3>
+                        {recoveryBadge?.showWarning ? (
+                          <AlertTriangle
+                            size={16}
+                            className="mt-1 shrink-0 text-red-400/80"
+                            aria-label="Recovery warning"
+                          />
+                        ) : null}
+                      </div>
+
+                      {recoveryBadge ? (
+                        <div className="mt-2">
+                          <span
+                            className={`inline-flex rounded-full bg-black/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ring-1 backdrop-blur-sm ${recoveryBadge.className}`}
+                          >
+                            {recoveryBadge.label}
+                          </span>
+                          <p className="mt-1.5 text-xs leading-4 text-zinc-500">
+                            {recoveryBadge.reason}
+                          </p>
+                        </div>
+                      ) : null}
 
                       <p className="mt-1 text-xs text-zinc-500">
                         {timesCompleted === 0
@@ -274,7 +322,7 @@ export default function SectionPage() {
                     </div>
 
                     <Image
-                      src={`/exercises/${slug}.webp`}
+                      src={`/exercises/${exerciseSlug}.webp`}
                       alt={exercise.name}
                       width={90}
                       height={90}
