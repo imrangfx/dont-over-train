@@ -1,5 +1,9 @@
 import type { RecoverySummary } from "@/app/lib/recovery/recoveryTypes";
-import { formatLastUpdated } from "@/components/recovery/buildOverallSummary";
+import {
+  formatLastUpdated,
+  formatRecoveryPercent,
+  sanitizeRecoveryPercent,
+} from "@/components/recovery/buildOverallSummary";
 
 type OverallRecoveryCardProps = {
   summary: RecoverySummary;
@@ -8,7 +12,7 @@ type OverallRecoveryCardProps = {
 export default function OverallRecoveryCard({
   summary,
 }: OverallRecoveryCardProps) {
-  const percent = Math.min(100, Math.max(0, summary.overallRecoveryPercent));
+  const percent = sanitizeRecoveryPercent(summary.overallRecoveryPercent);
 
   return (
     <div className="card-surface p-5">
@@ -18,7 +22,7 @@ export default function OverallRecoveryCard({
         className="mt-3 text-5xl font-bold tracking-tight"
         style={{ color: summary.overallColor }}
       >
-        {percent}%
+        {formatRecoveryPercent(percent)}%
       </p>
 
       <div className="mt-3 flex items-center gap-2">

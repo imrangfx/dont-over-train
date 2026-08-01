@@ -1,11 +1,15 @@
 import type { MuscleStatus } from "@/app/lib/recovery/recoveryTypes";
+import {
+  formatRecoveryPercent,
+  sanitizeRecoveryPercent,
+} from "@/components/recovery/buildOverallSummary";
 
 type MuscleRecoveryCardProps = {
   status: MuscleStatus;
 };
 
 export default function MuscleRecoveryCard({ status }: MuscleRecoveryCardProps) {
-  const percent = Math.min(100, Math.max(0, status.recoveryPercent));
+  const percent = sanitizeRecoveryPercent(status.recoveryPercent);
 
   return (
     <div className="card-surface p-4">
@@ -29,7 +33,7 @@ export default function MuscleRecoveryCard({ status }: MuscleRecoveryCardProps) 
           className="shrink-0 text-lg font-bold tabular-nums"
           style={{ color: status.color }}
         >
-          {percent}%
+          {formatRecoveryPercent(percent)}%
         </span>
       </div>
 
