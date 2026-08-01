@@ -1,18 +1,37 @@
 import type { MuscleStatus } from "@/app/lib/recovery/recoveryTypes";
 import {
   formatRecoveryPercent,
+  formatRecoveryPercentWhole,
   sanitizeRecoveryPercent,
 } from "@/components/recovery/buildOverallSummary";
 
 type MuscleRecoveryCardProps = {
   status: MuscleStatus;
+  /** Optional section label above the card (e.g. "Most Fatigued"). */
+  heading?: string;
+  /** Whole-number percentages (history snapshot). */
+  integerPercent?: boolean;
 };
 
-export default function MuscleRecoveryCard({ status }: MuscleRecoveryCardProps) {
-  const percent = sanitizeRecoveryPercent(status.recoveryPercent);
+export default function MuscleRecoveryCard({
+  status,
+  heading,
+  integerPercent = false,
+}: MuscleRecoveryCardProps) {
+  const percent = integerPercent
+    ? Math.round(sanitizeRecoveryPercent(status.recoveryPercent))
+    : sanitizeRecoveryPercent(status.recoveryPercent);
+
+  const label = integerPercent
+    ? formatRecoveryPercentWhole(status.recoveryPercent)
+    : formatRecoveryPercent(percent);
 
   return (
     <div className="card-surface p-4">
+      {heading ? (
+        <p className="mb-3 text-sm font-medium text-zinc-500">{heading}</p>
+      ) : null}
+
       <div className="mb-3 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="truncate text-base font-semibold text-white">
@@ -33,7 +52,7 @@ export default function MuscleRecoveryCard({ status }: MuscleRecoveryCardProps) 
           className="shrink-0 text-lg font-bold tabular-nums"
           style={{ color: status.color }}
         >
-          {formatRecoveryPercent(percent)}%
+          {label}%
         </span>
       </div>
 

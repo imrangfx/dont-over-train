@@ -15,10 +15,17 @@ const LEVEL_COLOR: Record<RecommendationLevel, string> = {
   AVOID: RECOVERY_STATUS[4].color,
 };
 
+const LEVEL_EMOJI: Record<RecommendationLevel, string> = {
+  SAFE: "🟢",
+  CAUTION: "🟡",
+  AVOID: "🔴",
+};
+
 export default function RecommendationCard({
   recommendation,
 }: RecommendationCardProps) {
   const color = LEVEL_COLOR[recommendation.level];
+  const emoji = LEVEL_EMOJI[recommendation.level];
 
   return (
     <div className="card-surface p-4">
@@ -34,7 +41,7 @@ export default function RecommendationCard({
             backgroundColor: `${color}1A`,
           }}
         >
-          {recommendation.level}
+          {emoji} {recommendation.level}
         </span>
       </div>
 

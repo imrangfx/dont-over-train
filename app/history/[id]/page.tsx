@@ -14,6 +14,7 @@ import { exerciseHref } from "@/lib/exerciseAnalytics";
 import EmptyState from "@/components/ui/EmptyState";
 import LoadingCard from "@/components/ui/LoadingCard";
 import BottomNav from "@/components/BottomNav";
+import RecoverySnapshotSection from "@/components/recovery/RecoverySnapshotSection";
 
 /** Fatigue % → text / bar color classes (0–49 green, 50–79 yellow, 80–100 red). */
 function getFatigueColor(value: number): { text: string; bg: string } {
@@ -300,6 +301,10 @@ export default function WorkoutDetailsPage() {
           </div>
 
         )}
+
+        {workout.recovery ? (
+          <RecoverySnapshotSection snapshot={workout.recovery} />
+        ) : null}
 
        </div>
     </main>

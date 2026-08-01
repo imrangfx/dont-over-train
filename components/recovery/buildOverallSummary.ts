@@ -25,6 +25,14 @@ export function formatRecoveryPercent(value: number): string {
 }
 
 /**
+ * Format a recovery percentage as a whole number for history / snapshot UI.
+ * Examples: 58.4 → "58", 92.5 → "93", 61.0000001 → "61"
+ */
+export function formatRecoveryPercentWhole(value: number): string {
+  return String(Math.round(sanitizeRecoveryPercent(value)));
+}
+
+/**
  * Fatigue-weighted overall readiness (UI-only; does not alter stored muscle %).
  *
  * Algorithm:

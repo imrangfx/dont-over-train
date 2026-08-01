@@ -2,17 +2,30 @@ import type { RecoverySummary } from "@/app/lib/recovery/recoveryTypes";
 import {
   formatLastUpdated,
   formatRecoveryPercent,
+  formatRecoveryPercentWhole,
   sanitizeRecoveryPercent,
 } from "@/components/recovery/buildOverallSummary";
 
 type OverallRecoveryCardProps = {
   summary: RecoverySummary;
+  /** Defaults to "Last Updated". History snapshot uses "Snapshot taken". */
+  timestampLabel?: string;
+  /** Whole-number percentages (history snapshot). Default keeps one decimal. */
+  integerPercent?: boolean;
 };
 
 export default function OverallRecoveryCard({
   summary,
+  timestampLabel = "Last Updated",
+  integerPercent = false,
 }: OverallRecoveryCardProps) {
-  const percent = sanitizeRecoveryPercent(summary.overallRecoveryPercent);
+  const percent = integerPercent
+    ? Math.round(sanitizeRecoveryPercent(summary.overallRecoveryPercent))
+    : sanitizeRecoveryPercent(summary.overallRecoveryPercent);
+
+  const label = integerPercent
+    ? formatRecoveryPercentWhole(summary.overallRecoveryPercent)
+    : formatRecoveryPercent(percent);
 
   return (
     <div className="card-surface p-5">
@@ -22,7 +35,7 @@ export default function OverallRecoveryCard({
         className="mt-3 text-5xl font-bold tracking-tight"
         style={{ color: summary.overallColor }}
       >
-        {formatRecoveryPercent(percent)}%
+        {label}%
       </p>
 
       <div className="mt-3 flex items-center gap-2">
@@ -55,7 +68,7 @@ export default function OverallRecoveryCard({
       </div>
 
       <p className="mt-4 text-xs text-zinc-500">
-        Last Updated{" "}
+        {timestampLabel}{" "}
         <span className="text-zinc-400">{formatLastUpdated(summary.asOf)}</span>
       </p>
     </div>
