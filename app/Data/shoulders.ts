@@ -1,326 +1,472 @@
+import { MUSCLES } from "./muscles";
+import type { ExerciseData } from "./exerciseTypes";
+
+/**
+ * Shoulders exercise database — recovery-engine foundation.
+ *
+ * Fatigue keys use MUSCLES only. Legacy `upperBack` mapped to Mid Back
+ * with the same numeric values (no rebalance).
+ * Sections are UI-only: front-delts | side-delts | rear-delts.
+ */
 export const shoulders = {
-// =====================
-// FRONT DELTS
-// =====================
+  // =====================
+  // FRONT DELTS (UI section)
+  // =====================
 
-"barbell-overhead-press": {
-  name: "Barbell Overhead Press",
-  bodyPart: "Shoulders",
-  section: "front-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    frontDelts: 18,
-    sideDelts: 6,
-    "Lateral Head Triceps": 5,
-    "Medial Head Triceps": 3,
-    "Long Head Triceps": 2,
+  "barbell-overhead-press": {
+    name: "Barbell Overhead Press",
+    bodyPart: "Shoulders",
+    section: "front-delts",
+    trackingType: "weight" as const,
+    movement: "vertical-push",
+    primaryMuscles: [MUSCLES.FRONT_DELTS],
+    secondaryMuscles: [
+      MUSCLES.SIDE_DELTS,
+      MUSCLES.LATERAL_HEAD_TRICEPS,
+      MUSCLES.MEDIAL_HEAD_TRICEPS,
+      MUSCLES.LONG_HEAD_TRICEPS,
+    ],
+    fatigue: {
+      [MUSCLES.FRONT_DELTS]: 18,
+      [MUSCLES.SIDE_DELTS]: 6,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 5,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 3,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 2,
+    },
   },
-},
 
-"dumbbell-overhead-press": {
-  name: "Dumbbell Overhead Press",
-  bodyPart: "Shoulders",
-  section: "front-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    frontDelts: 17,
-    sideDelts: 7,
-    "Lateral Head Triceps": 5,
-    "Medial Head Triceps": 3,
-    "Long Head Triceps": 1,
+  "dumbbell-overhead-press": {
+    name: "Dumbbell Overhead Press",
+    bodyPart: "Shoulders",
+    section: "front-delts",
+    trackingType: "weight" as const,
+    movement: "vertical-push",
+    primaryMuscles: [MUSCLES.FRONT_DELTS],
+    secondaryMuscles: [
+      MUSCLES.SIDE_DELTS,
+      MUSCLES.LATERAL_HEAD_TRICEPS,
+      MUSCLES.MEDIAL_HEAD_TRICEPS,
+      MUSCLES.LONG_HEAD_TRICEPS,
+    ],
+    fatigue: {
+      [MUSCLES.FRONT_DELTS]: 17,
+      [MUSCLES.SIDE_DELTS]: 7,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 5,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 3,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 1,
+    },
   },
-},
 
-"arnold-press": {
-  name: "Arnold Press",
-  bodyPart: "Shoulders",
-  section: "front-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    frontDelts: 18,
-    sideDelts: 8,
-    "Lateral Head Triceps": 4,
-    "Medial Head Triceps": 3,
-    "Long Head Triceps": 1,
+  "arnold-press": {
+    name: "Arnold Press",
+    bodyPart: "Shoulders",
+    section: "front-delts",
+    trackingType: "weight" as const,
+    movement: "vertical-push",
+    primaryMuscles: [MUSCLES.FRONT_DELTS],
+    secondaryMuscles: [
+      MUSCLES.SIDE_DELTS,
+      MUSCLES.LATERAL_HEAD_TRICEPS,
+      MUSCLES.MEDIAL_HEAD_TRICEPS,
+      MUSCLES.LONG_HEAD_TRICEPS,
+    ],
+    fatigue: {
+      [MUSCLES.FRONT_DELTS]: 18,
+      [MUSCLES.SIDE_DELTS]: 8,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 4,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 3,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 1,
+    },
   },
-},
 
-"machine-shoulder-press": {
-  name: "Machine Shoulder Press",
-  bodyPart: "Shoulders",
-  section: "front-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    frontDelts: 17,
-    sideDelts: 6,
-    "Lateral Head Triceps": 4,
-    "Medial Head Triceps": 3,
-    "Long Head Triceps": 1,
+  "machine-shoulder-press": {
+    name: "Machine Shoulder Press",
+    bodyPart: "Shoulders",
+    section: "front-delts",
+    trackingType: "weight" as const,
+    movement: "vertical-push",
+    primaryMuscles: [MUSCLES.FRONT_DELTS],
+    secondaryMuscles: [
+      MUSCLES.SIDE_DELTS,
+      MUSCLES.LATERAL_HEAD_TRICEPS,
+      MUSCLES.MEDIAL_HEAD_TRICEPS,
+      MUSCLES.LONG_HEAD_TRICEPS,
+    ],
+    fatigue: {
+      [MUSCLES.FRONT_DELTS]: 17,
+      [MUSCLES.SIDE_DELTS]: 6,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 4,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 3,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 1,
+    },
   },
-},
 
-"smith-overhead-press": {
-  name: "Smith Overhead Press",
-  bodyPart: "Shoulders",
-  section: "front-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    frontDelts: 17,
-    sideDelts: 6,
-    "Lateral Head Triceps": 5,
-    "Medial Head Triceps": 3,
-    "Long Head Triceps": 1,
+  "smith-overhead-press": {
+    name: "Smith Overhead Press",
+    bodyPart: "Shoulders",
+    section: "front-delts",
+    trackingType: "weight" as const,
+    movement: "vertical-push",
+    primaryMuscles: [MUSCLES.FRONT_DELTS],
+    secondaryMuscles: [
+      MUSCLES.SIDE_DELTS,
+      MUSCLES.LATERAL_HEAD_TRICEPS,
+      MUSCLES.MEDIAL_HEAD_TRICEPS,
+      MUSCLES.LONG_HEAD_TRICEPS,
+    ],
+    fatigue: {
+      [MUSCLES.FRONT_DELTS]: 17,
+      [MUSCLES.SIDE_DELTS]: 6,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 5,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 3,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 1,
+    },
   },
-},
 
-"landmine-shoulder-press": {
-  name: "Landmine Shoulder Press",
-  bodyPart: "Shoulders",
-  section: "front-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    frontDelts: 15,
-    sideDelts: 5,
-    "Lateral Head Triceps": 3,
-    "Medial Head Triceps": 2,
-    "Long Head Triceps": 2,
+  "landmine-shoulder-press": {
+    name: "Landmine Shoulder Press",
+    bodyPart: "Shoulders",
+    section: "front-delts",
+    trackingType: "weight" as const,
+    movement: "vertical-push",
+    primaryMuscles: [MUSCLES.FRONT_DELTS],
+    secondaryMuscles: [
+      MUSCLES.SIDE_DELTS,
+      MUSCLES.LATERAL_HEAD_TRICEPS,
+      MUSCLES.MEDIAL_HEAD_TRICEPS,
+      MUSCLES.LONG_HEAD_TRICEPS,
+    ],
+    fatigue: {
+      [MUSCLES.FRONT_DELTS]: 15,
+      [MUSCLES.SIDE_DELTS]: 5,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 3,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 2,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 2,
+    },
   },
-},
 
-"single-arm-dumbbell-press": {
-  name: "Single Arm Dumbbell Press",
-  bodyPart: "Shoulders",
-  section: "front-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    frontDelts: 16,
-    sideDelts: 6,
-    "Lateral Head Triceps": 4,
-    "Medial Head Triceps": 3,
-    "Long Head Triceps": 1,
+  "single-arm-dumbbell-press": {
+    name: "Single Arm Dumbbell Press",
+    bodyPart: "Shoulders",
+    section: "front-delts",
+    trackingType: "weight" as const,
+    movement: "vertical-push",
+    primaryMuscles: [MUSCLES.FRONT_DELTS],
+    secondaryMuscles: [
+      MUSCLES.SIDE_DELTS,
+      MUSCLES.LATERAL_HEAD_TRICEPS,
+      MUSCLES.MEDIAL_HEAD_TRICEPS,
+      MUSCLES.LONG_HEAD_TRICEPS,
+    ],
+    fatigue: {
+      [MUSCLES.FRONT_DELTS]: 16,
+      [MUSCLES.SIDE_DELTS]: 6,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 4,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 3,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 1,
+    },
   },
-},
 
-"seated-barbell-press": {
-  name: "Seated Barbell Press",
-  bodyPart: "Shoulders",
-  section: "front-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    frontDelts: 18,
-    sideDelts: 6,
-    "Lateral Head Triceps": 5,
-    "Medial Head Triceps": 3,
-    "Long Head Triceps": 2,
+  "seated-barbell-press": {
+    name: "Seated Barbell Press",
+    bodyPart: "Shoulders",
+    section: "front-delts",
+    trackingType: "weight" as const,
+    movement: "vertical-push",
+    primaryMuscles: [MUSCLES.FRONT_DELTS],
+    secondaryMuscles: [
+      MUSCLES.SIDE_DELTS,
+      MUSCLES.LATERAL_HEAD_TRICEPS,
+      MUSCLES.MEDIAL_HEAD_TRICEPS,
+      MUSCLES.LONG_HEAD_TRICEPS,
+    ],
+    fatigue: {
+      [MUSCLES.FRONT_DELTS]: 18,
+      [MUSCLES.SIDE_DELTS]: 6,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 5,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 3,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 2,
+    },
   },
-},
 
-"seated-dumbbell-press": {
-  name: "Seated Dumbbell Press",
-  bodyPart: "Shoulders",
-  section: "front-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    frontDelts: 17,
-    sideDelts: 7,
-    "Lateral Head Triceps": 5,
-    "Medial Head Triceps": 3,
-    "Long Head Triceps": 1,
+  "seated-dumbbell-press": {
+    name: "Seated Dumbbell Press",
+    bodyPart: "Shoulders",
+    section: "front-delts",
+    trackingType: "weight" as const,
+    movement: "vertical-push",
+    primaryMuscles: [MUSCLES.FRONT_DELTS],
+    secondaryMuscles: [
+      MUSCLES.SIDE_DELTS,
+      MUSCLES.LATERAL_HEAD_TRICEPS,
+      MUSCLES.MEDIAL_HEAD_TRICEPS,
+      MUSCLES.LONG_HEAD_TRICEPS,
+    ],
+    fatigue: {
+      [MUSCLES.FRONT_DELTS]: 17,
+      [MUSCLES.SIDE_DELTS]: 7,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 5,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 3,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 1,
+    },
   },
-},
 
-"push-press": {
-  name: "Push Press",
-  bodyPart: "Shoulders",
-  section: "front-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    frontDelts: 18,
-    sideDelts: 6,
-    "Lateral Head Triceps": 5,
-    "Medial Head Triceps": 3,
-    "Long Head Triceps": 2,
+  "push-press": {
+    name: "Push Press",
+    bodyPart: "Shoulders",
+    section: "front-delts",
+    trackingType: "weight" as const,
+    movement: "vertical-push",
+    primaryMuscles: [MUSCLES.FRONT_DELTS],
+    secondaryMuscles: [
+      MUSCLES.SIDE_DELTS,
+      MUSCLES.LATERAL_HEAD_TRICEPS,
+      MUSCLES.MEDIAL_HEAD_TRICEPS,
+      MUSCLES.LONG_HEAD_TRICEPS,
+    ],
+    fatigue: {
+      [MUSCLES.FRONT_DELTS]: 18,
+      [MUSCLES.SIDE_DELTS]: 6,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 5,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 3,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 2,
+    },
   },
-},
 
-// =====================
-// SIDE DELTS
-// =====================
-"dumbbell-lateral-raise": {
-  name: "Dumbbell Lateral Raise",
-  bodyPart: "Shoulders",
-  section: "side-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    sideDelts: 18,
-    frontDelts: 2,
-  },
-},
+  // =====================
+  // SIDE DELTS (UI section)
+  // =====================
 
-"cable-lateral-raise": {
-  name: "Cable Lateral Raise",
-  bodyPart: "Shoulders",
-  section: "side-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    sideDelts: 18,
-    frontDelts: 1,
+  "dumbbell-lateral-raise": {
+    name: "Dumbbell Lateral Raise",
+    bodyPart: "Shoulders",
+    section: "side-delts",
+    trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.SIDE_DELTS],
+    secondaryMuscles: [MUSCLES.FRONT_DELTS],
+    fatigue: {
+      [MUSCLES.SIDE_DELTS]: 18,
+      [MUSCLES.FRONT_DELTS]: 2,
+    },
   },
-},
 
-"machine-lateral-raise": {
-  name: "Machine Lateral Raise",
-  bodyPart: "Shoulders",
-  section: "side-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    sideDelts: 17,
+  "cable-lateral-raise": {
+    name: "Cable Lateral Raise",
+    bodyPart: "Shoulders",
+    section: "side-delts",
+    trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.SIDE_DELTS],
+    secondaryMuscles: [MUSCLES.FRONT_DELTS],
+    fatigue: {
+      [MUSCLES.SIDE_DELTS]: 18,
+      [MUSCLES.FRONT_DELTS]: 1,
+    },
   },
-},
 
-"leaning-cable-lateral-raise": {
-  name: "Leaning Cable Lateral Raise",
-  bodyPart: "Shoulders",
-  section: "side-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    sideDelts: 18,
+  "machine-lateral-raise": {
+    name: "Machine Lateral Raise",
+    bodyPart: "Shoulders",
+    section: "side-delts",
+    trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.SIDE_DELTS],
+    secondaryMuscles: [],
+    fatigue: {
+      [MUSCLES.SIDE_DELTS]: 17,
+    },
   },
-},
 
-"single-arm-lateral-raise": {
-  name: "Single Arm Lateral Raise",
-  bodyPart: "Shoulders",
-  section: "side-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    sideDelts: 17,
+  "leaning-cable-lateral-raise": {
+    name: "Leaning Cable Lateral Raise",
+    bodyPart: "Shoulders",
+    section: "side-delts",
+    trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.SIDE_DELTS],
+    secondaryMuscles: [],
+    fatigue: {
+      [MUSCLES.SIDE_DELTS]: 18,
+    },
   },
-},
 
-"seated-lateral-raise": {
-  name: "Seated Lateral Raise",
-  bodyPart: "Shoulders",
-  section: "side-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    sideDelts: 17,
+  "single-arm-lateral-raise": {
+    name: "Single Arm Lateral Raise",
+    bodyPart: "Shoulders",
+    section: "side-delts",
+    trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.SIDE_DELTS],
+    secondaryMuscles: [],
+    fatigue: {
+      [MUSCLES.SIDE_DELTS]: 17,
+    },
   },
-},
 
-"incline-lateral-raise": {
-  name: "Incline Lateral Raise",
-  bodyPart: "Shoulders",
-  section: "side-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    sideDelts: 17,
+  "seated-lateral-raise": {
+    name: "Seated Lateral Raise",
+    bodyPart: "Shoulders",
+    section: "side-delts",
+    trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.SIDE_DELTS],
+    secondaryMuscles: [],
+    fatigue: {
+      [MUSCLES.SIDE_DELTS]: 17,
+    },
   },
-},
 
-"behind-the-back-cable-lateral-raise": {
-  name: "Behind The Back Cable Lateral Raise",
-  bodyPart: "Shoulders",
-  section: "side-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    sideDelts: 18,
+  "incline-lateral-raise": {
+    name: "Incline Lateral Raise",
+    bodyPart: "Shoulders",
+    section: "side-delts",
+    trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.SIDE_DELTS],
+    secondaryMuscles: [],
+    fatigue: {
+      [MUSCLES.SIDE_DELTS]: 17,
+    },
   },
-},
 
-"resistance-band-lateral-raise": {
-  name: "Resistance Band Lateral Raise",
-  bodyPart: "Shoulders",
-  section: "side-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    sideDelts: 15,
+  "behind-the-back-cable-lateral-raise": {
+    name: "Behind The Back Cable Lateral Raise",
+    bodyPart: "Shoulders",
+    section: "side-delts",
+    trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.SIDE_DELTS],
+    secondaryMuscles: [],
+    fatigue: {
+      [MUSCLES.SIDE_DELTS]: 18,
+    },
   },
-},
 
-"partial-lateral-raise": {
-  name: "Partial Lateral Raise",
-  bodyPart: "Shoulders",
-  section: "side-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    sideDelts: 16,
+  "resistance-band-lateral-raise": {
+    name: "Resistance Band Lateral Raise",
+    bodyPart: "Shoulders",
+    section: "side-delts",
+    trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.SIDE_DELTS],
+    secondaryMuscles: [],
+    fatigue: {
+      [MUSCLES.SIDE_DELTS]: 15,
+    },
   },
-},
-// =====================
-// REAR DELTS
-// =====================
 
-"face-pull": {
-  name: "Face Pull",
-  bodyPart: "Shoulders",
-  section: "rear-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    rearDelts: 16,
-    upperBack: 7,
+  "partial-lateral-raise": {
+    name: "Partial Lateral Raise",
+    bodyPart: "Shoulders",
+    section: "side-delts",
+    trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.SIDE_DELTS],
+    secondaryMuscles: [],
+    fatigue: {
+      [MUSCLES.SIDE_DELTS]: 16,
+    },
   },
-},
 
-"bent-over-dumbbell-reverse-fly": {
-  name: "Bent Over Dumbbell Reverse Fly",
-  bodyPart: "Shoulders",
-  section: "rear-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    rearDelts: 17,
-    upperBack: 5,
-  },
-},
+  // =====================
+  // REAR DELTS (UI section)
+  // =====================
 
-"cable-rear-delt-fly": {
-  name: "Cable Rear Delt Fly",
-  bodyPart: "Shoulders",
-  section: "rear-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    rearDelts: 18,
+  "face-pull": {
+    name: "Face Pull",
+    bodyPart: "Shoulders",
+    section: "rear-delts",
+    trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.REAR_DELTS],
+    secondaryMuscles: [MUSCLES.MID_BACK],
+    // Legacy upperBack: 7 → Mid Back (same value; no rebalance).
+    fatigue: {
+      [MUSCLES.REAR_DELTS]: 16,
+      [MUSCLES.MID_BACK]: 7,
+    },
   },
-},
 
-"reverse-cable-cross": {
-  name: "Reverse Cable Cross",
-  bodyPart: "Shoulders",
-  section: "rear-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    rearDelts: 17,
+  "bent-over-dumbbell-reverse-fly": {
+    name: "Bent Over Dumbbell Reverse Fly",
+    bodyPart: "Shoulders",
+    section: "rear-delts",
+    trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.REAR_DELTS],
+    secondaryMuscles: [MUSCLES.MID_BACK],
+    // Legacy upperBack: 5 → Mid Back (same value).
+    fatigue: {
+      [MUSCLES.REAR_DELTS]: 17,
+      [MUSCLES.MID_BACK]: 5,
+    },
   },
-},
 
-"machine-rear-delt-fly": {
-  name: "Machine Rear Delt Fly",
-  bodyPart: "Shoulders",
-  section: "rear-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    rearDelts: 18,
+  "cable-rear-delt-fly": {
+    name: "Cable Rear Delt Fly",
+    bodyPart: "Shoulders",
+    section: "rear-delts",
+    trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.REAR_DELTS],
+    secondaryMuscles: [],
+    fatigue: {
+      [MUSCLES.REAR_DELTS]: 18,
+    },
   },
-},
 
-"incline-rear-delt-raise": {
-  name: "Incline Rear Delt Raise",
-  bodyPart: "Shoulders",
-  section: "rear-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    rearDelts: 17,
+  "reverse-cable-cross": {
+    name: "Reverse Cable Cross",
+    bodyPart: "Shoulders",
+    section: "rear-delts",
+    trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.REAR_DELTS],
+    secondaryMuscles: [],
+    fatigue: {
+      [MUSCLES.REAR_DELTS]: 17,
+    },
   },
-},
 
-"band-pull-apart": {
-  name: "Band Pull Apart",
-  bodyPart: "Shoulders",
-  section: "rear-delts",
-  trackingType: "weight" as const,
-  fatigue: {
-    rearDelts: 15,
-    upperBack: 5,
+  "machine-rear-delt-fly": {
+    name: "Machine Rear Delt Fly",
+    bodyPart: "Shoulders",
+    section: "rear-delts",
+    trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.REAR_DELTS],
+    secondaryMuscles: [],
+    fatigue: {
+      [MUSCLES.REAR_DELTS]: 18,
+    },
   },
-},
-};
+
+  "incline-rear-delt-raise": {
+    name: "Incline Rear Delt Raise",
+    bodyPart: "Shoulders",
+    section: "rear-delts",
+    trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.REAR_DELTS],
+    secondaryMuscles: [],
+    fatigue: {
+      [MUSCLES.REAR_DELTS]: 17,
+    },
+  },
+
+  "band-pull-apart": {
+    name: "Band Pull Apart",
+    bodyPart: "Shoulders",
+    section: "rear-delts",
+    trackingType: "weight" as const,
+    movement: "isolation",
+    primaryMuscles: [MUSCLES.REAR_DELTS],
+    secondaryMuscles: [MUSCLES.MID_BACK],
+    // Legacy upperBack: 5 → Mid Back (same value).
+    fatigue: {
+      [MUSCLES.REAR_DELTS]: 15,
+      [MUSCLES.MID_BACK]: 5,
+    },
+  },
+} as const satisfies Record<string, ExerciseData>;
