@@ -6,28 +6,9 @@ import { triceps } from "./triceps";
 import { legs } from "./legs";
 import { abs } from "./abs";
 import { forearms } from "./forearms";
+import type { ExerciseData, ExerciseTrackingType } from "./exerciseTypes";
 
-/** How an exercise is logged in the workout logger. */
-export type ExerciseTrackingType = "weight" | "bodyweight" | "duration";
-
-/** Shared shape for every exercise in the database. */
-export type ExerciseData = {
-  name: string;
-  bodyPart: string;
-  section: string;
-  /**
-   * weight → weight + reps
-   * bodyweight → reps only
-   * duration → seconds only
-   */
-  trackingType: ExerciseTrackingType;
-  fatigue: Record<string, number>;
-  /** Display muscle groups emphasized by the movement (Training Today, etc.). */
-  primaryMuscles?: string[];
-  /** Assisting display muscle groups (shown after primaries). */
-  secondaryMuscles?: string[];
-  image?: string;
-};
+export type { ExerciseData, ExerciseTrackingType } from "./exerciseTypes";
 
 export const exercises = {
   ...chest,
