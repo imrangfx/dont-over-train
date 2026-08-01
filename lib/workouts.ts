@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import type { ExerciseTrackingType } from "@/app/Data/exercises";
+import type { RecoveryEngineResult } from "@/app/lib/recovery";
 
 /**
  * Canonical per-set logging entry.
@@ -347,6 +348,8 @@ export type WorkoutHistoryEntry = {
   sections: string[];
   exerciseList: WorkoutExercise[];
   fatigueBreakdown: Record<string, number>;
+  /** Recovery Engine snapshot at complete time. Optional for older history. */
+  recovery?: RecoveryEngineResult;
 };
 
 export function toLocalDayKey(ms: number): string {
