@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import {
   formatClockTime,
   isWorkoutStarted,
@@ -12,33 +12,71 @@ import {
   resolveWorkoutNextPath,
   workoutStartBackHref,
 } from "@/lib/workoutNavigation";
-import { normalizeInProgressList } from "@/lib/workouts";
+import { loadWorkoutHistory, normalizeInProgressList } from "@/lib/workouts";
+import {
+  buildLiveRecoveryView,
+  findLatestRecoverySnapshot,
+  type LiveRecoveryView,
+} from "@/components/recovery/liveRecovery";
+import {
+  bodyPartSlugFromWorkoutPath,
+  findRecoveryCheckWarning,
+  type RecoveryCheckWarning,
+} from "@/components/recovery/workoutRecoveryCheck";
+import RecoveryCheckModal from "@/components/recovery/RecoveryCheckModal";
+
+type PendingStart = "timed" | "untimed";
 
 function StartWorkoutContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [clock, setClock] = useState(() => formatClockTime());
   const [ready, setReady] = useState(false);
+  const [liveView, setLiveView] = useState<LiveRecoveryView | null>(null);
+  const [warning, setWarning] = useState<RecoveryCheckWarning | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [pendingStart, setPendingStart] = useState<PendingStart | null>(null);
 
   const nextPath = resolveWorkoutNextPath(searchParams.get("next"), "/home");
   const backHref = workoutStartBackHref(nextPath);
 
   useEffect(() => {
+    let active = true;
+
     queueMicrotask(() => {
-      const saved = localStorage.getItem("currentWorkout");
-      const parsed = saved ? JSON.parse(saved) : null;
-      const inProgress = normalizeInProgressList(parsed);
-      const workoutAlreadyUnderway =
-        isWorkoutStarted() || inProgress.length > 0;
+      void (async () => {
+        const saved = localStorage.getItem("currentWorkout");
+        const parsed = saved ? JSON.parse(saved) : null;
+        const inProgress = normalizeInProgressList(parsed);
+        const workoutAlreadyUnderway =
+          isWorkoutStarted() || inProgress.length > 0;
 
-      // Mid-workout (timed or untimed) — skip Start and open the exercise list.
-      if (workoutAlreadyUnderway) {
-        router.replace(nextPath);
-        return;
-      }
+        // Mid-workout (timed or untimed) — skip Start and open the exercise list.
+        if (workoutAlreadyUnderway) {
+          router.replace(nextPath);
+          return;
+        }
 
-      setReady(true);
+        // Load live recovery for the pre-start check (read-only; never writes).
+        try {
+          const { history } = await loadWorkoutHistory();
+          if (!active) return;
+          const snapshot = findLatestRecoverySnapshot(history);
+          if (snapshot) {
+            setLiveView(buildLiveRecoveryView(snapshot, Date.now()));
+          }
+        } catch {
+          // Recovery check is advisory — proceed without blocking start.
+        }
+
+        if (!active) return;
+        setReady(true);
+      })();
     });
+
+    return () => {
+      active = false;
+    };
   }, [router, nextPath]);
 
   useEffect(() => {
@@ -49,13 +87,46 @@ function StartWorkoutContent() {
     return () => clearInterval(tick);
   }, []);
 
-  function handleStartWorkout() {
-    startWorkoutSession();
-    router.replace(nextPath);
+  const proceedToWorkout = useCallback(
+    (mode: PendingStart) => {
+      if (mode === "timed") {
+        startWorkoutSession();
+      }
+      router.replace(nextPath);
+    },
+    [router, nextPath],
+  );
+
+  function attemptStart(mode: PendingStart) {
+    const bodyPartSlug = bodyPartSlugFromWorkoutPath(nextPath);
+    const check =
+      liveView && bodyPartSlug
+        ? findRecoveryCheckWarning(liveView, bodyPartSlug)
+        : null;
+
+    if (check) {
+      setWarning(check);
+      setPendingStart(mode);
+      setModalOpen(true);
+      return;
+    }
+
+    proceedToWorkout(mode);
   }
 
-  function handleContinueWithoutTimer() {
-    router.replace(nextPath);
+  function handleContinueAnyway() {
+    const mode = pendingStart ?? "untimed";
+    setModalOpen(false);
+    setWarning(null);
+    setPendingStart(null);
+    proceedToWorkout(mode);
+  }
+
+  function handleChooseAnotherMuscle() {
+    setModalOpen(false);
+    setWarning(null);
+    setPendingStart(null);
+    router.push(backHref);
   }
 
   if (!ready) {
@@ -92,7 +163,7 @@ function StartWorkoutContent() {
           <div className="mt-12 flex w-full max-w-[320px] flex-col gap-3">
             <button
               type="button"
-              onClick={handleStartWorkout}
+              onClick={() => attemptStart("timed")}
               className="btn-base w-full rounded-2xl bg-lime-400 py-5 text-2xl font-semibold text-black hover:brightness-110 active:brightness-95"
             >
               Start Workout
@@ -100,7 +171,7 @@ function StartWorkoutContent() {
 
             <button
               type="button"
-              onClick={handleContinueWithoutTimer}
+              onClick={() => attemptStart("untimed")}
               className="btn-base w-full rounded-2xl border border-[#333] bg-[#111] py-4 text-lg font-semibold text-white hover:bg-[#1a1a1a] active:bg-[#222]"
             >
               Continue Without Timer
@@ -108,6 +179,15 @@ function StartWorkoutContent() {
           </div>
         </div>
       </div>
+
+      {warning ? (
+        <RecoveryCheckModal
+          open={modalOpen}
+          warning={warning}
+          onContinue={handleContinueAnyway}
+          onChooseAnother={handleChooseAnotherMuscle}
+        />
+      ) : null}
     </main>
   );
 }
