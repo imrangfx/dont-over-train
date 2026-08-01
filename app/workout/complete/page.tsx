@@ -34,6 +34,7 @@ import {
 import { useToast } from "@/components/ui/Toast";
 import LevelUpCelebration from "@/components/LevelUpCelebration";
 import ShareCardModal from "@/components/ShareCardModal";
+import { runRecoveryEngine } from "@/app/lib/recovery";
 
 /** Best (highest) weight lifted for a single exercise this session. */
 function maxWeightLifted(item: InProgressWorkoutItem): number {
@@ -121,6 +122,24 @@ export default function CompletePage() {
       );
     });
 
+    // Recovery Engine snapshot at complete time. Failures must never block save.
+    let recovery: WorkoutHistoryEntry["recovery"];
+    try {
+      const loggedExercises = formatted.map((item) => ({
+        slug: item.slug,
+        name: item.exercise,
+        bodyPart: item.bodyPart,
+        section: item.section,
+        sets: item.sets,
+        fatigueBreakdown: item.fatigueBreakdown || {},
+        completedAt: endedAt,
+      }));
+      const now = Date.now();
+      recovery = runRecoveryEngine(loggedExercises, endedAt, now);
+    } catch {
+      recovery = undefined;
+    }
+
     const historyEntry: WorkoutHistoryEntry = {
       id: crypto.randomUUID(),
 
@@ -170,6 +189,7 @@ export default function CompletePage() {
         };
       }),
       fatigueBreakdown: fatigueTotals,
+      recovery,
     };
 
     // Mark session completed: stash summary, clear active session + exercises
