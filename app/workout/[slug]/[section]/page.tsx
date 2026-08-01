@@ -11,7 +11,7 @@ import type { MuscleName } from "@/app/Data/muscles";
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { usePathname, useParams } from "next/navigation";
+import { usePathname, useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { AlertTriangle, ArrowUpDown } from "lucide-react";
 import LoadingScreen from "@/components/ui/LoadingScreen";
@@ -53,10 +53,18 @@ export default function SectionPage() {
   const [history, setHistory] = useState<WorkoutHistoryEntry[]>([]);
 
   const pathname = usePathname();
+  const router = useRouter();
 
   const params = useParams<{ slug: string; section: string }>();
 
   const isLoading = useMinimumLoadingDelay();
+
+  // Legacy Back "mid-back" section → Upper Back (traps / rhomboids rows).
+  useEffect(() => {
+    if (params.slug === "back" && params.section === "mid-back") {
+      router.replace("/workout/back/upper-back");
+    }
+  }, [params.slug, params.section, router]);
 
   // Sort preference is remembered only for the current app session (not
   // persisted across app restarts) - sessionStorage is read after mount so

@@ -193,7 +193,7 @@ const FATIGUE_HIGH_THRESHOLD = 70;
  */
 const BODY_PART_SECTIONS: Record<string, string[]> = {
   Chest: ["upper-chest", "mid-chest", "lower-chest"],
-  Back: ["upper-back", "mid-back", "lats", "lower-back"],
+  Back: ["upper-back", "lats", "lower-back"],
   Shoulders: ["front-delts", "side-delts", "rear-delts"],
   Biceps: ["long-head", "short-head", "brachialis"],
   Triceps: ["long-head", "lateral-head", "medial-head"],

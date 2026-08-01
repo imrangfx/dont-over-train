@@ -5,7 +5,11 @@ import type { ExerciseData } from "./exerciseTypes";
  * Back exercise database — recovery-engine foundation.
  *
  * Fatigue keys use MUSCLES only (never body-region keys like "Upper Back").
- * Sections are UI-only: upper-back | lats | mid-back | lower-back.
+ * Sections are UI-only: upper-back | lats | lower-back.
+ *
+ * Upper Back covers traps / rhomboids-biased work.
+ * Lats covers lat-focused vertical pulls.
+ * Lower Back covers hinge / erector work.
  *
  * Fatigue scale (≈3×10 baseline):
  *   Primary 16–18 | Strong secondary 6–10 | Minor 2–5 | Stabilizer 1–3
@@ -316,13 +320,14 @@ export const back = {
   },
 
   // =====================
-  // MID BACK (UI section)
+  // UPPER BACK continued (former mid-back UI section)
+  // Rows whose primary target is traps / mid-scapular retraction.
   // =====================
 
   "barbell-row": {
     name: "Barbell Row",
     bodyPart: "Back",
-    section: "mid-back",
+    section: "upper-back",
     trackingType: "weight" as const,
     movement: "horizontal-pull",
     // Hinged torso: mid-back + lats pull; erectors stabilize isometrically.
@@ -354,7 +359,7 @@ export const back = {
   "t-bar-row": {
     name: "T Bar Row",
     bodyPart: "Back",
-    section: "mid-back",
+    section: "upper-back",
     trackingType: "weight" as const,
     movement: "horizontal-pull",
     // Mid-back biased row; less free axial load than a strict barbell row.
@@ -382,7 +387,7 @@ export const back = {
   "chest-supported-row": {
     name: "Chest Supported Row",
     bodyPart: "Back",
-    section: "mid-back",
+    section: "upper-back",
     trackingType: "weight" as const,
     movement: "horizontal-pull",
     // Pad removes erector demand → clean mid-back prescription.
@@ -410,7 +415,7 @@ export const back = {
   "seated-cable-row": {
     name: "Seated Cable Row",
     bodyPart: "Back",
-    section: "mid-back",
+    section: "upper-back",
     trackingType: "weight" as const,
     movement: "horizontal-pull",
     // Constant tension; mid-back + lat share by elbow path.
