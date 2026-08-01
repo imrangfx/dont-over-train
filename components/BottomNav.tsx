@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { House, History, CircleUserRound, Settings } from "lucide-react";
+import {
+  House,
+  History,
+  HeartPulse,
+  CircleUserRound,
+  Settings,
+} from "lucide-react";
 
 const NAV_ITEMS = [
   {
@@ -14,6 +20,11 @@ const NAV_ITEMS = [
     label: "History",
     href: "/history",
     icon: History,
+  },
+  {
+    label: "Recovery",
+    href: "/recovery",
+    icon: HeartPulse,
   },
   {
     label: "Profile",
@@ -43,7 +54,7 @@ export default function BottomNav() {
       aria-label="Bottom navigation"
       className="fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-800 bg-[#111] pb-[env(safe-area-inset-bottom)]"
     >
-      <div className="mx-auto grid h-[72px] w-full max-w-[430px] grid-cols-4 items-center px-1">
+      <div className="mx-auto grid h-[72px] w-full max-w-[430px] grid-cols-5 items-center px-1">
         {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
           const active = isActive(pathname, href);
 
