@@ -1,21 +1,23 @@
 /**
  * Recovery-aware exercise badges for body-part section lists.
- * Presentation only — weighted by catalog fatigue contribution values.
+ * Presentation only — warning badges when attention is needed.
  *
- * Does not modify the Recovery Engine. Uses live recovery % + exercise.fatigue
- * weights, and RECOMMENDATION_RULES thresholds for classification.
+ * Does not modify the Recovery Engine. Uses live muscle recovery % / status
+ * bands plus exercise primary/secondary (and fatigue map as fallback).
  */
 
 import { isMuscleName, type MuscleName } from "@/app/Data/muscles";
-import { RECOMMENDATION_RULES } from "@/app/Data/recoveryConfig";
-import type { RecommendationLevel } from "@/app/lib/recovery/recoveryTypes";
+import {
+  RECOMMENDATION_RULES,
+  type RecoveryStatusId,
+} from "@/app/Data/recoveryConfig";
 import type { LiveRecoveryView } from "@/components/recovery/liveRecovery";
 import { sanitizeRecoveryPercent } from "@/components/recovery/buildOverallSummary";
 
 export type ExerciseRecoveryBadgeId =
-  | "recommended"
-  | "train-light"
-  | "recovering";
+  | "avoid"
+  | "not-recommended"
+  | "train-light";
 
 export type ExerciseRecoveryBadge = {
   readonly id: ExerciseRecoveryBadgeId;
@@ -31,19 +33,26 @@ type ExerciseMuscleInput = {
   readonly fatigue?: Readonly<Partial<Record<string, number>>>;
 };
 
-type MuscleContribution = {
+type MuscleReadiness = {
   readonly muscle: MuscleName;
-  readonly weight: number;
   readonly recoveryPercent: number;
+  readonly statusId: RecoveryStatusId;
+  readonly fatigueWeight: number;
 };
 
 const BADGE_BY_ID: Record<
   ExerciseRecoveryBadgeId,
   Omit<ExerciseRecoveryBadge, "reason">
 > = {
-  recovering: {
-    id: "recovering",
-    label: "🔴 Recovering",
+  avoid: {
+    id: "avoid",
+    label: "🔴 Avoid",
+    className: "text-red-400 ring-red-500/25",
+    showWarning: true,
+  },
+  "not-recommended": {
+    id: "not-recommended",
+    label: "🔴 Not Recommended",
     className: "text-red-400 ring-red-500/25",
     showWarning: true,
   },
@@ -53,129 +62,143 @@ const BADGE_BY_ID: Record<
     className: "text-yellow-300 ring-yellow-500/25",
     showWarning: false,
   },
-  recommended: {
-    id: "recommended",
-    label: "🟢 Recommended",
-    className: "text-lime-400 ring-lime-500/25",
-    showWarning: false,
-  },
 };
 
+/** Warnings first; safe (no badge) last. Stable within tier. */
 const TIER_ORDER: Record<ExerciseRecoveryBadgeId, number> = {
-  recommended: 0,
-  "train-light": 1,
-  recovering: 2,
+  avoid: 0,
+  "not-recommended": 1,
+  "train-light": 2,
 };
 
-function recoveryPercentForMuscle(
+const SAFE_TIER = 3;
+
+function isHighDanger(statusId: RecoveryStatusId): boolean {
+  return statusId === "HIGH" || statusId === "OVERREACHED";
+}
+
+function isSafeToTrain(recoveryPercent: number): boolean {
+  return recoveryPercent >= RECOMMENDATION_RULES.SAFE_TO_TRAIN_AT;
+}
+
+function recoveryLookup(
   live: LiveRecoveryView,
   muscle: MuscleName,
-): number {
+): Pick<MuscleReadiness, "recoveryPercent" | "statusId"> {
   const status = live.muscles.find((item) => item.muscle === muscle);
   if (status) {
-    return sanitizeRecoveryPercent(status.recoveryPercent);
+    return {
+      recoveryPercent: sanitizeRecoveryPercent(status.recoveryPercent),
+      statusId: status.statusId,
+    };
   }
   // Not in live snapshot → treat as fully recovered.
-  return 100;
+  return { recoveryPercent: 100, statusId: "FRESH" };
+}
+
+function fatigueWeightFor(
+  exercise: ExerciseMuscleInput,
+  muscle: MuscleName,
+): number {
+  const raw = exercise.fatigue?.[muscle];
+  if (typeof raw === "number" && Number.isFinite(raw) && raw > 0) {
+    return raw;
+  }
+  return 0;
+}
+
+function uniqueMuscles(muscles: readonly MuscleName[]): MuscleName[] {
+  const seen = new Set<MuscleName>();
+  const result: MuscleName[] = [];
+  for (const muscle of muscles) {
+    if (seen.has(muscle)) continue;
+    seen.add(muscle);
+    result.push(muscle);
+  }
+  return result;
 }
 
 /**
- * Fatigue contribution entries (MuscleName → catalog weight > 0).
+ * Fatigue map entries with positive contribution, highest weight first.
  */
-function readContributions(
-  live: LiveRecoveryView,
+function fatigueRankedMuscles(
   exercise: ExerciseMuscleInput,
-): MuscleContribution[] {
-  const contributions: MuscleContribution[] = [];
+): { muscle: MuscleName; weight: number }[] {
   const fatigue = exercise.fatigue ?? {};
+  const ranked: { muscle: MuscleName; weight: number }[] = [];
 
   for (const [key, raw] of Object.entries(fatigue)) {
     if (!isMuscleName(key)) continue;
     if (typeof raw !== "number" || !Number.isFinite(raw) || raw <= 0) {
       continue;
     }
-    contributions.push({
-      muscle: key,
-      weight: raw,
-      recoveryPercent: recoveryPercentForMuscle(live, key),
-    });
+    ranked.push({ muscle: key, weight: raw });
   }
 
-  return contributions;
+  ranked.sort((a, b) => b.weight - a.weight);
+  return ranked;
 }
 
-/**
- * Σ(recovery × weight) / Σ(weight)
- */
-function weightedRecoveryScore(
-  contributions: readonly MuscleContribution[],
-): number {
-  let weightedSum = 0;
-  let totalWeight = 0;
-
-  for (const entry of contributions) {
-    weightedSum += entry.recoveryPercent * entry.weight;
-    totalWeight += entry.weight;
+function resolvePrimaryMuscles(exercise: ExerciseMuscleInput): MuscleName[] {
+  if (exercise.primaryMuscles && exercise.primaryMuscles.length > 0) {
+    return uniqueMuscles(exercise.primaryMuscles);
   }
 
-  if (totalWeight <= 0) return 100;
-  return sanitizeRecoveryPercent(weightedSum / totalWeight);
+  const ranked = fatigueRankedMuscles(exercise);
+  if (ranked.length === 0) return [];
+  // Fallback: top fatigue contributor is the primary target.
+  return [ranked[0].muscle];
 }
 
-/**
- * Headline muscle = largest contribution weight (primary fatigue naturally wins).
- * Tie-break: lower recovery (more fatigued) so the reason stays meaningful.
- */
-function highestImpactMuscle(
-  contributions: readonly MuscleContribution[],
-): MuscleContribution {
-  return contributions.reduce((best, entry) => {
-    if (entry.weight > best.weight) return entry;
-    if (entry.weight < best.weight) return best;
-    return entry.recoveryPercent < best.recoveryPercent ? entry : best;
+function resolveSecondaryMuscles(
+  exercise: ExerciseMuscleInput,
+  primaries: readonly MuscleName[],
+): MuscleName[] {
+  const primarySet = new Set(primaries);
+
+  if (exercise.secondaryMuscles && exercise.secondaryMuscles.length > 0) {
+    return uniqueMuscles(exercise.secondaryMuscles).filter(
+      (muscle) => !primarySet.has(muscle),
+    );
+  }
+
+  // Fallback: remaining fatigue contributors are support muscles.
+  return fatigueRankedMuscles(exercise)
+    .map((entry) => entry.muscle)
+    .filter((muscle) => !primarySet.has(muscle));
+}
+
+function toReadiness(
+  live: LiveRecoveryView,
+  exercise: ExerciseMuscleInput,
+  muscle: MuscleName,
+): MuscleReadiness {
+  const { recoveryPercent, statusId } = recoveryLookup(live, muscle);
+  return {
+    muscle,
+    recoveryPercent,
+    statusId,
+    fatigueWeight: fatigueWeightFor(exercise, muscle),
+  };
+}
+
+/** Worst readiness first (lowest recovery; tie-break higher fatigue weight). */
+function pickWorst(candidates: readonly MuscleReadiness[]): MuscleReadiness | null {
+  if (candidates.length === 0) return null;
+  return candidates.reduce((worst, entry) => {
+    if (entry.recoveryPercent < worst.recoveryPercent) return entry;
+    if (entry.recoveryPercent > worst.recoveryPercent) return worst;
+    return entry.fatigueWeight > worst.fatigueWeight ? entry : worst;
   });
 }
 
-function levelFromRecoveryPercent(
-  recoveryPercent: number,
-): RecommendationLevel {
-  if (recoveryPercent >= RECOMMENDATION_RULES.SAFE_TO_TRAIN_AT) {
-    return "SAFE";
-  }
-  if (recoveryPercent >= RECOMMENDATION_RULES.CAUTION_AT) {
-    return "CAUTION";
-  }
-  return "AVOID";
-}
-
-function badgeIdFromWeightedScore(
-  score: number,
-): ExerciseRecoveryBadgeId {
-  if (score >= RECOMMENDATION_RULES.SAFE_TO_TRAIN_AT) {
-    return "recommended";
-  }
-  if (score >= RECOMMENDATION_RULES.CAUTION_AT) {
-    return "train-light";
-  }
-  return "recovering";
-}
-
-function reasonForImpactMuscle(entry: MuscleContribution): string {
-  const level = levelFromRecoveryPercent(entry.recoveryPercent);
-
-  // Prefer engine recommendation message level when status exists in live data.
-  // Phrasing stays tied to SAFE / CAUTION / AVOID thresholds (not new cutoffs).
-  if (level === "AVOID") return `${entry.muscle} recovering`;
-  if (level === "CAUTION") return `${entry.muscle} slightly fatigued`;
-  return `${entry.muscle} fully recovered`;
-}
-
 /**
- * Classify one exercise using fatigue-contribution weighted recovery.
+ * Classify one exercise for list badges.
  *
- * Recommended  → weighted ≥ SAFE_TO_TRAIN_AT
- * Train Light  → CAUTION_AT ≤ weighted < SAFE_TO_TRAIN_AT
- * Recovering   → weighted < CAUTION_AT
+ * AVOID            → primary High Fatigue / Overreached
+ * NOT RECOMMENDED  → primary below SAFE, but not high-danger
+ * TRAIN LIGHT      → primary safe, important secondary still recovering
+ * (no badge)       → otherwise
  */
 export function getExerciseRecoveryBadge(
   live: LiveRecoveryView | null,
@@ -183,30 +206,68 @@ export function getExerciseRecoveryBadge(
 ): ExerciseRecoveryBadge | null {
   if (!live) return null;
 
-  const contributions = readContributions(live, exercise);
-  if (contributions.length === 0) return null;
+  const primaries = resolvePrimaryMuscles(exercise);
+  if (primaries.length === 0) return null;
 
-  const score = weightedRecoveryScore(contributions);
-  const badgeId = badgeIdFromWeightedScore(score);
-  const impact = highestImpactMuscle(contributions);
+  const primaryStates = primaries.map((muscle) =>
+    toReadiness(live, exercise, muscle),
+  );
 
-  return {
-    ...BADGE_BY_ID[badgeId],
-    reason: reasonForImpactMuscle(impact),
-  };
+  const avoidPrimary = pickWorst(
+    primaryStates.filter((entry) => isHighDanger(entry.statusId)),
+  );
+  if (avoidPrimary) {
+    return {
+      ...BADGE_BY_ID.avoid,
+      reason: `${avoidPrimary.muscle} needs more recovery.`,
+    };
+  }
+
+  const notRecommendedPrimary = pickWorst(
+    primaryStates.filter(
+      (entry) =>
+        !isSafeToTrain(entry.recoveryPercent) && !isHighDanger(entry.statusId),
+    ),
+  );
+  if (notRecommendedPrimary) {
+    return {
+      ...BADGE_BY_ID["not-recommended"],
+      reason: `${notRecommendedPrimary.muscle} is still recovering.`,
+    };
+  }
+
+  const allPrimariesSafe = primaryStates.every((entry) =>
+    isSafeToTrain(entry.recoveryPercent),
+  );
+  if (!allPrimariesSafe) return null;
+
+  const secondaries = resolveSecondaryMuscles(exercise, primaries);
+  const recoveringSecondary = pickWorst(
+    secondaries
+      .map((muscle) => toReadiness(live, exercise, muscle))
+      .filter((entry) => !isSafeToTrain(entry.recoveryPercent)),
+  );
+  if (recoveringSecondary) {
+    return {
+      ...BADGE_BY_ID["train-light"],
+      reason: `${recoveringSecondary.muscle} still recovering.`,
+    };
+  }
+
+  return null;
 }
 
-/** Sort key: Recommended → Train Light → Recovering (stable within tier). */
+/** Sort key: Avoid → Not Recommended → Train Light → no badge. */
 export function exerciseRecoveryTierSortKey(
   badge: ExerciseRecoveryBadge | null,
 ): number {
-  if (!badge) return 1;
+  if (!badge) return SAFE_TIER;
   return TIER_ORDER[badge.id];
 }
 
 /**
- * Sort exercises by recovery tier, preserving original relative order within
- * each group. Does not mutate the input array.
+ * Sort exercises by recovery warning tier, preserving original relative order
+ * within each group. Does not mutate the input array.
  */
 export function sortExercisesByRecoveryTier<T>(
   entries: readonly T[],
