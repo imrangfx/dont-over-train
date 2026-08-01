@@ -1,6 +1,20 @@
+import { MUSCLES } from "./muscles";
+import type { ExerciseData } from "./exerciseTypes";
+
+/**
+ * Abs exercise database — recovery-engine foundation.
+ *
+ * Fatigue keys use MUSCLES only. Numeric values preserved from legacy.
+ * Legacy remaps (same values unless noted):
+ *   upperAbs / lowerAbs → Abs (RECTUS_ABDOMINIS); summed when both present
+ *   obliques → Obliques
+ *   lowerBack → folded into RECTUS_ABDOMINIS or OBLIQUES (only allowed abs muscles)
+ *   Legacy hipFlexors / grip entries dropped (not in MUSCLES); remaining values kept as-is.
+ * Section is UI-only: upper-abs | lower-abs | obliques | core.
+ */
 export const abs = {
   // =====================
-  // UPPER ABS
+  // UPPER ABS (UI section)
   // =====================
 
   "cable-crunch": {
@@ -8,8 +22,11 @@ export const abs = {
     bodyPart: "Abs",
     section: "upper-abs",
     trackingType: "weight" as const,
+    movement: "core-flexion",
+    primaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
+    secondaryMuscles: [],
     fatigue: {
-      upperAbs: 18,
+      [MUSCLES.RECTUS_ABDOMINIS]: 18,
     },
   },
 
@@ -18,8 +35,11 @@ export const abs = {
     bodyPart: "Abs",
     section: "upper-abs",
     trackingType: "weight" as const,
+    movement: "core-flexion",
+    primaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
+    secondaryMuscles: [],
     fatigue: {
-      upperAbs: 17,
+      [MUSCLES.RECTUS_ABDOMINIS]: 17,
     },
   },
 
@@ -28,9 +48,11 @@ export const abs = {
     bodyPart: "Abs",
     section: "upper-abs",
     trackingType: "bodyweight" as const,
+    movement: "core-flexion",
+    primaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
+    secondaryMuscles: [],
     fatigue: {
-      upperAbs: 18,
-      hipFlexors: 4,
+      [MUSCLES.RECTUS_ABDOMINIS]: 18,
     },
   },
 
@@ -39,8 +61,11 @@ export const abs = {
     bodyPart: "Abs",
     section: "upper-abs",
     trackingType: "bodyweight" as const,
+    movement: "core-flexion",
+    primaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
+    secondaryMuscles: [],
     fatigue: {
-      upperAbs: 17,
+      [MUSCLES.RECTUS_ABDOMINIS]: 17,
     },
   },
 
@@ -49,18 +74,24 @@ export const abs = {
     bodyPart: "Abs",
     section: "upper-abs",
     trackingType: "weight" as const,
+    movement: "core-flexion",
+    primaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
+    secondaryMuscles: [],
     fatigue: {
-      upperAbs: 18,
+      [MUSCLES.RECTUS_ABDOMINIS]: 18,
     },
   },
 
-  "crunch": {
+  crunch: {
     name: "Crunch",
     bodyPart: "Abs",
     section: "upper-abs",
     trackingType: "bodyweight" as const,
+    movement: "core-flexion",
+    primaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
+    secondaryMuscles: [],
     fatigue: {
-      upperAbs: 16,
+      [MUSCLES.RECTUS_ABDOMINIS]: 16,
     },
   },
 
@@ -69,8 +100,11 @@ export const abs = {
     bodyPart: "Abs",
     section: "upper-abs",
     trackingType: "bodyweight" as const,
+    movement: "core-flexion",
+    primaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
+    secondaryMuscles: [],
     fatigue: {
-      upperAbs: 17,
+      [MUSCLES.RECTUS_ABDOMINIS]: 17,
     },
   },
 
@@ -79,8 +113,11 @@ export const abs = {
     bodyPart: "Abs",
     section: "upper-abs",
     trackingType: "weight" as const,
+    movement: "core-flexion",
+    primaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
+    secondaryMuscles: [],
     fatigue: {
-      upperAbs: 18,
+      [MUSCLES.RECTUS_ABDOMINIS]: 18,
     },
   },
 
@@ -89,22 +126,28 @@ export const abs = {
     bodyPart: "Abs",
     section: "upper-abs",
     trackingType: "weight" as const,
+    movement: "core-flexion",
+    primaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
+    secondaryMuscles: [],
     fatigue: {
-      upperAbs: 17,
+      [MUSCLES.RECTUS_ABDOMINIS]: 17,
     },
   },
 
   // =====================
-  // LOWER ABS
+  // LOWER ABS (UI section)
   // =====================
+
   "hanging-leg-raise": {
     name: "Hanging Leg Raise",
     bodyPart: "Abs",
     section: "lower-abs",
     trackingType: "bodyweight" as const,
+    movement: "core-flexion",
+    primaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
+    secondaryMuscles: [],
     fatigue: {
-      lowerAbs: 18,
-      hipFlexors: 6,
+      [MUSCLES.RECTUS_ABDOMINIS]: 18,
     },
   },
 
@@ -113,9 +156,11 @@ export const abs = {
     bodyPart: "Abs",
     section: "lower-abs",
     trackingType: "bodyweight" as const,
+    movement: "core-flexion",
+    primaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
+    secondaryMuscles: [],
     fatigue: {
-      lowerAbs: 17,
-      hipFlexors: 6,
+      [MUSCLES.RECTUS_ABDOMINIS]: 17,
     },
   },
 
@@ -124,8 +169,11 @@ export const abs = {
     bodyPart: "Abs",
     section: "lower-abs",
     trackingType: "bodyweight" as const,
+    movement: "core-flexion",
+    primaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
+    secondaryMuscles: [],
     fatigue: {
-      lowerAbs: 17,
+      [MUSCLES.RECTUS_ABDOMINIS]: 17,
     },
   },
 
@@ -134,9 +182,11 @@ export const abs = {
     bodyPart: "Abs",
     section: "lower-abs",
     trackingType: "bodyweight" as const,
+    movement: "core-flexion",
+    primaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
+    secondaryMuscles: [],
     fatigue: {
-      lowerAbs: 17,
-      hipFlexors: 5,
+      [MUSCLES.RECTUS_ABDOMINIS]: 17,
     },
   },
 
@@ -145,9 +195,11 @@ export const abs = {
     bodyPart: "Abs",
     section: "lower-abs",
     trackingType: "bodyweight" as const,
+    movement: "core-flexion",
+    primaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
+    secondaryMuscles: [],
     fatigue: {
-      lowerAbs: 18,
-      hipFlexors: 4,
+      [MUSCLES.RECTUS_ABDOMINIS]: 18,
     },
   },
 
@@ -156,9 +208,11 @@ export const abs = {
     bodyPart: "Abs",
     section: "lower-abs",
     trackingType: "bodyweight" as const,
+    movement: "core-flexion",
+    primaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
+    secondaryMuscles: [],
     fatigue: {
-      lowerAbs: 16,
-      hipFlexors: 6,
+      [MUSCLES.RECTUS_ABDOMINIS]: 16,
     },
   },
 
@@ -167,9 +221,11 @@ export const abs = {
     bodyPart: "Abs",
     section: "lower-abs",
     trackingType: "bodyweight" as const,
+    movement: "core-flexion",
+    primaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
+    secondaryMuscles: [],
     fatigue: {
-      lowerAbs: 16,
-      hipFlexors: 6,
+      [MUSCLES.RECTUS_ABDOMINIS]: 16,
     },
   },
 
@@ -178,10 +234,11 @@ export const abs = {
     bodyPart: "Abs",
     section: "lower-abs",
     trackingType: "bodyweight" as const,
+    movement: "core-flexion",
+    primaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
+    secondaryMuscles: [],
     fatigue: {
-      lowerAbs: 19,
-      hipFlexors: 7,
-      grip: 3,
+      [MUSCLES.RECTUS_ABDOMINIS]: 19,
     },
   },
 
@@ -190,9 +247,11 @@ export const abs = {
     bodyPart: "Abs",
     section: "lower-abs",
     trackingType: "bodyweight" as const,
+    movement: "core-flexion",
+    primaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
+    secondaryMuscles: [],
     fatigue: {
-      lowerAbs: 17,
-      hipFlexors: 5,
+      [MUSCLES.RECTUS_ABDOMINIS]: 17,
     },
   },
 
@@ -201,22 +260,29 @@ export const abs = {
     bodyPart: "Abs",
     section: "lower-abs",
     trackingType: "bodyweight" as const,
+    movement: "core-flexion",
+    primaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
+    secondaryMuscles: [],
     fatigue: {
-      lowerAbs: 16,
+      [MUSCLES.RECTUS_ABDOMINIS]: 16,
     },
   },
 
   // =====================
-  // OBLIQUES
+  // OBLIQUES (UI section)
   // =====================
+
   "russian-twist": {
     name: "Russian Twist",
     bodyPart: "Abs",
     section: "obliques",
     trackingType: "bodyweight" as const,
+    movement: "core-rotation",
+    primaryMuscles: [MUSCLES.OBLIQUES],
+    secondaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
     fatigue: {
-      obliques: 18,
-      upperAbs: 6,
+      [MUSCLES.OBLIQUES]: 18,
+      [MUSCLES.RECTUS_ABDOMINIS]: 6,
     },
   },
 
@@ -225,9 +291,12 @@ export const abs = {
     bodyPart: "Abs",
     section: "obliques",
     trackingType: "weight" as const,
+    movement: "core-rotation",
+    primaryMuscles: [MUSCLES.OBLIQUES],
+    secondaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
     fatigue: {
-      obliques: 19,
-      upperAbs: 5,
+      [MUSCLES.OBLIQUES]: 19,
+      [MUSCLES.RECTUS_ABDOMINIS]: 5,
     },
   },
 
@@ -236,9 +305,12 @@ export const abs = {
     bodyPart: "Abs",
     section: "obliques",
     trackingType: "weight" as const,
+    movement: "core-rotation",
+    primaryMuscles: [MUSCLES.OBLIQUES],
+    secondaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
     fatigue: {
-      obliques: 18,
-      upperAbs: 4,
+      [MUSCLES.OBLIQUES]: 18,
+      [MUSCLES.RECTUS_ABDOMINIS]: 4,
     },
   },
 
@@ -247,8 +319,11 @@ export const abs = {
     bodyPart: "Abs",
     section: "obliques",
     trackingType: "weight" as const,
+    movement: "core-rotation",
+    primaryMuscles: [MUSCLES.OBLIQUES],
+    secondaryMuscles: [],
     fatigue: {
-      obliques: 17,
+      [MUSCLES.OBLIQUES]: 17,
     },
   },
 
@@ -257,9 +332,12 @@ export const abs = {
     bodyPart: "Abs",
     section: "obliques",
     trackingType: "bodyweight" as const,
+    movement: "core-rotation",
+    primaryMuscles: [MUSCLES.OBLIQUES],
+    secondaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
     fatigue: {
-      obliques: 17,
-      upperAbs: 4,
+      [MUSCLES.OBLIQUES]: 17,
+      [MUSCLES.RECTUS_ABDOMINIS]: 4,
     },
   },
 
@@ -268,9 +346,12 @@ export const abs = {
     bodyPart: "Abs",
     section: "obliques",
     trackingType: "bodyweight" as const,
+    movement: "core-rotation",
+    primaryMuscles: [MUSCLES.OBLIQUES],
+    secondaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
     fatigue: {
-      obliques: 16,
-      lowerAbs: 5,
+      [MUSCLES.OBLIQUES]: 16,
+      [MUSCLES.RECTUS_ABDOMINIS]: 5,
     },
   },
 
@@ -279,9 +360,12 @@ export const abs = {
     bodyPart: "Abs",
     section: "obliques",
     trackingType: "bodyweight" as const,
+    movement: "core-rotation",
+    primaryMuscles: [MUSCLES.OBLIQUES],
+    secondaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
     fatigue: {
-      obliques: 19,
-      lowerAbs: 7,
+      [MUSCLES.OBLIQUES]: 19,
+      [MUSCLES.RECTUS_ABDOMINIS]: 7,
     },
   },
 
@@ -290,8 +374,11 @@ export const abs = {
     bodyPart: "Abs",
     section: "obliques",
     trackingType: "weight" as const,
+    movement: "core-rotation",
+    primaryMuscles: [MUSCLES.OBLIQUES],
+    secondaryMuscles: [],
     fatigue: {
-      obliques: 17,
+      [MUSCLES.OBLIQUES]: 17,
     },
   },
 
@@ -300,26 +387,31 @@ export const abs = {
     bodyPart: "Abs",
     section: "obliques",
     trackingType: "bodyweight" as const,
+    movement: "core-rotation",
+    primaryMuscles: [MUSCLES.OBLIQUES],
+    secondaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
     fatigue: {
-      obliques: 17,
-      lowerAbs: 5,
+      [MUSCLES.OBLIQUES]: 17,
+      [MUSCLES.RECTUS_ABDOMINIS]: 5,
     },
   },
 
   // =====================
-  // CORE
+  // CORE (UI section)
   // =====================
 
-  "plank": {
+  plank: {
     name: "Plank",
     bodyPart: "Abs",
     section: "core",
     trackingType: "duration" as const,
+    movement: "core-stability",
+    primaryMuscles: [MUSCLES.RECTUS_ABDOMINIS],
+    secondaryMuscles: [MUSCLES.OBLIQUES],
+    // Legacy upperAbs 10 + lowerAbs 8 → RECTUS 18; lowerBack 6 folded into RECTUS (total 32).
     fatigue: {
-      upperAbs: 10,
-      lowerAbs: 8,
-      obliques: 8,
-      lowerBack: 6,
+      [MUSCLES.RECTUS_ABDOMINIS]: 24,
+      [MUSCLES.OBLIQUES]: 8,
     },
   },
 
@@ -328,10 +420,14 @@ export const abs = {
     bodyPart: "Abs",
     section: "core",
     trackingType: "duration" as const,
+    movement: "core-stability",
+    primaryMuscles: [MUSCLES.OBLIQUES],
+    secondaryMuscles: [],
+    // Legacy upperAbs 4 + lowerBack 4 → RECTUS 8; OBLIQUES stays 16 (total 24).
+    // RECTUS in fatigue for value preservation; not listed in secondary per rules.
     fatigue: {
-      obliques: 16,
-      upperAbs: 4,
-      lowerBack: 4,
+      [MUSCLES.OBLIQUES]: 16,
+      [MUSCLES.RECTUS_ABDOMINIS]: 8,
     },
   },
-};
+} as const satisfies Record<string, ExerciseData>;
