@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { chest } from "@/app/Data/chest";
 import { back } from "@/app/Data/back";
 import { biceps } from "@/app/Data/biceps";
@@ -11,12 +11,14 @@ import { shoulders } from "@/app/Data/shoulders";
 import { legs } from "@/app/Data/legs";
 import { abs } from "@/app/Data/abs";
 import {
+  loadWorkoutHistory,
   normalizeInProgressList,
   recoveryHoursForFatigue,
   formatWorkoutSetsSummary,
   workoutDisplayReps,
   workoutSetCount,
   type InProgressWorkoutItem,
+  type WorkoutHistoryEntry,
 } from "@/lib/workouts";
 import { getExerciseTrackingType } from "@/app/Data/exercises";
 import {
@@ -29,6 +31,12 @@ import {
   type ActiveWorkoutSession,
 } from "@/lib/workoutSession";
 import ManualDurationModal from "@/components/ui/ManualDurationModal";
+import {
+  buildLiveRecoveryView,
+  findLatestRecoverySnapshot,
+} from "@/components/recovery/liveRecovery";
+import { buildSessionForecast } from "@/components/recovery/sessionForecast";
+import SessionForecastCard from "@/components/recovery/SessionForecastCard";
 
 export default function SessionPage() {
   const router = useRouter();
@@ -38,6 +46,7 @@ export default function SessionPage() {
   const [session, setSession] = useState<ActiveWorkoutSession | null>(null);
   const [elapsedMs, setElapsedMs] = useState(0);
   const [manualDurationOpen, setManualDurationOpen] = useState(false);
+  const [history, setHistory] = useState<WorkoutHistoryEntry[]>([]);
 
   useEffect(() => {
     const saved = localStorage.getItem("currentWorkout");
@@ -61,6 +70,17 @@ export default function SessionPage() {
     });
   }, [router]);
 
+  useEffect(() => {
+    let active = true;
+    loadWorkoutHistory().then((result) => {
+      if (!active) return;
+      setHistory(result.history);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   // Live timer — always derived from persisted sessionStartTime in storage.
   useEffect(() => {
     if (!session) return;
@@ -80,6 +100,17 @@ export default function SessionPage() {
   }, [session]);
 
   const displayElapsedMs = session ? elapsedMs : 0;
+
+  const liveRecovery = useMemo(() => {
+    const snapshot = findLatestRecoverySnapshot(history);
+    if (!snapshot) return null;
+    return buildLiveRecoveryView(snapshot, Date.now());
+  }, [history]);
+
+  const sessionForecast = useMemo(
+    () => buildSessionForecast(liveRecovery, workout, Date.now()),
+    [liveRecovery, workout],
+  );
 
   workout.forEach((item) => {
     const exercises = {
@@ -297,6 +328,10 @@ export default function SessionPage() {
               </div>
             ))}
         </div>
+
+        {sessionForecast ? (
+          <SessionForecastCard forecast={sessionForecast} />
+        ) : null}
 
         {hasHighFatigue && (
           <div className="rounded-3xl border border-yellow-500 bg-yellow-500/10 p-4 mb-5">
