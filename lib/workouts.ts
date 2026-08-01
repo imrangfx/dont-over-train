@@ -554,6 +554,7 @@ export function rowToEntry(row: WorkoutRow): WorkoutHistoryEntry {
     sections: snapshot.sections || [],
     exerciseList: snapshot.exerciseList || [],
     fatigueBreakdown: snapshot.fatigueBreakdown || {},
+    recovery: snapshot.recovery,
   };
 }
 
