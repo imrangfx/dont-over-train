@@ -3,14 +3,12 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
-import { ArrowLeft, ChevronRight, Dumbbell } from "lucide-react";
-import { loadWorkoutHistoryById, formatWorkoutSetsSummary, normalizeWorkoutSets, type WorkoutHistoryEntry, type WorkoutExercise } from "@/lib/workouts";
-import { getExerciseTrackingType } from "@/app/Data/exercises";
+import { ArrowLeft, Dumbbell } from "lucide-react";
+import { loadWorkoutHistoryById, type WorkoutHistoryEntry } from "@/lib/workouts";
 import {
   bodyPartHistoryTitle,
   projectWorkoutForBodyPart,
 } from "@/lib/historyFilter";
-import { exerciseHref } from "@/lib/exerciseAnalytics";
 import EmptyState from "@/components/ui/EmptyState";
 import LoadingCard from "@/components/ui/LoadingCard";
 import BottomNav from "@/components/BottomNav";
@@ -119,6 +117,8 @@ export default function WorkoutDetailsPage() {
     );
   }
 
+  const exerciseList = displayedWorkout.exerciseList || [];
+
   return (
     <>
     <main className="min-h-screen bg-black px-6 py-8 pb-[calc(72px+env(safe-area-inset-bottom)+1.5rem)] text-white animate-[fade-in_200ms_ease-out]">
@@ -169,79 +169,22 @@ export default function WorkoutDetailsPage() {
             Exercises
           </h2>
 
-          {(displayedWorkout.exerciseList || []).map(
-            (exercise: WorkoutExercise, index: number) => (
-
-              <div
-                key={index}
-                className="card-surface mb-5 p-5"
-              >
-
-                <Link
-                  href={exerciseHref(exercise.name)}
-                  className="btn-base -m-1 flex items-center justify-between gap-2 rounded-lg p-1 text-xl font-semibold hover:text-lime-400"
+          {exerciseList.length === 0 ? (
+            <p className="text-sm text-zinc-500">No exercises logged.</p>
+          ) : (
+            <ol className="space-y-3">
+              {exerciseList.map((exercise, index) => (
+                <li
+                  key={`${exercise.name}-${index}`}
+                  className="flex gap-3 text-lg font-medium text-white"
                 >
-                  {exercise.name}
-                  <ChevronRight size={18} className="text-zinc-500" aria-hidden="true" />
-                </Link>
-
-                <p className="mt-2 text-zinc-400">
-                  {formatWorkoutSetsSummary(
-                    normalizeWorkoutSets(exercise),
-                    getExerciseTrackingType(exercise.name)
-                  )}
-                </p>
-
-                {exercise.fatigueBreakdown && (
-                  <div className="mt-5">
-
-                    <h4 className="mb-3 text-sm font-semibold text-zinc-400">
-                      Fatigue Impact
-                    </h4>
-
-                    {
-                      Object.entries(exercise.fatigueBreakdown)
-                        .filter(([, value]) => Number(value) > 0)
-                        .map(([muscle, value]) => {
-                          const fatigueColor = getFatigueColor(Number(value));
-
-                          return (
-                            <div key={muscle} className="mb-3">
-
-                              <div className="mb-1 flex justify-between text-sm">
-                                <span>
-                                  {String(muscle)
-                                    .replace(/([A-Z])/g, " $1")
-                                    .replace(/^./, (s: string) => s.toUpperCase())}
-                                </span>
-
-                                <span className={fatigueColor.text}>
-                                  {value}%
-                                </span>
-                              </div>
-
-                              <div className="h-2 rounded-full bg-zinc-800">
-
-                                <div
-                                  className={`h-2 rounded-full ${fatigueColor.bg}`}
-                                  style={{
-                                    width: `${Math.min(Number(value), 100)}%`,
-                                  }}
-                                />
-
-                              </div>
-
-                            </div>
-                          );
-                        })
-                    }
-
-                  </div>
-                )}
-
-              </div>
-
-            )
+                  <span className="w-6 shrink-0 text-zinc-500 tabular-nums">
+                    {index + 1}.
+                  </span>
+                  <span>{exercise.name}</span>
+                </li>
+              ))}
+            </ol>
           )}
 
         </div>
