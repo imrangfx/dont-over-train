@@ -36,6 +36,35 @@ export const shoulders = {
     },
   },
 
+  "single-arm-landmine-press": {
+    name: "Single Arm Landmine Press",
+    bodyPart: "Shoulders",
+    section: "front-delts",
+    trackingType: "weight" as const,
+    movement: "vertical-push",
+
+    primaryMuscles: [
+      MUSCLES.FRONT_DELTS,
+    ],
+
+    secondaryMuscles: [
+      MUSCLES.SIDE_DELTS,
+      MUSCLES.LATERAL_HEAD_TRICEPS,
+      MUSCLES.MEDIAL_HEAD_TRICEPS,
+      MUSCLES.LONG_HEAD_TRICEPS,
+    ],
+
+    fatigue: {
+      [MUSCLES.FRONT_DELTS]: 15,
+      [MUSCLES.SIDE_DELTS]: 5,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 3,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 2,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 2,
+    },
+
+    image: "/shoulders/single-arm-landmine-press.webp",
+  },
+
   "dumbbell-overhead-press": {
     name: "Dumbbell Overhead Press",
     bodyPart: "Shoulders",
@@ -78,6 +107,85 @@ export const shoulders = {
       [MUSCLES.MEDIAL_HEAD_TRICEPS]: 3,
       [MUSCLES.LONG_HEAD_TRICEPS]: 1,
     },
+  },
+
+  "z-press": {
+    name: "Z Press",
+    bodyPart: "Shoulders",
+    section: "front-delts",
+    trackingType: "weight" as const,
+    movement: "vertical-push",
+
+    primaryMuscles: [
+      MUSCLES.FRONT_DELTS,
+    ],
+
+    secondaryMuscles: [
+      MUSCLES.SIDE_DELTS,
+      MUSCLES.LATERAL_HEAD_TRICEPS,
+      MUSCLES.MEDIAL_HEAD_TRICEPS,
+      MUSCLES.LONG_HEAD_TRICEPS,
+      MUSCLES.RECTUS_ABDOMINIS,
+      MUSCLES.OBLIQUES,
+    ],
+
+    fatigue: {
+      [MUSCLES.FRONT_DELTS]: 16,
+      [MUSCLES.SIDE_DELTS]: 6,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 4,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 2,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 2,
+      [MUSCLES.RECTUS_ABDOMINIS]: 3,
+      [MUSCLES.OBLIQUES]: 2,
+    },
+
+    image: "/shoulders/z-press.webp",
+  },
+
+  "chest-supported-rear-delt-raise": {
+    name: "Chest Supported Rear Delt Raise",
+    bodyPart: "Shoulders",
+    section: "rear-delts",
+    trackingType: "weight" as const,
+    movement: "isolation",
+
+    primaryMuscles: [
+      MUSCLES.REAR_DELTS,
+    ],
+
+    secondaryMuscles: [
+      MUSCLES.RHOMBOIDS,
+    ],
+
+    fatigue: {
+      [MUSCLES.REAR_DELTS]: 17,
+      [MUSCLES.RHOMBOIDS]: 5,
+    },
+
+    image: "/shoulders/chest-supported-rear-delt-raise.webp",
+  },
+
+  "single-arm-cable-rear-delt-fly": {
+    name: "Single Arm Cable Rear Delt Fly",
+    bodyPart: "Shoulders",
+    section: "rear-delts",
+    trackingType: "weight" as const,
+    movement: "isolation",
+
+    primaryMuscles: [
+      MUSCLES.REAR_DELTS,
+    ],
+
+    secondaryMuscles: [
+      MUSCLES.RHOMBOIDS,
+    ],
+
+    fatigue: {
+      [MUSCLES.REAR_DELTS]: 17,
+      [MUSCLES.RHOMBOIDS]: 5,
+    },
+
+    image: "/shoulders/single-arm-cable-rear-delt-fly.webp",
   },
 
   "machine-shoulder-press": {
@@ -146,8 +254,8 @@ export const shoulders = {
     },
   },
 
-  "single-arm-dumbbell-press": {
-    name: "Single Arm Dumbbell Press",
+  "single-arm-dumbbell-shoulder-press": {
+    name: "Single Arm Dumbbell Shoulder Press",
     bodyPart: "Shoulders",
     section: "front-delts",
     trackingType: "weight" as const,
@@ -379,7 +487,7 @@ export const shoulders = {
     bodyPart: "Shoulders",
     section: "rear-delts",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "horizontal-pull",
     primaryMuscles: [MUSCLES.REAR_DELTS],
     secondaryMuscles: [MUSCLES.RHOMBOIDS],
     // Legacy upperBack: 7 → Rhomboids (same value; no rebalance).
@@ -454,6 +562,31 @@ export const shoulders = {
     fatigue: {
       [MUSCLES.REAR_DELTS]: 17,
     },
+  },
+
+  "dumbbell-y-raise": {
+    name: "Dumbbell Y Raise",
+    bodyPart: "Shoulders",
+    section: "rear-delts",
+    trackingType: "weight" as const,
+    movement: "isolation",
+
+    primaryMuscles: [
+      MUSCLES.REAR_DELTS,
+    ],
+
+    secondaryMuscles: [
+      MUSCLES.LOWER_TRAPS,
+      MUSCLES.SIDE_DELTS,
+    ],
+
+    fatigue: {
+      [MUSCLES.REAR_DELTS]: 14,
+      [MUSCLES.LOWER_TRAPS]: 5,
+      [MUSCLES.SIDE_DELTS]: 4,
+    },
+
+    image: "/shoulders/dumbbell-y-raise.webp",
   },
 
   "band-pull-apart": {

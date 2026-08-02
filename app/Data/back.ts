@@ -50,6 +50,121 @@ export const back = {
     },
   },
 
+  "dumbbell-shrug": {
+    name: "Dumbbell Shrug",
+    bodyPart: "Back",
+    section: "upper-back",
+    trackingType: "weight",
+    movement: "shrug",
+
+    primaryMuscles: [
+      MUSCLES.UPPER_TRAPS,
+    ],
+
+    secondaryMuscles: [
+      MUSCLES.MIDDLE_TRAPS,
+    ],
+
+    fatigue: {
+      [MUSCLES.UPPER_TRAPS]: 16,
+      [MUSCLES.MIDDLE_TRAPS]: 4,
+    },
+
+    image: "/back/dumbbell-shrug.webp",
+  },
+
+  "barbell-shrug": {
+    name: "Barbell Shrug",
+    bodyPart: "Back",
+    section: "upper-back",
+    trackingType: "weight",
+    movement: "shrug",
+
+    primaryMuscles: [
+      MUSCLES.UPPER_TRAPS,
+    ],
+
+    secondaryMuscles: [
+      MUSCLES.MIDDLE_TRAPS,
+    ],
+
+    fatigue: {
+      [MUSCLES.UPPER_TRAPS]: 16,
+      [MUSCLES.MIDDLE_TRAPS]: 4,
+    },
+
+    image: "/back/barbell-shrug.webp",
+  },
+
+  "cable-shrug": {
+    name: "Cable Shrug",
+    bodyPart: "Back",
+    section: "upper-back",
+    trackingType: "weight",
+    movement: "shrug",
+
+    primaryMuscles: [
+      MUSCLES.UPPER_TRAPS,
+    ],
+
+    secondaryMuscles: [
+      MUSCLES.MIDDLE_TRAPS,
+    ],
+
+    fatigue: {
+      [MUSCLES.UPPER_TRAPS]: 16,
+      [MUSCLES.MIDDLE_TRAPS]: 4,
+    },
+
+    image: "/back/cable-shrug.webp",
+  },
+
+  "smith-machine-shrug": {
+    name: "Smith Machine Shrug",
+    bodyPart: "Back",
+    section: "upper-back",
+    trackingType: "weight",
+    movement: "shrug",
+
+    primaryMuscles: [
+      MUSCLES.UPPER_TRAPS,
+    ],
+
+    secondaryMuscles: [
+      MUSCLES.MIDDLE_TRAPS,
+    ],
+
+    fatigue: {
+      [MUSCLES.UPPER_TRAPS]: 16,
+      [MUSCLES.MIDDLE_TRAPS]: 4,
+    },
+
+    image: "/back/smith-machine-shrug.webp",
+  },
+
+  "plate-loaded-shrug": {
+    name: "Plate Loaded Shrug",
+    bodyPart: "Back",
+    section: "upper-back",
+    trackingType: "weight",
+    movement: "shrug",
+
+    primaryMuscles: [
+      MUSCLES.UPPER_TRAPS,
+    ],
+
+    secondaryMuscles: [
+      MUSCLES.MIDDLE_TRAPS,
+    ],
+
+    fatigue: {
+      [MUSCLES.UPPER_TRAPS]: 16,
+      [MUSCLES.MIDDLE_TRAPS]: 4,
+    },
+
+    image: "/back/machine-shrug.webp",
+  },
+
   "high-row": {
     name: "High Row",
     bodyPart: "Back",
@@ -164,6 +279,43 @@ export const back = {
     },
   },
 
+  "half-kneeling-cable-row": {
+    name: "Half Kneeling Cable Row",
+    bodyPart: "Back",
+    section: "upper-back",
+    trackingType: "weight",
+    movement: "horizontal-pull",
+
+    primaryMuscles: [
+      MUSCLES.LATS,
+      MUSCLES.RHOMBOIDS,
+    ],
+
+    secondaryMuscles: [
+      MUSCLES.MIDDLE_TRAPS,
+      MUSCLES.LOWER_TRAPS,
+      MUSCLES.REAR_DELTS,
+      MUSCLES.OBLIQUES,
+      MUSCLES.LONG_HEAD_BICEPS,
+      MUSCLES.SHORT_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+    ],
+
+    fatigue: {
+      [MUSCLES.LATS]: 12,
+      [MUSCLES.RHOMBOIDS]: 10,
+      [MUSCLES.MIDDLE_TRAPS]: 8,
+      [MUSCLES.LOWER_TRAPS]: 5,
+      [MUSCLES.REAR_DELTS]: 3,
+      [MUSCLES.OBLIQUES]: 2,
+      [MUSCLES.LONG_HEAD_BICEPS]: 2,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 2,
+      [MUSCLES.BRACHIALIS]: 2,
+    },
+
+    image: "/back/half-kneeling-cable-row.webp",
+  },
+
   "meadows-row": {
     name: "Meadows Row",
     bodyPart: "Back",
@@ -194,138 +346,138 @@ export const back = {
   },
 
   "one-arm-dumbbell-row": {
-  name: "One Arm Dumbbell Row",
-  bodyPart: "Back",
-  section: "upper-back",
-  trackingType: "weight",
-  movement: "horizontal-pull",
+    name: "One Arm Dumbbell Row",
+    bodyPart: "Back",
+    section: "upper-back",
+    trackingType: "weight",
+    movement: "horizontal-pull",
 
-  primaryMuscles: [
-    MUSCLES.LATS,
-    MUSCLES.RHOMBOIDS,
-  ],
+    primaryMuscles: [
+      MUSCLES.LATS,
+      MUSCLES.RHOMBOIDS,
+    ],
 
-  secondaryMuscles: [
-    MUSCLES.MIDDLE_TRAPS,
-    MUSCLES.LOWER_TRAPS,
-    MUSCLES.LOWER_BACK,
-    MUSCLES.REAR_DELTS,
-    MUSCLES.LONG_HEAD_BICEPS,
-    MUSCLES.SHORT_HEAD_BICEPS,
-    MUSCLES.BRACHIALIS,
-  ],
+    secondaryMuscles: [
+      MUSCLES.MIDDLE_TRAPS,
+      MUSCLES.LOWER_TRAPS,
+      MUSCLES.LOWER_BACK,
+      MUSCLES.REAR_DELTS,
+      MUSCLES.LONG_HEAD_BICEPS,
+      MUSCLES.SHORT_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+    ],
 
-  fatigue: {
-    [MUSCLES.LATS]: 12,
-    [MUSCLES.RHOMBOIDS]: 10,
-    [MUSCLES.MIDDLE_TRAPS]: 8,
-    [MUSCLES.LOWER_TRAPS]: 6,
-    [MUSCLES.LOWER_BACK]: 4,
-    [MUSCLES.REAR_DELTS]: 3,
-    [MUSCLES.LONG_HEAD_BICEPS]: 3,
-    [MUSCLES.SHORT_HEAD_BICEPS]: 2,
-    [MUSCLES.BRACHIALIS]: 2,
+    fatigue: {
+      [MUSCLES.LATS]: 12,
+      [MUSCLES.RHOMBOIDS]: 10,
+      [MUSCLES.MIDDLE_TRAPS]: 8,
+      [MUSCLES.LOWER_TRAPS]: 6,
+      [MUSCLES.LOWER_BACK]: 4,
+      [MUSCLES.REAR_DELTS]: 3,
+      [MUSCLES.LONG_HEAD_BICEPS]: 3,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 2,
+      [MUSCLES.BRACHIALIS]: 2,
+    },
   },
-},
 
-"v-bar-seated-row": {
-  name: "V Bar Seated Row",
-  bodyPart: "Back",
-  section: "upper-back",
-  trackingType: "weight",
-  movement: "horizontal-pull",
+  "v-bar-seated-row": {
+    name: "V Bar Seated Row",
+    bodyPart: "Back",
+    section: "upper-back",
+    trackingType: "weight",
+    movement: "horizontal-pull",
 
-  primaryMuscles: [
-    MUSCLES.LATS,
-    MUSCLES.RHOMBOIDS,
-  ],
+    primaryMuscles: [
+      MUSCLES.LATS,
+      MUSCLES.RHOMBOIDS,
+    ],
 
-  secondaryMuscles: [
-    MUSCLES.MIDDLE_TRAPS,
-    MUSCLES.LOWER_TRAPS,
-    MUSCLES.LONG_HEAD_BICEPS,
-    MUSCLES.SHORT_HEAD_BICEPS,
-    MUSCLES.BRACHIALIS,
-  ],
+    secondaryMuscles: [
+      MUSCLES.MIDDLE_TRAPS,
+      MUSCLES.LOWER_TRAPS,
+      MUSCLES.LONG_HEAD_BICEPS,
+      MUSCLES.SHORT_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+    ],
 
-  fatigue: {
-    [MUSCLES.LATS]: 12,
-    [MUSCLES.RHOMBOIDS]: 10,
-    [MUSCLES.MIDDLE_TRAPS]: 8,
-    [MUSCLES.LOWER_TRAPS]: 5,
-    [MUSCLES.LONG_HEAD_BICEPS]: 3,
-    [MUSCLES.SHORT_HEAD_BICEPS]: 3,
-    [MUSCLES.BRACHIALIS]: 2,
+    fatigue: {
+      [MUSCLES.LATS]: 12,
+      [MUSCLES.RHOMBOIDS]: 10,
+      [MUSCLES.MIDDLE_TRAPS]: 8,
+      [MUSCLES.LOWER_TRAPS]: 5,
+      [MUSCLES.LONG_HEAD_BICEPS]: 3,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 3,
+      [MUSCLES.BRACHIALIS]: 2,
+    },
   },
-},
 
-"single-arm-seated-row": {
-  name: "Single Arm Seated Row",
-  bodyPart: "Back",
-  section: "upper-back",
-  trackingType: "weight",
-  movement: "horizontal-pull",
+  "single-arm-seated-row": {
+    name: "Single Arm Seated Row",
+    bodyPart: "Back",
+    section: "upper-back",
+    trackingType: "weight",
+    movement: "horizontal-pull",
 
-  primaryMuscles: [
-    MUSCLES.LATS,
-    MUSCLES.RHOMBOIDS,
-  ],
+    primaryMuscles: [
+      MUSCLES.LATS,
+      MUSCLES.RHOMBOIDS,
+    ],
 
-  secondaryMuscles: [
-    MUSCLES.MIDDLE_TRAPS,
-    MUSCLES.LOWER_TRAPS,
-    MUSCLES.REAR_DELTS,
-    MUSCLES.LONG_HEAD_BICEPS,
-    MUSCLES.SHORT_HEAD_BICEPS,
-    MUSCLES.BRACHIALIS,
-  ],
+    secondaryMuscles: [
+      MUSCLES.MIDDLE_TRAPS,
+      MUSCLES.LOWER_TRAPS,
+      MUSCLES.REAR_DELTS,
+      MUSCLES.LONG_HEAD_BICEPS,
+      MUSCLES.SHORT_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+    ],
 
-  fatigue: {
-    [MUSCLES.LATS]: 12,
-    [MUSCLES.RHOMBOIDS]: 10,
-    [MUSCLES.MIDDLE_TRAPS]: 8,
-    [MUSCLES.LOWER_TRAPS]: 5,
-    [MUSCLES.REAR_DELTS]: 3,
-    [MUSCLES.LONG_HEAD_BICEPS]: 3,
-    [MUSCLES.SHORT_HEAD_BICEPS]: 2,
-    [MUSCLES.BRACHIALIS]: 2,
+    fatigue: {
+      [MUSCLES.LATS]: 12,
+      [MUSCLES.RHOMBOIDS]: 10,
+      [MUSCLES.MIDDLE_TRAPS]: 8,
+      [MUSCLES.LOWER_TRAPS]: 5,
+      [MUSCLES.REAR_DELTS]: 3,
+      [MUSCLES.LONG_HEAD_BICEPS]: 3,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 2,
+      [MUSCLES.BRACHIALIS]: 2,
+    },
   },
-},
 
-"single-arm-cable-row": {
-  name: "Single Arm Cable Row",
-  bodyPart: "Back",
-  section: "upper-back",
-  trackingType: "weight",
-  movement: "horizontal-pull",
+  "single-arm-cable-row": {
+    name: "Single Arm Cable Row",
+    bodyPart: "Back",
+    section: "upper-back",
+    trackingType: "weight",
+    movement: "horizontal-pull",
 
-  primaryMuscles: [
-    MUSCLES.LATS,
-    MUSCLES.RHOMBOIDS,
-  ],
+    primaryMuscles: [
+      MUSCLES.LATS,
+      MUSCLES.RHOMBOIDS,
+    ],
 
-  secondaryMuscles: [
-    MUSCLES.MIDDLE_TRAPS,
-    MUSCLES.LOWER_TRAPS,
-    MUSCLES.REAR_DELTS,
-    MUSCLES.OBLIQUES,
-    MUSCLES.LONG_HEAD_BICEPS,
-    MUSCLES.SHORT_HEAD_BICEPS,
-    MUSCLES.BRACHIALIS,
-  ],
+    secondaryMuscles: [
+      MUSCLES.MIDDLE_TRAPS,
+      MUSCLES.LOWER_TRAPS,
+      MUSCLES.REAR_DELTS,
+      MUSCLES.OBLIQUES,
+      MUSCLES.LONG_HEAD_BICEPS,
+      MUSCLES.SHORT_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+    ],
 
-  fatigue: {
-    [MUSCLES.LATS]: 12,
-    [MUSCLES.RHOMBOIDS]: 10,
-    [MUSCLES.MIDDLE_TRAPS]: 8,
-    [MUSCLES.LOWER_TRAPS]: 5,
-    [MUSCLES.REAR_DELTS]: 3,
-    [MUSCLES.OBLIQUES]: 2,
-    [MUSCLES.LONG_HEAD_BICEPS]: 2,
-    [MUSCLES.SHORT_HEAD_BICEPS]: 2,
-    [MUSCLES.BRACHIALIS]: 2,
+    fatigue: {
+      [MUSCLES.LATS]: 12,
+      [MUSCLES.RHOMBOIDS]: 10,
+      [MUSCLES.MIDDLE_TRAPS]: 8,
+      [MUSCLES.LOWER_TRAPS]: 5,
+      [MUSCLES.REAR_DELTS]: 3,
+      [MUSCLES.OBLIQUES]: 2,
+      [MUSCLES.LONG_HEAD_BICEPS]: 2,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 2,
+      [MUSCLES.BRACHIALIS]: 2,
+    },
   },
-},
   // =====================
   // LATS (UI section)
   // =====================
@@ -359,38 +511,38 @@ export const back = {
   },
 
   "chin-up": {
-  name: "Chin Up",
-  bodyPart: "Back",
-  section: "lats",
-  trackingType: "bodyweight",
-  movement: "vertical-pull",
+    name: "Chin Up",
+    bodyPart: "Back",
+    section: "lats",
+    trackingType: "bodyweight",
+    movement: "vertical-pull",
 
-  // Underhand grip shifts more load to the elbow flexors while keeping the lats primary.
-  primaryMuscles: [
-    MUSCLES.LATS,
-    MUSCLES.LONG_HEAD_BICEPS,
-  ],
+    // Underhand grip shifts more load to the elbow flexors while keeping the lats primary.
+    primaryMuscles: [
+      MUSCLES.LATS,
+      MUSCLES.LONG_HEAD_BICEPS,
+    ],
 
-  secondaryMuscles: [
-    MUSCLES.SHORT_HEAD_BICEPS,
-    MUSCLES.BRACHIALIS,
-    MUSCLES.BRACHIORADIALIS,
-    MUSCLES.RHOMBOIDS,
-    MUSCLES.LOWER_TRAPS,
-  ],
+    secondaryMuscles: [
+      MUSCLES.SHORT_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+      MUSCLES.BRACHIORADIALIS,
+      MUSCLES.RHOMBOIDS,
+      MUSCLES.LOWER_TRAPS,
+    ],
 
-  fatigue: {
-    [MUSCLES.LATS]: 16,
-    [MUSCLES.LONG_HEAD_BICEPS]: 6,
-    [MUSCLES.SHORT_HEAD_BICEPS]: 4,
-    [MUSCLES.BRACHIALIS]: 3,
-    [MUSCLES.BRACHIORADIALIS]: 2,
-    [MUSCLES.RHOMBOIDS]: 2,
-    [MUSCLES.LOWER_TRAPS]: 2,
+    fatigue: {
+      [MUSCLES.LATS]: 16,
+      [MUSCLES.LONG_HEAD_BICEPS]: 6,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 4,
+      [MUSCLES.BRACHIALIS]: 3,
+      [MUSCLES.BRACHIORADIALIS]: 2,
+      [MUSCLES.RHOMBOIDS]: 2,
+      [MUSCLES.LOWER_TRAPS]: 2,
+    },
+
+    image: "/back/chin-up.webp",
   },
-
-  image: "/back/chin-up.webp",
-},
 
   "lat-pulldown": {
     name: "Lat Pulldown",
@@ -419,37 +571,37 @@ export const back = {
   },
 
   "wide-grip-lat-pulldown": {
-  name: "Wide Grip Lat Pulldown",
-  bodyPart: "Back",
-  section: "lats",
-  trackingType: "weight",
-  movement: "vertical-pull",
+    name: "Wide Grip Lat Pulldown",
+    bodyPart: "Back",
+    section: "lats",
+    trackingType: "weight",
+    movement: "vertical-pull",
 
-  primaryMuscles: [
-    MUSCLES.LATS,
-  ],
+    primaryMuscles: [
+      MUSCLES.LATS,
+    ],
 
-  secondaryMuscles: [
-    MUSCLES.RHOMBOIDS,
-    MUSCLES.LOWER_TRAPS,
-    MUSCLES.LONG_HEAD_BICEPS,
-    MUSCLES.SHORT_HEAD_BICEPS,
-    MUSCLES.BRACHIALIS,
-    MUSCLES.BRACHIORADIALIS,
-  ],
+    secondaryMuscles: [
+      MUSCLES.RHOMBOIDS,
+      MUSCLES.LOWER_TRAPS,
+      MUSCLES.LONG_HEAD_BICEPS,
+      MUSCLES.SHORT_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+      MUSCLES.BRACHIORADIALIS,
+    ],
 
-  fatigue: {
-    [MUSCLES.LATS]: 16,
-    [MUSCLES.RHOMBOIDS]: 3,
-    [MUSCLES.LOWER_TRAPS]: 3,
-    [MUSCLES.LONG_HEAD_BICEPS]: 3,
-    [MUSCLES.SHORT_HEAD_BICEPS]: 2,
-    [MUSCLES.BRACHIALIS]: 2,
-    [MUSCLES.BRACHIORADIALIS]: 2,
+    fatigue: {
+      [MUSCLES.LATS]: 16,
+      [MUSCLES.RHOMBOIDS]: 3,
+      [MUSCLES.LOWER_TRAPS]: 3,
+      [MUSCLES.LONG_HEAD_BICEPS]: 3,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 2,
+      [MUSCLES.BRACHIALIS]: 2,
+      [MUSCLES.BRACHIORADIALIS]: 2,
+    },
+
+    image: "/back/wide-grip-lat-pulldown.webp",
   },
-
-  image: "/back/wide-grip-lat-pulldown.webp",
-},
 
   "close-grip-pulldown": {
     name: "Close Grip Pulldown",
@@ -635,39 +787,39 @@ export const back = {
   },
 
   "chest-supported-dumbbell-row": {
-  name: "Chest Supported Dumbbell Row",
-  bodyPart: "Back",
-  section: "upper-back",
-  trackingType: "weight",
-  movement: "horizontal-pull",
+    name: "Chest Supported Dumbbell Row",
+    bodyPart: "Back",
+    section: "upper-back",
+    trackingType: "weight",
+    movement: "horizontal-pull",
 
-  primaryMuscles: [
-    MUSCLES.RHOMBOIDS,
-    MUSCLES.MIDDLE_TRAPS,
-  ],
+    primaryMuscles: [
+      MUSCLES.RHOMBOIDS,
+      MUSCLES.MIDDLE_TRAPS,
+    ],
 
-  secondaryMuscles: [
-    MUSCLES.LATS,
-    MUSCLES.LOWER_TRAPS,
-    MUSCLES.REAR_DELTS,
-    MUSCLES.LONG_HEAD_BICEPS,
-    MUSCLES.SHORT_HEAD_BICEPS,
-    MUSCLES.BRACHIALIS,
-  ],
+    secondaryMuscles: [
+      MUSCLES.LATS,
+      MUSCLES.LOWER_TRAPS,
+      MUSCLES.REAR_DELTS,
+      MUSCLES.LONG_HEAD_BICEPS,
+      MUSCLES.SHORT_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+    ],
 
-  fatigue: {
-    [MUSCLES.RHOMBOIDS]: 12,
-    [MUSCLES.MIDDLE_TRAPS]: 10,
-    [MUSCLES.LATS]: 8,
-    [MUSCLES.LOWER_TRAPS]: 6,
-    [MUSCLES.REAR_DELTS]: 4,
-    [MUSCLES.LONG_HEAD_BICEPS]: 3,
-    [MUSCLES.SHORT_HEAD_BICEPS]: 3,
-    [MUSCLES.BRACHIALIS]: 2,
+    fatigue: {
+      [MUSCLES.RHOMBOIDS]: 12,
+      [MUSCLES.MIDDLE_TRAPS]: 10,
+      [MUSCLES.LATS]: 8,
+      [MUSCLES.LOWER_TRAPS]: 6,
+      [MUSCLES.REAR_DELTS]: 4,
+      [MUSCLES.LONG_HEAD_BICEPS]: 3,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 3,
+      [MUSCLES.BRACHIALIS]: 2,
+    },
+
+    image: "/back/chest-supported-dumbbell-row.webp",
   },
-
-  image: "/back/chest-supported-dumbbell-row.webp",
-},
 
   "seated-cable-row": {
     name: "Seated Cable Row",

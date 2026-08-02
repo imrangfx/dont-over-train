@@ -31,6 +31,79 @@ export const legs = {
     },
   },
 
+  "belt-squat": {
+    name: "Belt Squat",
+    bodyPart: "Legs",
+    section: "quads",
+    trackingType: "weight",
+    movement: "squat",
+
+    primaryMuscles: [
+      MUSCLES.QUADS,
+    ],
+
+    secondaryMuscles: [
+      MUSCLES.GLUTES,
+      MUSCLES.HAMSTRINGS,
+    ],
+
+    fatigue: {
+      [MUSCLES.QUADS]: 19,
+      [MUSCLES.GLUTES]: 8,
+      [MUSCLES.HAMSTRINGS]: 5,
+    },
+
+    image: "/legs/belt-squat.webp",
+  },
+
+  "pendulum-squat": {
+    name: "Pendulum Squat",
+    bodyPart: "Legs",
+    section: "quads",
+    trackingType: "weight",
+    movement: "squat",
+
+    primaryMuscles: [
+      MUSCLES.QUADS,
+    ],
+
+    secondaryMuscles: [
+      MUSCLES.GLUTES,
+    ],
+
+    fatigue: {
+      [MUSCLES.QUADS]: 20,
+      [MUSCLES.GLUTES]: 7,
+    },
+
+    image: "/legs/pendulum-squat.webp",
+  },
+
+  "single-leg-romanian-deadlift": {
+    name: "Single Leg Romanian Deadlift",
+    bodyPart: "Legs",
+    section: "hamstrings",
+    trackingType: "weight",
+    movement: "hip-hinge",
+
+    primaryMuscles: [
+      MUSCLES.HAMSTRINGS,
+    ],
+
+    secondaryMuscles: [
+      MUSCLES.GLUTES,
+      MUSCLES.LOWER_BACK,
+    ],
+
+    fatigue: {
+      [MUSCLES.HAMSTRINGS]: 17,
+      [MUSCLES.GLUTES]: 9,
+      [MUSCLES.LOWER_BACK]: 5,
+    },
+
+    image: "/legs/single-leg-romanian-deadlift.webp",
+  },
+
   "leg-press": {
     name: "Leg Press",
     bodyPart: "Legs",
@@ -330,6 +403,28 @@ export const legs = {
       [MUSCLES.GLUTES]: 20,
       [MUSCLES.HAMSTRINGS]: 6,
     },
+  },
+
+  "hip-abduction-machine": {
+    name: "Hip Abduction Machine",
+    bodyPart: "Legs",
+    section: "glutes",
+    trackingType: "weight",
+    movement: "isolation",
+
+    primaryMuscles: [
+      MUSCLES.ABDUCTORS,
+      MUSCLES.GLUTES,
+    ],
+
+    secondaryMuscles: [],
+
+    fatigue: {
+      [MUSCLES.ABDUCTORS]: 14,
+      [MUSCLES.GLUTES]: 8,
+    },
+
+    image: "/legs/hip-abduction-machine.webp",
   },
 
   "glute-bridge": {
