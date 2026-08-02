@@ -13,6 +13,62 @@ export const biceps = {
   // LONG HEAD (UI section)
   // =====================
 
+  "barbell-curl": {
+    name: "Barbell Curl",
+    bodyPart: "Biceps",
+    section: "long-head",
+    trackingType: "weight" as const,
+    movement: "isolation",
+
+    // Standard shoulder-width barbell curl loads both biceps heads.
+    primaryMuscles: [
+      MUSCLES.LONG_HEAD_BICEPS,
+      MUSCLES.SHORT_HEAD_BICEPS,
+    ],
+
+    secondaryMuscles: [
+      MUSCLES.BRACHIALIS,
+      MUSCLES.BRACHIORADIALIS,
+    ],
+
+    fatigue: {
+      [MUSCLES.LONG_HEAD_BICEPS]: 12,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 12,
+      [MUSCLES.BRACHIALIS]: 3,
+      [MUSCLES.BRACHIORADIALIS]: 3,
+    },
+
+    image: "/biceps/barbell-curl.webp",
+  },
+
+"ez-bar-curl": {
+  name: "EZ Bar Curl",
+  bodyPart: "Biceps",
+  section: "long-head",
+  trackingType: "weight" as const,
+  movement: "isolation",
+
+  // Standard EZ-bar grip loads both biceps heads with a wrist-friendly position.
+  primaryMuscles: [
+    MUSCLES.LONG_HEAD_BICEPS,
+    MUSCLES.SHORT_HEAD_BICEPS,
+  ],
+
+  secondaryMuscles: [
+    MUSCLES.BRACHIALIS,
+    MUSCLES.BRACHIORADIALIS,
+  ],
+
+  fatigue: {
+    [MUSCLES.LONG_HEAD_BICEPS]: 11,
+    [MUSCLES.SHORT_HEAD_BICEPS]: 11,
+    [MUSCLES.BRACHIALIS]: 4,
+    [MUSCLES.BRACHIORADIALIS]: 4,
+  },
+
+  image: "/biceps/ez-bar-curl.webp",
+},
+
   "incline-dumbbell-curl": {
     name: "Incline Dumbbell Curl",
     bodyPart: "Biceps",
@@ -74,23 +130,6 @@ export const biceps = {
     },
   },
 
-  "standing-dumbbell-curl": {
-    name: "Standing Dumbbell Curl",
-    bodyPart: "Biceps",
-    section: "long-head",
-    trackingType: "weight" as const,
-    movement: "isolation",
-    // Supinated curl loads both biceps heads.
-    primaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
-    secondaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.BRACHIORADIALIS],
-    fatigue: {
-      [MUSCLES.LONG_HEAD_BICEPS]: 12,
-      [MUSCLES.SHORT_HEAD_BICEPS]: 3,
-      [MUSCLES.BRACHIALIS]: 2,
-      [MUSCLES.BRACHIORADIALIS]: 4,
-    },
-  },
-
   "alternating-dumbbell-curl": {
     name: "Alternating Dumbbell Curl",
     bodyPart: "Biceps",
@@ -123,46 +162,6 @@ export const biceps = {
       [MUSCLES.LONG_HEAD_BICEPS]: 13,
       [MUSCLES.SHORT_HEAD_BICEPS]: 2,
       [MUSCLES.BRACHIALIS]: 2,
-      [MUSCLES.BRACHIORADIALIS]: 3,
-    },
-  },
-
-  "rope-cable-curl": {
-    name: "Rope Cable Curl",
-    bodyPart: "Biceps",
-    section: "long-head",
-    trackingType: "weight" as const,
-    movement: "isolation",
-    primaryMuscles: [MUSCLES.LONG_HEAD_BICEPS],
-    secondaryMuscles: [
-      MUSCLES.SHORT_HEAD_BICEPS,
-      MUSCLES.BRACHIALIS,
-      MUSCLES.BRACHIORADIALIS,
-    ],
-    fatigue: {
-      [MUSCLES.LONG_HEAD_BICEPS]: 12,
-      [MUSCLES.SHORT_HEAD_BICEPS]: 2,
-      [MUSCLES.BRACHIALIS]: 2,
-      [MUSCLES.BRACHIORADIALIS]: 3,
-    },
-  },
-
-  "seated-incline-dumbbell-curl": {
-    name: "Seated Incline Dumbbell Curl",
-    bodyPart: "Biceps",
-    section: "long-head",
-    trackingType: "weight" as const,
-    movement: "isolation",
-    primaryMuscles: [MUSCLES.LONG_HEAD_BICEPS],
-    secondaryMuscles: [
-      MUSCLES.SHORT_HEAD_BICEPS,
-      MUSCLES.BRACHIALIS,
-      MUSCLES.BRACHIORADIALIS,
-    ],
-    fatigue: {
-      [MUSCLES.LONG_HEAD_BICEPS]: 15,
-      [MUSCLES.SHORT_HEAD_BICEPS]: 2,
-      [MUSCLES.BRACHIALIS]: 1,
       [MUSCLES.BRACHIORADIALIS]: 3,
     },
   },
@@ -348,42 +347,6 @@ export const biceps = {
       [MUSCLES.LONG_HEAD_BICEPS]: 2,
       [MUSCLES.BRACHIALIS]: 2,
       [MUSCLES.BRACHIORADIALIS]: 2,
-    },
-  },
-
-  "scott-curl": {
-    name: "Scott Curl",
-    bodyPart: "Biceps",
-    section: "short-head",
-    trackingType: "weight" as const,
-    movement: "isolation",
-    primaryMuscles: [MUSCLES.SHORT_HEAD_BICEPS],
-    secondaryMuscles: [
-      MUSCLES.LONG_HEAD_BICEPS,
-      MUSCLES.BRACHIALIS,
-      MUSCLES.BRACHIORADIALIS,
-    ],
-    fatigue: {
-      [MUSCLES.SHORT_HEAD_BICEPS]: 14,
-      [MUSCLES.LONG_HEAD_BICEPS]: 2,
-      [MUSCLES.BRACHIALIS]: 1,
-      [MUSCLES.BRACHIORADIALIS]: 2,
-    },
-  },
-
-  "seated-dumbbell-curl": {
-    name: "Seated Dumbbell Curl",
-    bodyPart: "Biceps",
-    section: "short-head",
-    trackingType: "weight" as const,
-    movement: "isolation",
-    primaryMuscles: [MUSCLES.SHORT_HEAD_BICEPS, MUSCLES.LONG_HEAD_BICEPS],
-    secondaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.BRACHIORADIALIS],
-    fatigue: {
-      [MUSCLES.SHORT_HEAD_BICEPS]: 12,
-      [MUSCLES.LONG_HEAD_BICEPS]: 3,
-      [MUSCLES.BRACHIALIS]: 2,
-      [MUSCLES.BRACHIORADIALIS]: 3,
     },
   },
 
