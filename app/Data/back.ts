@@ -50,6 +50,102 @@ export const back = {
     },
   },
 
+  "trap-3-raise": {
+  name: "Trap-3 Raise",
+  bodyPart: "Back",
+  section: "upper-back",
+  trackingType: "weight",
+  movement: "isolation",
+
+  primaryMuscles: [
+    MUSCLES.LOWER_TRAPS,
+  ],
+
+  secondaryMuscles: [
+    MUSCLES.REAR_DELTS,
+    MUSCLES.RHOMBOIDS,
+  ],
+
+  fatigue: {
+    [MUSCLES.LOWER_TRAPS]: 18,
+    [MUSCLES.REAR_DELTS]: 5,
+    [MUSCLES.RHOMBOIDS]: 4,
+  },
+
+  image: "/back/trap-3-raise.webp",
+},
+
+"straight-arm-cable-pulldown": {
+  name: "Straight Arm Cable Pulldown",
+  bodyPart: "Back",
+  section: "lats",
+  trackingType: "weight",
+  movement: "vertical-pull",
+
+  primaryMuscles: [
+    MUSCLES.LATS,
+  ],
+
+  secondaryMuscles: [
+    MUSCLES.LOWER_TRAPS,
+  ],
+
+  fatigue: {
+    [MUSCLES.LATS]: 16,
+    [MUSCLES.LOWER_TRAPS]: 6,
+  },
+
+  image: "/back/straight-arm-cable-pulldown.webp",
+},
+
+"rope-straight-arm-pulldown": {
+  name: "Rope Straight Arm Pulldown",
+  bodyPart: "Back",
+  section: "lats",
+  trackingType: "weight",
+  movement: "vertical-pull",
+
+  primaryMuscles: [
+    MUSCLES.LATS,
+  ],
+
+  secondaryMuscles: [
+    MUSCLES.LOWER_TRAPS,
+  ],
+
+  fatigue: {
+    [MUSCLES.LATS]: 16,
+    [MUSCLES.LOWER_TRAPS]: 6,
+  },
+
+  image: "/back/rope-straight-arm-pulldown.webp",
+},
+
+"scapular-pull-up": {
+  name: "Scapular Pull-Up",
+  bodyPart: "Back",
+  section: "upper-back",
+  trackingType: "bodyweight",
+  movement: "vertical-pull",
+
+  primaryMuscles: [
+    MUSCLES.LOWER_TRAPS,
+  ],
+
+  secondaryMuscles: [
+    MUSCLES.LATS,
+    MUSCLES.RHOMBOIDS,
+  ],
+
+  fatigue: {
+    [MUSCLES.LOWER_TRAPS]: 15,
+    [MUSCLES.LATS]: 6,
+    [MUSCLES.RHOMBOIDS]: 4,
+  },
+
+  image: "/back/scapular-pull-up.webp",
+},
+
   "dumbbell-shrug": {
     name: "Dumbbell Shrug",
     bodyPart: "Back",
