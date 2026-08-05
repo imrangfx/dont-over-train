@@ -10,21 +10,35 @@ import {
 import BottomNav from "@/components/BottomNav";
 import EmptyState from "@/components/ui/EmptyState";
 import LoadingCard from "@/components/ui/LoadingCard";
-import SectionHeader from "@/components/ui/SectionHeader";
-import OverallRecoveryCard from "@/components/recovery/OverallRecoveryCard";
-import MuscleRecoveryCard from "@/components/recovery/MuscleRecoveryCard";
-import RecommendationCard from "@/components/recovery/RecommendationCard";
+import RecoveryHeroCard from "@/components/recovery/RecoveryHeroCard";
+import RecoveryQuickSummary from "@/components/recovery/RecoveryQuickSummary";
+import TodaysTrainingAdviceCard from "@/components/recovery/TodaysTrainingAdviceCard";
+import MuscleRecoveryAccordion from "@/components/recovery/MuscleRecoveryAccordion";
 import {
   buildLiveRecoveryView,
   findLatestRecoverySnapshot,
 } from "@/components/recovery/liveRecovery";
+import { countRecoveryBuckets } from "@/components/recovery/recoveryDashboard";
 
 export default function RecoveryPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<readonly WorkoutHistoryEntry[]>([]);
-  /** Fixed at load so decay is stable for this page view. */
+  /** Fixed at load / refresh so decay is stable for this page view. */
   const [evaluatedAt, setEvaluatedAt] = useState(() => Date.now());
+
+  function reloadRecovery() {
+    loadWorkoutHistory().then((result) => {
+      if (result.error) {
+        setError(result.error);
+        setHistory([]);
+        return;
+      }
+      setError(null);
+      setHistory(result.history);
+      setEvaluatedAt(Date.now());
+    });
+  }
 
   useEffect(() => {
     let active = true;
@@ -55,24 +69,32 @@ export default function RecoveryPage() {
   );
 
   const live = useMemo(
-    () =>
-      snapshot ? buildLiveRecoveryView(snapshot, evaluatedAt) : null,
+    () => (snapshot ? buildLiveRecoveryView(snapshot, evaluatedAt) : null),
     [snapshot, evaluatedAt],
+  );
+
+  const quickCounts = useMemo(
+    () => (live ? countRecoveryBuckets(live.muscles) : null),
+    [live],
   );
 
   return (
     <main className="min-h-screen bg-black text-white">
       <div className="mx-auto w-full max-w-[430px] px-6 pb-[calc(72px+env(safe-area-inset-bottom)+1.5rem)] pt-8">
         <header className="mb-6">
-          <h1 className="text-3xl font-bold tracking-tight">Recovery</h1>
-          <p className="mt-1 text-sm text-zinc-500">Current Muscle Recovery</p>
+          <h1 className="heading-font text-[1.75rem] font-semibold tracking-tight text-white">
+            Recovery
+          </h1>
+          <p className="mt-1.5 text-sm text-zinc-500">
+            Your recovery command center
+          </p>
         </header>
 
         {loading ? (
           <div className="space-y-4">
+            <LoadingCard rows={3} />
             <LoadingCard rows={2} />
             <LoadingCard rows={4} />
-            <LoadingCard rows={3} />
           </div>
         ) : error ? (
           <EmptyState
@@ -80,7 +102,7 @@ export default function RecoveryPage() {
             title="Couldn't load recovery"
             description={error}
           />
-        ) : !live ? (
+        ) : !live || !quickCounts ? (
           <div className="flex min-h-[50vh] flex-col items-center justify-center gap-5">
             <EmptyState
               icon={<BatteryCharging size={22} aria-hidden="true" />}
@@ -96,37 +118,19 @@ export default function RecoveryPage() {
             </Link>
           </div>
         ) : (
-          <div className="space-y-8">
-            <OverallRecoveryCard summary={live.summary} />
+          <div className="space-y-5">
+            <RecoveryHeroCard
+              summary={live.summary}
+              onRefresh={reloadRecovery}
+            />
 
-            <section aria-labelledby="muscle-recovery-heading">
-              <SectionHeader id="muscle-recovery-heading" title="Muscles" />
-              <div className="space-y-3">
-                {live.muscles.map((status) => (
-                  <MuscleRecoveryCard
-                    key={status.muscle}
-                    status={status}
-                  />
-                ))}
-              </div>
-            </section>
+            <RecoveryQuickSummary counts={quickCounts} />
 
-            {live.recommendations.length > 0 && (
-              <section aria-labelledby="recommendations-heading">
-                <SectionHeader
-                  id="recommendations-heading"
-                  title="Recommendations"
-                />
-                <div className="space-y-3">
-                  {live.recommendations.map((recommendation) => (
-                    <RecommendationCard
-                      key={recommendation.muscle}
-                      recommendation={recommendation}
-                    />
-                  ))}
-                </div>
-              </section>
-            )}
+            <TodaysTrainingAdviceCard
+              recommendations={live.recommendations}
+            />
+
+            <MuscleRecoveryAccordion muscles={live.muscles} />
           </div>
         )}
       </div>
