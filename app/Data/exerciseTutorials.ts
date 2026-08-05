@@ -145,51 +145,51 @@ export const EXERCISE_TUTORIALS: Readonly<
   // =========================
 
   "seal-row": {
-    youtubeId: "",
+    youtubeId: "9ffaage-LjY",
   },
 
   "trap-3-raise": {
-    youtubeId: "",
+    youtubeId: "AlixeUG_bIU",
   },
 
   "scapular-pull-up": {
-    youtubeId: "",
+    youtubeId: "pE8PJsWEV7k",
   },
 
   "dumbbell-shrug": {
-    youtubeId: "",
+    youtubeId: "yqzRYcOMx2Q",
   },
 
   "barbell-shrug": {
-    youtubeId: "",
+    youtubeId: "zfAHfyTB_Ao",
   },
 
   "cable-shrug": {
-    youtubeId: "",
+    youtubeId: "YykmcX2b-LY",
   },
 
   "smith-machine-shrug": {
-    youtubeId: "",
+    youtubeId: "cT5_GyOXIgE",
   },
 
   "plate-loaded-shrug": {
-    youtubeId: "",
+    youtubeId: "rko8DHiCnaM",
   },
 
   "high-row": {
-    youtubeId: "",
+    youtubeId: "vGrlowxaKq0",
   },
 
   "wide-grip-seated-row": {
-    youtubeId: "",
+    youtubeId: "sjJ0z4R3w0M",
   },
 
   "rear-delt-row": {
-    youtubeId: "",
+    youtubeId: "syG-Xxkol3o",
   },
 
   "machine-row": {
-    youtubeId: "",
+    youtubeId: "bmWA2yO9Aa0",
   },
 
   "half-kneeling-cable-row": {

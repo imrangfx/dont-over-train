@@ -282,15 +282,16 @@ export const back = {
     ],
     // Legacy total 35 (MID_BACK 6 + UT 10 → Rhomboids / Mid / Lower Traps).
     fatigue: {
-      [MUSCLES.RHOMBOIDS]: 7,
-      [MUSCLES.MIDDLE_TRAPS]: 6,
-      [MUSCLES.REAR_DELTS]: 10,
-      [MUSCLES.LOWER_TRAPS]: 3,
+      [MUSCLES.RHOMBOIDS]: 8,
+      [MUSCLES.MIDDLE_TRAPS]: 8,
+      [MUSCLES.REAR_DELTS]: 8,
+      [MUSCLES.LOWER_TRAPS]: 4,
       [MUSCLES.LATS]: 4,
+      [MUSCLES.BRACHIALIS]: 3,
       [MUSCLES.LONG_HEAD_BICEPS]: 2,
       [MUSCLES.SHORT_HEAD_BICEPS]: 2,
-      [MUSCLES.BRACHIALIS]: 1,
     },
+    image: "/back/high-row.webp",
   },
 
   "wide-grip-seated-row": {
