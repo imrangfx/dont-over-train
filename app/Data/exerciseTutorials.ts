@@ -25,8 +25,21 @@ import type { ExerciseTutorial } from "./exerciseTypes";
 export const EXERCISE_TUTORIALS: Readonly<
   Partial<Record<string, ExerciseTutorial>>
 > = {
-  // Intentionally empty until videos are sourced.
-  // Populate by slug as tutorials are published.
+  "decline-push-up": {
+    youtubeId: "IODxDxX7oi4",
+  },
+
+  "barbell-row": {
+    youtubeId: "dQw4w9WgXcQ",
+  },
+
+  "machine-shoulder-press": {
+    youtubeId: "2yjwXTZQDDI",
+  },
+
+  "ab-wheel-rollout": {
+    youtubeId: "XXXXXXXXXXX",
+  },
 };
 
 function hasPlayableTutorial(
