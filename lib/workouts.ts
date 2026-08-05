@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import type { ExerciseTrackingType } from "@/app/Data/exercises";
 import type { RecoveryEngineResult } from "@/app/lib/recovery";
+import { formatDisplayDate } from "./formatDate";
 
 /**
  * Canonical per-set logging entry.
@@ -531,11 +532,12 @@ export type WorkoutRow = {
  */
 export function rowToEntry(row: WorkoutRow): WorkoutHistoryEntry {
   const snapshot = row.fatigue && typeof row.fatigue === "object" ? row.fatigue : {};
+  const timestamp = new Date(row.workout_date).getTime();
 
   return {
     id: row.id,
-    date: new Date(row.workout_date).toLocaleDateString(),
-    timestamp: new Date(row.workout_date).getTime(),
+    date: formatDisplayDate(timestamp),
+    timestamp,
     exercises:
       typeof snapshot.exercises === "number"
         ? snapshot.exercises

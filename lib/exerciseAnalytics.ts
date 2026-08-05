@@ -1,5 +1,6 @@
 import type { WorkoutHistoryEntry } from "@/lib/workouts";
 import { toLocalDayKey } from "@/lib/workouts";
+import { formatDisplayDate } from "@/lib/formatDate";
 import {
   getExerciseCategory,
   type ExerciseCategory,
@@ -592,8 +593,12 @@ export function buildExerciseAnalytics(
     averageSets: average(sets),
     totalSessions,
     totalVolume: sessions.reduce((sum, s) => sum + s.volume, 0),
-    firstWorkoutDate: chronological[0]?.date ?? null,
-    lastWorkoutDate: sessions[0]?.date ?? null,
+    firstWorkoutDate: chronological[0]
+      ? formatDisplayDate(chronological[0].timestamp || chronological[0].date)
+      : null,
+    lastWorkoutDate: sessions[0]
+      ? formatDisplayDate(sessions[0].timestamp || sessions[0].date)
+      : null,
   };
 
   return {

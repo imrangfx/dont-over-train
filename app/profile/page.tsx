@@ -40,11 +40,13 @@ import {
   Share2,
   ThumbsUp,
   ThumbsDown,
+  Minus,
 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import LoadingCard from "@/components/ui/LoadingCard";
 import { useToast } from "@/components/ui/Toast";
 import ShareCardModal from "@/components/ShareCardModal";
+import { formatDisplayDate } from "@/lib/formatDate";
 
 export default function ProfilePage() {
   const { toast } = useToast();
@@ -394,8 +396,9 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <p className="mt-1 text-xs text-zinc-500">
-              Based on your heaviest 8+ rep sets across every muscle group.
+            <p className="mt-1 text-xs leading-5 text-zinc-500">
+              Based on your lifetime heaviest 8+ rep sets across every muscle
+              group.
             </p>
 
             <div className="mt-4 h-2.5 w-full overflow-hidden rounded-full bg-zinc-800">
@@ -443,6 +446,7 @@ export default function ProfilePage() {
               icon={<Dumbbell size={20} />}
               title="Total Workouts"
               value={String(totalWorkouts)}
+              numericValue={totalWorkouts}
               rating={totalWorkoutsQuality.rating}
               ratingLabel={totalWorkoutsQuality.label}
             />
@@ -451,6 +455,7 @@ export default function ProfilePage() {
               icon={<Trophy size={20} />}
               title="Exercises Completed"
               value={String(totalExercises)}
+              numericValue={totalExercises}
               rating={exercisesQuality.rating}
               ratingLabel={exercisesQuality.label}
             />
@@ -459,6 +464,7 @@ export default function ProfilePage() {
               icon={<Clock3 size={20} />}
               title="Training Time"
               value={formatDurationMinutes(trainingMinutes)}
+              numericValue={trainingMinutes}
               rating={trainingTimeQuality.rating}
               ratingLabel={trainingTimeQuality.label}
             />
@@ -467,6 +473,7 @@ export default function ProfilePage() {
               icon={<Flame size={20} />}
               title="Current Streak"
               value={`${currentStreak} Days`}
+              numericValue={currentStreak}
               rating={streakQuality.rating}
               ratingLabel={streakQuality.label}
             />
@@ -492,8 +499,8 @@ export default function ProfilePage() {
 
             <>
 
-              <div className="mt-3 text-2xl font-bold">
-                {lastWorkout.date}
+              <div className="mt-3 text-2xl font-bold tabular-nums">
+                {formatDisplayDate(lastWorkout.timestamp || lastWorkout.date)}
               </div>
 
               <div className="mt-4 text-lg font-semibold text-lime-400">
@@ -692,30 +699,44 @@ export default function ProfilePage() {
   );
 }
 
+function resolveStatTone(
+  numericValue: number,
+  rating?: QualityRating,
+): "neutral" | "positive" | "negative" {
+  // Empty / zero ? calm neutral (never punish a fresh start).
+  if (!Number.isFinite(numericValue) || numericValue <= 0) {
+    return "neutral";
+  }
+
+  // Any real progress is celebrated. Reserve "negative" for future explicit warnings.
+  void rating;
+  return "positive";
+}
+
 function RatingIndicator({
-  rating,
+  tone,
   label,
 }: {
-  rating: QualityRating;
+  tone: "neutral" | "positive" | "negative";
   label?: string;
 }) {
-  const isPoor = rating === "poor";
-  const isAverage = rating === "average";
+  const className =
+    tone === "negative"
+      ? "text-red-500"
+      : tone === "neutral"
+        ? "text-zinc-500"
+        : "text-lime-400";
 
   return (
     <span
-      className={
-        isPoor
-          ? "text-red-500"
-          : isAverage
-            ? "text-amber-400/55"
-            : "text-lime-400"
-      }
+      className={className}
       title={label}
       aria-label={label ? `Rated ${label}` : undefined}
     >
-      {isPoor ? (
+      {tone === "negative" ? (
         <ThumbsDown size={16} aria-hidden="true" />
+      ) : tone === "neutral" ? (
+        <Minus size={16} aria-hidden="true" />
       ) : (
         <ThumbsUp size={16} aria-hidden="true" />
       )}
@@ -730,6 +751,7 @@ function StatCard({
   href,
   rating,
   ratingLabel,
+  numericValue,
 }: {
   title: string;
   value: string;
@@ -737,8 +759,14 @@ function StatCard({
   href?: string;
   rating?: QualityRating;
   ratingLabel?: string;
+  /** Raw metric used only for indicator tone (0 ? neutral). */
+  numericValue?: number;
 }) {
-  const isPoor = rating === "poor";
+  const tone =
+    rating != null
+      ? resolveStatTone(numericValue ?? 0, rating)
+      : undefined;
+  const isNegative = tone === "negative";
 
   const content = (
     <>
@@ -747,10 +775,10 @@ function StatCard({
           {icon}
         </div>
 
-        {rating && <RatingIndicator rating={rating} label={ratingLabel} />}
+        {tone && <RatingIndicator tone={tone} label={ratingLabel} />}
       </div>
 
-      <div className="mt-4 text-2xl font-bold">
+      <div className="mt-4 text-2xl font-bold tabular-nums">
         {value}
       </div>
 
@@ -762,7 +790,7 @@ function StatCard({
 
   const className = [
     "card-surface p-4",
-    isPoor ? "border-red-500/30 animate-poor-stat-glow" : "",
+    isNegative ? "border-red-500/30 animate-poor-stat-glow" : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -787,13 +815,20 @@ function InsightRow({
   value,
   rating,
   ratingLabel,
+  numericValue,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string;
   rating?: QualityRating;
   ratingLabel?: string;
+  numericValue?: number;
 }) {
+  const tone =
+    rating != null
+      ? resolveStatTone(numericValue ?? 0, rating)
+      : undefined;
+
   return (
     <div className="flex items-center justify-between gap-3">
       <div className="flex min-w-0 items-center gap-3">
@@ -806,8 +841,8 @@ function InsightRow({
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
-        {rating && <RatingIndicator rating={rating} label={ratingLabel} />}
-        <span className="text-right font-semibold text-white">
+        {tone && <RatingIndicator tone={tone} label={ratingLabel} />}
+        <span className="text-right font-semibold tabular-nums text-white">
           {value}
         </span>
       </div>

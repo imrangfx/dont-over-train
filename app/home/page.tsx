@@ -36,6 +36,7 @@ import {
   type WeekDayStatus,
   type WeeklyProgress as WeeklyProgressData,
 } from "@/lib/dashboard";
+import { formatDisplayDate } from "@/lib/formatDate";
 import {
   type BodyPartRecovery,
   type RecoveryIntelligenceReport,
@@ -453,12 +454,7 @@ function LatestPRCard({ record }: { record: PersonalRecord | null }) {
           </p>
 
           <p className="mt-2 text-sm text-zinc-400">
-            Achieved{" "}
-            {new Date(record.achievedAt).toLocaleDateString(undefined, {
-              month: "long",
-              day: "numeric",
-              year: "numeric",
-            })}
+            Achieved {formatDisplayDate(record.achievedAt)}
           </p>
         </Link>
       )}

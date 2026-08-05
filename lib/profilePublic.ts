@@ -10,6 +10,7 @@ import { getHighestPersonalRecord, type PersonalRecord } from "@/lib/progression
 import { calculateBodyPartLevel } from "@/lib/bodyPartProgression";
 import type { BodyPartLevelProgress } from "@/lib/bodyPartProgression";
 import { rowToPublicProfile, type PublicProfile } from "@/lib/friends";
+import { formatDisplayDate } from "@/lib/formatDate";
 
 /**
  * Read-only public profile data, built entirely from the existing
@@ -93,7 +94,9 @@ export async function loadPublicStrengthSummaries(
         highestPR: getHighestPersonalRecord(records),
         currentStreak: calculateCurrentStreak(entries),
         totalWorkouts: entries.length,
-        lastWorkoutDate: entries[0]?.date ?? null,
+        lastWorkoutDate: entries[0]
+          ? formatDisplayDate(entries[0].timestamp || entries[0].date)
+          : null,
       });
     }
 
@@ -184,7 +187,9 @@ export async function loadPublicFriendProfile(
         highestPR: getHighestPersonalRecord(records),
         currentStreak: calculateCurrentStreak(entries),
         totalWorkouts: entries.length,
-        lastWorkoutDate: entries[0]?.date ?? null,
+        lastWorkoutDate: entries[0]
+          ? formatDisplayDate(entries[0].timestamp || entries[0].date)
+          : null,
         recentPersonalRecords,
         insights: calculateWorkoutInsights(entries),
       },

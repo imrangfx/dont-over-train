@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { ArrowLeft, Dumbbell } from "lucide-react";
 import { loadWorkoutHistoryById, type WorkoutHistoryEntry } from "@/lib/workouts";
+import { formatDisplayDate } from "@/lib/formatDate";
 import {
   bodyPartHistoryTitle,
   projectWorkoutForBodyPart,
@@ -145,8 +146,8 @@ export default function WorkoutDetailsPage() {
             Date
           </div>
 
-          <div className="mt-2 text-2xl font-bold">
-            {displayedWorkout.date}
+          <div className="mt-2 text-2xl font-bold tabular-nums">
+            {formatDisplayDate(displayedWorkout.timestamp || displayedWorkout.date)}
           </div>
 
           <div className="mt-5 text-lg font-semibold text-lime-400">

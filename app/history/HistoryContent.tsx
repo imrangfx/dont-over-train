@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ChevronRight, Dumbbell } from "lucide-react";
 import { loadWorkoutHistory, type WorkoutHistoryEntry } from "@/lib/workouts";
+import { formatDisplayDate } from "@/lib/formatDate";
 import {
   bodyPartDisplayName,
   bodyPartHistoryTitle,
@@ -109,8 +110,8 @@ export default function HistoryContent() {
                 key={workout.id}
                 className="card-surface p-5 transition hover:border-zinc-700"
               >
-                <p className="text-sm text-zinc-500">
-                  {workout.date}
+                <p className="text-sm text-zinc-500 tabular-nums">
+                  {formatDisplayDate(workout.timestamp || workout.date)}
                 </p>
 
                 <h2 className="mt-3 flex flex-wrap items-center text-2xl font-bold">
@@ -142,7 +143,7 @@ export default function HistoryContent() {
                   <Link
                     href={detailsHref(workout.id)}
                     className="btn-base inline-flex items-center gap-2 rounded-lg text-zinc-300 hover:text-white"
-                    aria-label={`View details for ${workout.bodyParts?.join(" + ") || "workout"} on ${workout.date}`}
+                    aria-label={`View details for ${workout.bodyParts?.join(" + ") || "workout"} on ${formatDisplayDate(workout.timestamp || workout.date)}`}
                   >
                     View Details
                     <ChevronRight size={18} aria-hidden="true" />

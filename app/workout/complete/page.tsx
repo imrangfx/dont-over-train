@@ -35,6 +35,7 @@ import { useToast } from "@/components/ui/Toast";
 import LevelUpCelebration from "@/components/LevelUpCelebration";
 import ShareCardModal from "@/components/ShareCardModal";
 import { runRecoveryEngine } from "@/app/lib/recovery";
+import { formatDisplayDate } from "@/lib/formatDate";
 
 /** Best (highest) weight lifted for a single exercise this session. */
 function maxWeightLifted(item: InProgressWorkoutItem): number {
@@ -143,7 +144,7 @@ export default function CompletePage() {
     const historyEntry: WorkoutHistoryEntry = {
       id: crypto.randomUUID(),
 
-      date: new Date().toLocaleDateString(),
+      date: formatDisplayDate(endedAt),
 
       timestamp: endedAt,
 
