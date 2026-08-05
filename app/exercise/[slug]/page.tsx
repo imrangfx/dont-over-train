@@ -153,7 +153,7 @@ export default function ExercisePage() {
     });
   }
 
-  const WEIGHT_STEP = 2.5;
+  const WEIGHT_STEP = 5;
 
   function adjustSetWeight(index: number, delta: number) {
     setLoggedSets((prev) => {
@@ -461,7 +461,7 @@ export default function ExercisePage() {
                             set.weight == null ||
                             set.weight <= 0
                           }
-                          aria-label={`Decrease set ${index + 1} weight by 2.5 kilograms`}
+                          aria-label={`Decrease set ${index + 1} weight by 5 kilograms`}
                           className="btn-base absolute left-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white disabled:opacity-40"
                         >
                           −
@@ -488,7 +488,7 @@ export default function ExercisePage() {
                         <button
                           type="button"
                           onClick={() => adjustSetWeight(index, WEIGHT_STEP)}
-                          aria-label={`Increase set ${index + 1} weight by 2.5 kilograms`}
+                          aria-label={`Increase set ${index + 1} weight by 5 kilograms`}
                           className="btn-base absolute right-1.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl bg-[#262626] text-base font-semibold text-white"
                         >
                           +
