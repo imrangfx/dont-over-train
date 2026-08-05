@@ -91,8 +91,8 @@ export const back = {
   ],
 
   fatigue: {
-    [MUSCLES.LATS]: 16,
-    [MUSCLES.LOWER_TRAPS]: 6,
+    [MUSCLES.LATS]: 18,
+    [MUSCLES.LOWER_TRAPS]: 4,
   },
 
   image: "/back/straight-arm-cable-pulldown.webp",
@@ -724,22 +724,6 @@ export const back = {
       [MUSCLES.LONG_HEAD_BICEPS]: 1,
       [MUSCLES.SHORT_HEAD_BICEPS]: 1,
       [MUSCLES.BRACHIORADIALIS]: 1,
-    },
-  },
-
-  "straight-arm-pulldown": {
-    name: "Straight Arm Pulldown",
-    bodyPart: "Back",
-    section: "lats",
-    trackingType: "weight" as const,
-    movement: "isolation",
-    // Locked elbows → shoulder extension isolates the lats.
-    primaryMuscles: [MUSCLES.LATS],
-    secondaryMuscles: [MUSCLES.LOWER_TRAPS],
-    // Legacy total 20.
-    fatigue: {
-      [MUSCLES.LATS]: 18,
-      [MUSCLES.LOWER_TRAPS]: 2,
     },
   },
 

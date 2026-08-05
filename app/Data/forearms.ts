@@ -22,7 +22,7 @@ export const forearms = {
     bodyPart: "Forearms",
     section: "forearms",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "wrist-flexion",
     primaryMuscles: [MUSCLES.FOREARM_FLEXORS],
     secondaryMuscles: [],
     fatigue: {
@@ -35,7 +35,7 @@ export const forearms = {
     bodyPart: "Forearms",
     section: "forearms",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "wrist-extension",
     primaryMuscles: [MUSCLES.FOREARM_EXTENSORS],
     secondaryMuscles: [],
     // Legacy forearms → Forearm Extensors (same value).
@@ -49,7 +49,7 @@ export const forearms = {
     bodyPart: "Forearms",
     section: "forearms",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "wrist-flexion",
     primaryMuscles: [MUSCLES.FOREARM_FLEXORS],
     secondaryMuscles: [],
     fatigue: {
@@ -62,7 +62,7 @@ export const forearms = {
     bodyPart: "Forearms",
     section: "forearms",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "wrist-flexion",
     primaryMuscles: [MUSCLES.FOREARM_FLEXORS],
     secondaryMuscles: [],
     fatigue: {
@@ -75,7 +75,7 @@ export const forearms = {
     bodyPart: "Forearms",
     section: "forearms",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "wrist-extension",
     primaryMuscles: [MUSCLES.BRACHIORADIALIS],
     secondaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.FOREARM_EXTENSORS],
     // Legacy forearms → Brachioradialis, biceps → Brachialis (same values).
@@ -91,7 +91,7 @@ export const forearms = {
     bodyPart: "Forearms",
     section: "forearms",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "wrist-extension",
     primaryMuscles: [MUSCLES.BRACHIORADIALIS],
     secondaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.FOREARM_EXTENSORS],
     fatigue: {
@@ -105,7 +105,7 @@ export const forearms = {
     bodyPart: "Forearms",
     section: "forearms",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "wrist-extension",
     primaryMuscles: [MUSCLES.BRACHIORADIALIS],
     secondaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.FOREARM_EXTENSORS],
     fatigue: {
@@ -119,7 +119,7 @@ export const forearms = {
     bodyPart: "Forearms",
     section: "forearms",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "wrist-extension",
     primaryMuscles: [MUSCLES.BRACHIORADIALIS],
     secondaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.FOREARM_EXTENSORS],
     fatigue: {
@@ -148,7 +148,7 @@ export const forearms = {
     bodyPart: "Forearms",
     section: "forearms",
     trackingType: "weight" as const,
-    movement: "carry",
+    movement: "grip",
     primaryMuscles: [MUSCLES.FOREARM_FLEXORS],
     secondaryMuscles: [],
     fatigue: {
@@ -161,7 +161,7 @@ export const forearms = {
     bodyPart: "Forearms",
     section: "forearms",
     trackingType: "duration" as const,
-    movement: "carry",
+    movement: "grip",
     primaryMuscles: [MUSCLES.FOREARM_FLEXORS],
     secondaryMuscles: [MUSCLES.LATS],
     fatigue: {
@@ -175,7 +175,7 @@ export const forearms = {
     bodyPart: "Forearms",
     section: "forearms",
     trackingType: "bodyweight" as const,
-    movement: "isolation",
+    movement: "grip",
     primaryMuscles: [MUSCLES.FOREARM_FLEXORS],
     secondaryMuscles: [],
     fatigue: {
@@ -204,7 +204,7 @@ export const forearms = {
     bodyPart: "Forearms",
     section: "forearms",
     trackingType: "duration" as const,
-    movement: "carry",
+    movement: "grip",
     primaryMuscles: [MUSCLES.FOREARM_FLEXORS],
     secondaryMuscles: [],
     fatigue: {

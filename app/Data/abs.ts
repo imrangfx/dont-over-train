@@ -319,7 +319,7 @@ export const abs = {
     bodyPart: "Abs",
     section: "obliques",
     trackingType: "weight" as const,
-    movement: "core-rotation",
+    movement: "core-stability",
     primaryMuscles: [MUSCLES.OBLIQUES],
     secondaryMuscles: [],
     fatigue: {
@@ -415,6 +415,90 @@ export const abs = {
     },
   },
 
+  "ab-wheel-rollout": {
+  name: "Ab Wheel Rollout",
+  bodyPart: "Abs",
+  section: "core",
+  trackingType: "bodyweight" as const,
+  movement: "core-stability",
+
+  primaryMuscles: [
+    MUSCLES.RECTUS_ABDOMINIS,
+  ],
+
+  secondaryMuscles: [
+    MUSCLES.OBLIQUES,
+  ],
+
+  fatigue: {
+    [MUSCLES.RECTUS_ABDOMINIS]: 20,
+    [MUSCLES.OBLIQUES]: 6,
+  },
+},
+
+"dragon-flag": {
+  name: "Dragon Flag",
+  bodyPart: "Abs",
+  section: "core",
+  trackingType: "bodyweight" as const,
+  movement: "core-stability",
+
+  primaryMuscles: [
+    MUSCLES.RECTUS_ABDOMINIS,
+  ],
+
+  secondaryMuscles: [
+    MUSCLES.OBLIQUES,
+  ],
+
+  fatigue: {
+    [MUSCLES.RECTUS_ABDOMINIS]: 22,
+    [MUSCLES.OBLIQUES]: 6,
+  },
+},
+
+"hollow-body-hold": {
+  name: "Hollow Body Hold",
+  bodyPart: "Abs",
+  section: "core",
+  trackingType: "duration" as const,
+  movement: "core-stability",
+
+  primaryMuscles: [
+    MUSCLES.RECTUS_ABDOMINIS,
+  ],
+
+  secondaryMuscles: [
+    MUSCLES.OBLIQUES,
+  ],
+
+  fatigue: {
+    [MUSCLES.RECTUS_ABDOMINIS]: 18,
+    [MUSCLES.OBLIQUES]: 6,
+  },
+},
+
+"pallof-press": {
+  name: "Pallof Press",
+  bodyPart: "Abs",
+  section: "core",
+  trackingType: "weight" as const,
+  movement: "core-stability",
+
+  primaryMuscles: [
+    MUSCLES.OBLIQUES,
+  ],
+
+  secondaryMuscles: [
+    MUSCLES.RECTUS_ABDOMINIS,
+  ],
+
+  fatigue: {
+    [MUSCLES.OBLIQUES]: 18,
+    [MUSCLES.RECTUS_ABDOMINIS]: 6,
+  },
+},
+
   "side-plank": {
     name: "Side Plank",
     bodyPart: "Abs",
@@ -422,7 +506,9 @@ export const abs = {
     trackingType: "duration" as const,
     movement: "core-stability",
     primaryMuscles: [MUSCLES.OBLIQUES],
-    secondaryMuscles: [],
+    secondaryMuscles: [
+      MUSCLES.RECTUS_ABDOMINIS,
+    ],
     // Legacy upperAbs 4 + lowerBack 4 → RECTUS 8; OBLIQUES stays 16 (total 24).
     // RECTUS in fatigue for value preservation; not listed in secondary per rules.
     fatigue: {

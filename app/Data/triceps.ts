@@ -19,7 +19,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "long-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-extension",
     primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
     secondaryMuscles: [],
     fatigue: {
@@ -32,7 +32,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "long-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-extension",
     primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
     secondaryMuscles: [],
     fatigue: {
@@ -45,7 +45,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "long-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-extension",
     primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
     secondaryMuscles: [],
     fatigue: {
@@ -58,7 +58,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "long-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-extension",
     primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
     secondaryMuscles: [],
     fatigue: {
@@ -71,7 +71,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "long-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-extension",
     primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
     secondaryMuscles: [],
     fatigue: {
@@ -84,7 +84,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "long-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-extension",
     primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
     secondaryMuscles: [],
     fatigue: {
@@ -97,7 +97,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "long-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-extension",
     primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
     secondaryMuscles: [
       MUSCLES.MEDIAL_HEAD_TRICEPS,
@@ -116,7 +116,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "long-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-extension",
     primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
     secondaryMuscles: [],
     fatigue: {
@@ -129,7 +129,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "long-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-extension",
     primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
     secondaryMuscles: [],
     fatigue: {
@@ -142,7 +142,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "long-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-extension",
     primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
     secondaryMuscles: [],
     fatigue: {
@@ -155,7 +155,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "long-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-extension",
     primaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
     secondaryMuscles: [],
     fatigue: {
@@ -172,7 +172,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "lateral-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-extension",
     primaryMuscles: [MUSCLES.LATERAL_HEAD_TRICEPS],
     secondaryMuscles: [],
     fatigue: {
@@ -185,7 +185,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "lateral-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-extension",
     primaryMuscles: [MUSCLES.LATERAL_HEAD_TRICEPS],
     secondaryMuscles: [],
     fatigue: {
@@ -198,7 +198,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "lateral-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-extension",
     primaryMuscles: [MUSCLES.LATERAL_HEAD_TRICEPS],
     secondaryMuscles: [],
     fatigue: {
@@ -211,7 +211,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "lateral-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-extension",
     primaryMuscles: [MUSCLES.LATERAL_HEAD_TRICEPS],
     secondaryMuscles: [],
     fatigue: {
@@ -224,7 +224,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "lateral-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-extension",
     primaryMuscles: [MUSCLES.LATERAL_HEAD_TRICEPS],
     secondaryMuscles: [],
     fatigue: {
@@ -237,7 +237,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "lateral-head",
     trackingType: "bodyweight" as const,
-    movement: "vertical-push",
+    movement: "dip",
     primaryMuscles: [MUSCLES.LATERAL_HEAD_TRICEPS],
     secondaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS, MUSCLES.FRONT_DELTS],
     fatigue: {
@@ -252,7 +252,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "lateral-head",
     trackingType: "bodyweight" as const,
-    movement: "vertical-push",
+    movement: "dip",
     primaryMuscles: [MUSCLES.LATERAL_HEAD_TRICEPS],
     secondaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS, MUSCLES.MIDDLE_CHEST],
     // Legacy chest → Middle Chest (same value).
@@ -268,7 +268,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "lateral-head",
     trackingType: "bodyweight" as const,
-    movement: "vertical-push",
+    movement: "dip",
     primaryMuscles: [MUSCLES.LATERAL_HEAD_TRICEPS],
     secondaryMuscles: [
       MUSCLES.LONG_HEAD_TRICEPS,
@@ -332,7 +332,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "medial-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-extension",
     primaryMuscles: [MUSCLES.MEDIAL_HEAD_TRICEPS],
     secondaryMuscles: [MUSCLES.FOREARM_FLEXORS],
     // Legacy forearms → Forearm Flexors (same value).
@@ -347,7 +347,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "medial-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-extension",
     primaryMuscles: [MUSCLES.MEDIAL_HEAD_TRICEPS],
     secondaryMuscles: [MUSCLES.FOREARM_FLEXORS],
     fatigue: {
@@ -359,15 +359,23 @@ export const triceps = {
   "skull-crusher": {
     name: "Skull Crusher",
     bodyPart: "Triceps",
-    section: "medial-head",
+    section: "long-head",
     trackingType: "weight" as const,
-    movement: "isolation",
-    // Slight long-head contribution kept as secondary (legacy values).
-    primaryMuscles: [MUSCLES.MEDIAL_HEAD_TRICEPS],
-    secondaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
+    movement: "elbow-extension",
+
+    primaryMuscles: [
+      MUSCLES.LONG_HEAD_TRICEPS,
+      MUSCLES.MEDIAL_HEAD_TRICEPS,
+    ],
+
+    secondaryMuscles: [
+      MUSCLES.LATERAL_HEAD_TRICEPS,
+    ],
+
     fatigue: {
-      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 12,
-      [MUSCLES.LONG_HEAD_TRICEPS]: 6,
+      [MUSCLES.LONG_HEAD_TRICEPS]: 10,
+      [MUSCLES.MEDIAL_HEAD_TRICEPS]: 8,
+      [MUSCLES.LATERAL_HEAD_TRICEPS]: 2,
     },
   },
 
@@ -376,7 +384,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "medial-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-extension",
     primaryMuscles: [MUSCLES.MEDIAL_HEAD_TRICEPS],
     secondaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
     fatigue: {
@@ -390,7 +398,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "medial-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-extension",
     primaryMuscles: [MUSCLES.MEDIAL_HEAD_TRICEPS],
     secondaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
     fatigue: {
@@ -404,7 +412,7 @@ export const triceps = {
     bodyPart: "Triceps",
     section: "medial-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-extension",
     primaryMuscles: [MUSCLES.MEDIAL_HEAD_TRICEPS],
     secondaryMuscles: [MUSCLES.LONG_HEAD_TRICEPS],
     fatigue: {

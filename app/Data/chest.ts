@@ -296,8 +296,8 @@ export const chest = {
     },
   },
 
-  "dumbell-hex-press": {
-    name: "Dumbell Hex Press",
+  "dumbbell-hex-press": {
+    name: "Dumbbell Hex Press",
     bodyPart: "Chest",
     section: "mid-chest",
     trackingType: "weight" as const,
@@ -576,7 +576,7 @@ export const chest = {
     bodyPart: "Chest",
     section: "lower-chest",
     trackingType: "bodyweight" as const,
-    movement: "vertical-push",
+    movement: "dip",
     primaryMuscles: [MUSCLES.LOWER_CHEST],
     secondaryMuscles: [
       MUSCLES.MIDDLE_CHEST,
@@ -648,7 +648,7 @@ export const chest = {
     bodyPart: "Chest",
     section: "lower-chest",
     trackingType: "bodyweight" as const,
-    movement: "vertical-push",
+    movement: "dip",
     primaryMuscles: [MUSCLES.LOWER_CHEST],
     secondaryMuscles: [
       MUSCLES.MIDDLE_CHEST,
@@ -674,7 +674,7 @@ export const chest = {
     bodyPart: "Chest",
     section: "lower-chest",
     trackingType: "bodyweight" as const,
-    movement: "vertical-push",
+    movement: "dip",
     primaryMuscles: [MUSCLES.LOWER_CHEST],
     secondaryMuscles: [
       MUSCLES.MIDDLE_CHEST,

@@ -63,20 +63,26 @@ export type MuscleId = keyof typeof MUSCLES;
 
 /** Movement patterns used by the recovery / exercise engine. */
 export type ExerciseMovement =
-  | "horizontal-pull"
-  | "vertical-pull"
-  | "horizontal-push"
-  | "vertical-push"
-  | "hip-hinge"
-  | "squat"
-  | "lunge"
-  | "carry"
-  | "isolation"
-  | "shrug"
-  | "calf-raise"
-  | "core-flexion"
-  | "core-rotation"
-  | "core-stability";
+| "horizontal-pull"
+| "vertical-pull"
+| "horizontal-push"
+| "vertical-push"
+| "hip-hinge"
+| "squat"
+| "lunge"
+| "carry"
+| "shrug"
+| "dip"
+| "isolation"
+| "elbow-flexion"
+| "elbow-extension"
+| "wrist-flexion"
+| "wrist-extension"
+| "calf-raise"
+| "core-flexion"
+| "core-rotation"
+| "core-stability"
+| "grip";
 
 /** Fatigue map keyed only by muscles from MUSCLES. */
 export type MuscleFatigueMap = Partial<Record<MuscleName, number>>;

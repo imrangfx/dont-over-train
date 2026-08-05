@@ -6,7 +6,7 @@ import type { ExerciseData } from "./exerciseTypes";
  *
  * Fatigue keys use MUSCLES only. Numeric values preserved from legacy.
  * Sections are UI-only: long-head | short-head | brachialis.
- * All curls use movement: "isolation".
+ * All curls use movement: "elbow-flexion".
  */
 export const biceps = {
   // =====================
@@ -18,7 +18,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "long-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
 
     // Standard shoulder-width barbell curl loads both biceps heads.
     primaryMuscles: [
@@ -46,7 +46,7 @@ export const biceps = {
   bodyPart: "Biceps",
   section: "long-head",
   trackingType: "weight" as const,
-  movement: "isolation",
+  movement: "elbow-flexion",
 
   // Standard EZ-bar grip loads both biceps heads with a wrist-friendly position.
   primaryMuscles: [
@@ -74,7 +74,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "long-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.LONG_HEAD_BICEPS],
     secondaryMuscles: [
       MUSCLES.SHORT_HEAD_BICEPS,
@@ -94,7 +94,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "long-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.LONG_HEAD_BICEPS],
     secondaryMuscles: [
       MUSCLES.SHORT_HEAD_BICEPS,
@@ -114,7 +114,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "long-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     // Close grip slightly biases brachialis (reflected in secondary load).
     primaryMuscles: [MUSCLES.LONG_HEAD_BICEPS],
     secondaryMuscles: [
@@ -135,7 +135,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "long-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
     secondaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.BRACHIORADIALIS],
     fatigue: {
@@ -151,7 +151,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "long-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.LONG_HEAD_BICEPS],
     secondaryMuscles: [
       MUSCLES.SHORT_HEAD_BICEPS,
@@ -171,7 +171,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "long-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.LONG_HEAD_BICEPS],
     secondaryMuscles: [
       MUSCLES.SHORT_HEAD_BICEPS,
@@ -195,7 +195,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "short-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.SHORT_HEAD_BICEPS],
     secondaryMuscles: [
       MUSCLES.LONG_HEAD_BICEPS,
@@ -215,7 +215,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "short-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.SHORT_HEAD_BICEPS],
     secondaryMuscles: [
       MUSCLES.LONG_HEAD_BICEPS,
@@ -235,7 +235,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "short-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.SHORT_HEAD_BICEPS],
     secondaryMuscles: [
       MUSCLES.LONG_HEAD_BICEPS,
@@ -255,7 +255,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "short-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.SHORT_HEAD_BICEPS],
     secondaryMuscles: [
       MUSCLES.LONG_HEAD_BICEPS,
@@ -275,7 +275,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "short-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.SHORT_HEAD_BICEPS],
     secondaryMuscles: [
       MUSCLES.LONG_HEAD_BICEPS,
@@ -295,7 +295,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "short-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.SHORT_HEAD_BICEPS],
     secondaryMuscles: [
       MUSCLES.LONG_HEAD_BICEPS,
@@ -315,7 +315,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "short-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.SHORT_HEAD_BICEPS],
     secondaryMuscles: [
       MUSCLES.LONG_HEAD_BICEPS,
@@ -335,7 +335,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "short-head",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.SHORT_HEAD_BICEPS],
     secondaryMuscles: [
       MUSCLES.LONG_HEAD_BICEPS,
@@ -359,7 +359,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "brachialis",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.BRACHIORADIALIS],
     secondaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
     fatigue: {
@@ -375,7 +375,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "brachialis",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.BRACHIORADIALIS],
     secondaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
     fatigue: {
@@ -391,7 +391,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "brachialis",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.BRACHIORADIALIS],
     secondaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
     fatigue: {
@@ -407,7 +407,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "brachialis",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.BRACHIORADIALIS, MUSCLES.BRACHIALIS],
     secondaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
     fatigue: {
@@ -423,7 +423,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "brachialis",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.BRACHIORADIALIS, MUSCLES.BRACHIALIS],
     secondaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
     fatigue: {
@@ -439,7 +439,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "brachialis",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.BRACHIORADIALIS, MUSCLES.BRACHIALIS],
     secondaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
     fatigue: {
@@ -455,7 +455,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "brachialis",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.BRACHIORADIALIS, MUSCLES.BRACHIALIS],
     secondaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
     fatigue: {
@@ -471,7 +471,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "brachialis",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.BRACHIORADIALIS],
     secondaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
     fatigue: {
@@ -487,7 +487,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "brachialis",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.BRACHIORADIALIS],
     secondaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
     fatigue: {
@@ -503,7 +503,7 @@ export const biceps = {
     bodyPart: "Biceps",
     section: "brachialis",
     trackingType: "weight" as const,
-    movement: "isolation",
+    movement: "elbow-flexion",
     primaryMuscles: [MUSCLES.BRACHIALIS, MUSCLES.BRACHIORADIALIS],
     secondaryMuscles: [MUSCLES.LONG_HEAD_BICEPS, MUSCLES.SHORT_HEAD_BICEPS],
     fatigue: {
