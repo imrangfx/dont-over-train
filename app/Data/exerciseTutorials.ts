@@ -25,21 +25,217 @@ import type { ExerciseTutorial } from "./exerciseTypes";
 export const EXERCISE_TUTORIALS: Readonly<
   Partial<Record<string, ExerciseTutorial>>
 > = {
+
   "decline-push-up": {
-    youtubeId: "IODxDxX7oi4",
+    youtubeId: "QuaOc1mFcqs",
+  },
+
+  "incline-push-up": {
+    youtubeId: "Me9bHFAxnCs",
+  },
+
+  "incline-dumbbell-press": {
+    youtubeId: "IP4oeKh1Sd4",
+  },
+
+  "incline-barbell-press": {
+    youtubeId: "SrqOu55lrYU",
+  },
+
+  "incline-smith-press": {
+    youtubeId: "8urE8Z8AMQ4",
+  },
+
+  "low-to-high-cable-crossover": {
+    youtubeId: "wnFEC_34Bls",
+  },
+
+  "incline-hammer-press": {
+    youtubeId: "iVfAejapZ5c",
+  },
+
+  "incline-machine-press": {
+    youtubeId: "VesHgJR14E8",
+  },
+
+  "incline-cable-fly": {
+    youtubeId: "GwpA8-VcEk8",
+  },
+
+  // =========================
+  // MID CHEST
+  // =========================
+
+  "push-up": {
+    youtubeId: "WDIpL0pjun0",
+  },
+
+  "wide-push-up": {
+    youtubeId: "EsIdzx1J0iA",
+  },
+
+  "machine-chest-press": {
+    youtubeId: "n8TOta_pfr4",
+  },
+
+  "dumbbell-hex-press": {
+    youtubeId: "MjOeSCRwAQY",
+  },
+
+  "cable-press": {
+    youtubeId: "A3RepyBbWVI",
+  },
+
+  "dumbbell-bench-press": {
+    youtubeId: "YQ2s_Y7g5Qk",
+  },
+
+  "barbell-bench-press": {
+    youtubeId: "4Y2ZdHCOXok",
+  },
+
+  "hammer-strength-press": {
+    youtubeId: "0Wa9CfRXUkA",
+  },
+
+  "smith-machine-bench-press": {
+    youtubeId: "jjYdpy5qECk",
+  },
+
+  "dumbbell-chest-fly": {
+    youtubeId: "Nhvz9EzdJ4U",
+  },
+
+  "pec-deck-fly": {
+    youtubeId: "eGjt4lk6g34",
+  },
+  // =========================
+  // LOWER CHEST
+  // =========================
+
+  "decline-barbell-press": {
+    youtubeId: "FFyGwcLnDYc",
+  },
+
+  "decline-dumbbell-press": {
+    youtubeId: "J6hT44JbWRE",
+  },
+
+  "chest-dips": {
+    youtubeId: "",
+  },
+
+  "high-to-low-cable-fly": {
+    youtubeId: "8Um35Es-ROE",
+  },
+
+  "decline-smith-press": {
+    youtubeId: "",
+  },
+
+  "straight-bar-dips": {
+    youtubeId: "",
+  },
+
+  "assisted-dips": {
+    youtubeId: "",
+  },
+  // =========================
+  // UPPER BACK
+  // =========================
+
+  "seal-row": {
+    youtubeId: "",
+  },
+
+  "trap-3-raise": {
+    youtubeId: "",
+  },
+
+  "scapular-pull-up": {
+    youtubeId: "",
+  },
+
+  "dumbbell-shrug": {
+    youtubeId: "",
+  },
+
+  "barbell-shrug": {
+    youtubeId: "",
+  },
+
+  "cable-shrug": {
+    youtubeId: "",
+  },
+
+  "smith-machine-shrug": {
+    youtubeId: "",
+  },
+
+  "plate-loaded-shrug": {
+    youtubeId: "",
+  },
+
+  "high-row": {
+    youtubeId: "",
+  },
+
+  "wide-grip-seated-row": {
+    youtubeId: "",
+  },
+
+  "rear-delt-row": {
+    youtubeId: "",
+  },
+
+  "machine-row": {
+    youtubeId: "",
+  },
+
+  "half-kneeling-cable-row": {
+    youtubeId: "",
+  },
+
+  "meadows-row": {
+    youtubeId: "",
+  },
+
+  "one-arm-dumbbell-row": {
+    youtubeId: "",
+  },
+
+  "v-bar-seated-row": {
+    youtubeId: "",
+  },
+
+  "single-arm-seated-row": {
+    youtubeId: "",
+  },
+
+  "single-arm-cable-row": {
+    youtubeId: "",
   },
 
   "barbell-row": {
-    youtubeId: "dQw4w9WgXcQ",
+    youtubeId: "",
   },
 
-  "machine-shoulder-press": {
-    youtubeId: "2yjwXTZQDDI",
+  "landmine-t-bar-row": {
+    youtubeId: "",
   },
 
-  "ab-wheel-rollout": {
-    youtubeId: "XXXXXXXXXXX",
+  "chest-supported-t-bar-row": {
+    youtubeId: "",
   },
+
+  "chest-supported-dumbbell-row": {
+    youtubeId: "",
+  },
+
+  "seated-cable-row": {
+    youtubeId: "",
+  },
+
 };
 
 function hasPlayableTutorial(
