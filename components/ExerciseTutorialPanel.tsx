@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useId, useMemo, useState } from "react";
-import { ChevronDown, ExternalLink } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ExternalLink } from "lucide-react";
 import type { ExerciseTutorial } from "@/app/Data/exerciseTypes";
 import {
   resolveExerciseTutorial,
@@ -14,16 +14,13 @@ type ExerciseTutorialPanelProps = {
 };
 
 /**
- * Collapsible in-app tutorial player.
- * Lazy-mounts the iframe/video only after the user expands the section.
+ * Always-visible in-app tutorial player (YouTube embed or self-hosted file).
+ * No expand/collapse — renders immediately when a tutorial exists.
  */
 export default function ExerciseTutorialPanel({
   tutorial,
   exerciseName,
 }: ExerciseTutorialPanelProps) {
-  const panelId = useId();
-  const [expanded, setExpanded] = useState(false);
-  const [hasMountedPlayer, setHasMountedPlayer] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
 
   const resolved = useMemo(
@@ -32,68 +29,25 @@ export default function ExerciseTutorialPanel({
   );
 
   useEffect(() => {
-    // Reset when the exercise / tutorial source changes.
-    queueMicrotask(() => {
-      setExpanded(false);
-      setHasMountedPlayer(false);
-      setLoadFailed(false);
-    });
+    queueMicrotask(() => setLoadFailed(false));
   }, [tutorial]);
 
   if (!resolved) return null;
 
-  function handleToggle() {
-    setExpanded((open) => {
-      const next = !open;
-      if (next) setHasMountedPlayer(true);
-      return next;
-    });
-  }
-
   return (
-    <div className="mb-5 overflow-hidden rounded-3xl border border-[#222] bg-[#111]">
-      <button
-        type="button"
-        onClick={handleToggle}
-        aria-expanded={expanded}
-        aria-controls={panelId}
-        className="btn-base flex w-full items-center justify-between gap-3 px-5 py-4 text-left"
-      >
-        <span className="text-sm font-semibold text-white">
-          Watch Tutorial
-        </span>
-        <ChevronDown
-          size={18}
-          className={`shrink-0 text-zinc-400 transition-transform duration-300 ease-out ${
-            expanded ? "rotate-180" : "rotate-0"
-          }`}
-          aria-hidden="true"
+    <div className="mb-5 overflow-hidden rounded-3xl border border-[#222] bg-[#111] p-3">
+      {loadFailed ? (
+        <TutorialFallback
+          exerciseName={exerciseName}
+          externalUrl={resolved.externalUrl}
         />
-      </button>
-
-      <div
-        id={panelId}
-        className={`grid transition-[grid-template-rows] duration-300 ease-out ${
-          expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-        }`}
-      >
-        <div className="min-h-0 overflow-hidden">
-          <div className="border-t border-zinc-800 px-5 pb-5 pt-4">
-            {loadFailed ? (
-              <TutorialFallback
-                exerciseName={exerciseName}
-                externalUrl={resolved.externalUrl}
-              />
-            ) : hasMountedPlayer ? (
-              <TutorialPlayer
-                resolved={resolved}
-                exerciseName={exerciseName}
-                onError={() => setLoadFailed(true)}
-              />
-            ) : null}
-          </div>
-        </div>
-      </div>
+      ) : (
+        <TutorialPlayer
+          resolved={resolved}
+          exerciseName={exerciseName}
+          onError={() => setLoadFailed(true)}
+        />
+      )}
     </div>
   );
 }

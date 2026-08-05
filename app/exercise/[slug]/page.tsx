@@ -289,18 +289,18 @@ export default function ExercisePage() {
           {exerciseName}
         </h1>
 
-        <ExerciseHeroImage
-          slug={slug}
-          name={exerciseName}
-          image={heroImage}
-        />
-
         {tutorial ? (
           <ExerciseTutorialPanel
             tutorial={tutorial}
             exerciseName={exerciseName}
           />
-        ) : null}
+        ) : (
+          <ExerciseHeroImage
+            slug={slug}
+            name={exerciseName}
+            image={heroImage}
+          />
+        )}
 
         {/* Current Fatigue */}
         <div
