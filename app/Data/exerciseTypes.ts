@@ -4,6 +4,23 @@ import type { ExerciseMovement, MuscleName } from "./muscles";
 export type ExerciseTrackingType = "weight" | "bodyweight" | "duration";
 
 /**
+ * Optional form cue for an exercise.
+ *
+ * Prefer `youtubeId` at scale (500+) — no binary assets in the repo.
+ * Use `src` for self-hosted / CDN mp4|webm when needed.
+ * At least one of `youtubeId` or `src` must be set for the tutorial UI to show.
+ */
+export type ExerciseTutorial = {
+  /** YouTube video id (not a full URL). */
+  readonly youtubeId?: string;
+  /**
+   * Self-hosted path under `/public` (e.g. `/exercises/tutorials/barbell-row.mp4`)
+   * or an absolute https URL to a video file.
+   */
+  readonly src?: string;
+};
+
+/**
  * Shared shape for every exercise in the database.
  *
  * Migration note: `movement`, `primaryMuscles`, and `secondaryMuscles` are
@@ -13,6 +30,9 @@ export type ExerciseTrackingType = "weight" | "bodyweight" | "duration";
  *
  * `fatigue` keys MUST be MuscleName values from muscles.ts once a file is
  * migrated. Older files may still use legacy keys until their turn.
+ *
+ * Tutorials: prefer the sidecar map in `exerciseTutorials.ts`. The optional
+ * `tutorial` field here is an override when co-locating a one-off is clearer.
  */
 export type ExerciseData = {
   name: string;
@@ -32,4 +52,6 @@ export type ExerciseData = {
   /** Assisting / synergist muscles (not the prescription focus). */
   secondaryMuscles?: MuscleName[];
   image?: string;
+  /** Optional form tutorial (prefer sidecar registry for bulk entries). */
+  tutorial?: ExerciseTutorial;
 };

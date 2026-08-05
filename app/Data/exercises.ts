@@ -8,7 +8,11 @@ import { abs } from "./abs";
 import { forearms } from "./forearms";
 import type { ExerciseData, ExerciseTrackingType } from "./exerciseTypes";
 
-export type { ExerciseData, ExerciseTrackingType } from "./exerciseTypes";
+export type {
+  ExerciseData,
+  ExerciseTrackingType,
+  ExerciseTutorial,
+} from "./exerciseTypes";
 
 export const exercises = {
   ...chest,

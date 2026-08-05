@@ -18,6 +18,9 @@ import { forearms } from "@/app/Data/forearms";
 import EmptyState from "@/components/ui/EmptyState";
 import { Dumbbell } from "lucide-react";
 import LoadingScreen from "@/components/ui/LoadingScreen";
+import ExerciseHeroImage from "@/components/ExerciseHeroImage";
+import ExerciseTutorialPanel from "@/components/ExerciseTutorialPanel";
+import { getExerciseTutorial } from "@/app/Data/exerciseTutorials";
 import { useMinimumLoadingDelay } from "@/lib/hooks/useMinimumLoadingDelay";
 import {
   buildDurationWorkoutSets,
@@ -237,6 +240,13 @@ export default function ExercisePage() {
   }
   const exerciseName = exerciseData.name;
   const qualifyingPR = getQualifyingPersonalRecord(exerciseName, history, PR_MIN_REPS);
+  const inlineTutorial =
+    "tutorial" in exerciseData ? exerciseData.tutorial : undefined;
+  const tutorial = getExerciseTutorial(slug, inlineTutorial ?? null);
+  const heroImage =
+    "image" in exerciseData && typeof exerciseData.image === "string"
+      ? exerciseData.image
+      : undefined;
   const sortedMuscles = Object.entries(
     exerciseData.fatigue
   ).sort((a, b) => b[1] - a[1]);
@@ -275,9 +285,22 @@ export default function ExercisePage() {
           ← Back
         </Link>
 
-        <h1 className="heading-font text-3xl font-semibold mb-6 mt-4 text-[#39ff14]">
+        <h1 className="heading-font text-3xl font-semibold mb-4 mt-4 text-[#39ff14]">
           {exerciseName}
         </h1>
+
+        <ExerciseHeroImage
+          slug={slug}
+          name={exerciseName}
+          image={heroImage}
+        />
+
+        {tutorial ? (
+          <ExerciseTutorialPanel
+            tutorial={tutorial}
+            exerciseName={exerciseName}
+          />
+        ) : null}
 
         {/* Current Fatigue */}
         <div
