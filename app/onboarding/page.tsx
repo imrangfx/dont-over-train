@@ -92,56 +92,24 @@ export default function OnboardingPage() {
       </div>
 
       <div className="relative mx-auto flex w-full max-w-[480px] flex-col items-center px-5 pb-12 pt-4 sm:px-6 sm:pt-6">
-        {/* Hero */}
+        {/* Hero — single promotional artwork */}
         <section
-          className="animate-onboarding-fade relative mb-5 w-full sm:mb-6"
+          className="animate-onboarding-fade relative mb-6 w-full"
           aria-label="Don't Over Train"
         >
-          <div className="relative mx-auto h-[420px] w-full sm:h-[460px] md:h-[500px] lg:h-[560px]">
-            {/* Soft radial neon glow behind the body */}
-            <div
-              className="pointer-events-none absolute left-1/2 top-[40%] h-[70%] w-[85%] max-w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(57,255,20,0.28)_0%,rgba(57,255,20,0.1)_38%,transparent_72%)] blur-2xl"
-              aria-hidden="true"
+          <div className="relative mx-auto h-[360px] w-full overflow-hidden sm:h-[400px] md:h-[440px]">
+            <Image
+              src="/onboarding/back-hero.png"
+              alt="Don't Over Train"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover object-top"
             />
             <div
-              className="pointer-events-none absolute left-1/2 top-[38%] h-[46%] w-[52%] max-w-[240px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-lime-400/25 shadow-[0_0_48px_rgba(57,255,20,0.12)]"
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black via-black/80 to-transparent"
               aria-hidden="true"
             />
-
-            {/* Body silhouette — visible but still darker than the logo */}
-            <div className="absolute inset-x-[-6%] inset-y-0 sm:inset-x-0">
-              <Image
-                src="/onboarding/back-hero.png"
-                alt=""
-                fill
-                priority
-                sizes="(max-width: 768px) 100vw, 480px"
-                className="scale-[1.12] object-contain object-[center_62%] opacity-[0.72] brightness-[0.68] contrast-[1.28] saturate-0"
-                aria-hidden="true"
-              />
-            </div>
-
-            {/* Soft blend fades — keep top open, dissolve lower body into the page */}
-            <div
-              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/25"
-              aria-hidden="true"
-            />
-            <div
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-black via-black/70 to-transparent"
-              aria-hidden="true"
-            />
-
-            {/* Logo anchored on the upper back — same size as before */}
-            <div className="absolute inset-x-0 top-[22%] flex justify-center sm:top-[24%] md:top-[25%]">
-              <Image
-                src="/logo/logo.webp"
-                alt="Don't Over Train"
-                width={200}
-                height={200}
-                priority
-                className="h-auto w-[148px] drop-shadow-[0_12px_32px_rgba(0,0,0,0.7)] sm:w-[168px] md:w-[188px] lg:w-[200px]"
-              />
-            </div>
           </div>
         </section>
 
@@ -150,7 +118,7 @@ export default function OnboardingPage() {
           <button
             type="button"
             onClick={continueAsGuest}
-            className={`${btnPrimary} bg-lime-400 text-black hover:brightness-110 hover:shadow-[0_14px_36px_rgba(57,255,20,0.22)]`}
+            className={`${btnPrimary} bg-lime-400 text-black hover:brightness-110 hover:shadow-[0_0_30px_rgba(170,255,0,.18)]`}
           >
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/10">
               <Zap size={17} className="text-black" aria-hidden="true" />
@@ -254,7 +222,7 @@ export default function OnboardingPage() {
                 alt=""
                 width={120}
                 height={120}
-                className="h-auto w-[78px] rotate-[-18deg] drop-shadow-[0_12px_24px_rgba(0,0,0,0.55)] sm:w-[92px]"
+                className="h-auto w-[78px] rotate-[-18deg] drop-shadow-[0_12px_24px_rgba(0,0,0,0.55)] sm:w-[78px]"
                 aria-hidden="true"
               />
             </div>
@@ -277,7 +245,7 @@ export default function OnboardingPage() {
           </div>
 
           <nav
-            className="flex items-center justify-center gap-7 opacity-70"
+            className="flex items-center justify-center gap-7 opacity-100"
             aria-label="Social media"
           >
             {SOCIAL_LINKS.map(({ href, label, Icon }) => (
