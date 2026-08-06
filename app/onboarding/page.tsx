@@ -7,7 +7,6 @@ import {
   ChevronRight,
   Cloud,
   CloudUpload,
-  Dumbbell,
   Info,
   ShieldCheck,
   Smartphone,
@@ -55,6 +54,9 @@ const SOCIAL_LINKS = [
   },
 ] as const;
 
+const btnPrimary =
+  "btn-base flex h-[58px] w-full items-center justify-between gap-3 rounded-[22px] px-5 text-[17px] font-semibold shadow-[0_10px_28px_rgba(0,0,0,0.35)] transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99]";
+
 export default function OnboardingPage() {
   const router = useRouter();
   const { toast } = useToast();
@@ -79,110 +81,133 @@ export default function OnboardingPage() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-white">
-      <div className="mx-auto flex w-full max-w-[400px] flex-col items-center px-6 pb-10 pt-6 sm:pt-10">
+    <main className="relative min-h-screen overflow-x-hidden bg-black text-white">
+      {/* Ambient backdrop */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-[70vh]"
+        aria-hidden="true"
+      >
+        <div className="absolute left-1/2 top-16 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(57,255,20,0.12)_0%,transparent_68%)]" />
+        <div className="absolute left-1/2 top-40 h-[280px] w-[280px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(57,255,20,0.06)_0%,transparent_70%)]" />
+      </div>
+
+      <div className="relative mx-auto flex w-full max-w-[480px] flex-col items-center px-5 pb-12 pt-4 sm:px-6 sm:pt-6">
         {/* Hero */}
         <section
-          className="relative mb-8 flex w-full items-center justify-center"
+          className="animate-onboarding-fade relative mb-5 w-full sm:mb-6"
           aria-label="Don't Over Train"
         >
-          <div
-            className="pointer-events-none absolute left-1/2 top-[42%] h-56 w-56 -translate-x-1/2 -translate-y-1/2 rounded-full bg-lime-400/20 blur-3xl"
-            aria-hidden="true"
-          />
-          <div
-            className="pointer-events-none absolute left-1/2 top-[42%] h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full border border-lime-400/25"
-            aria-hidden="true"
-          />
-
-          <div className="relative h-[280px] w-full max-w-[300px]">
-            <Image
-              src="/onboarding/back-hero.png"
-              alt=""
-              fill
-              priority
-              sizes="300px"
-              className="object-contain object-bottom opacity-45 brightness-[0.55] contrast-110 saturate-0"
+          <div className="relative mx-auto h-[420px] w-full sm:h-[460px] md:h-[500px] lg:h-[560px]">
+            {/* Soft radial neon glow behind the body */}
+            <div
+              className="pointer-events-none absolute left-1/2 top-[40%] h-[70%] w-[85%] max-w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(57,255,20,0.28)_0%,rgba(57,255,20,0.1)_38%,transparent_72%)] blur-2xl"
               aria-hidden="true"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40" />
-            <div className="absolute inset-x-0 top-[18%] flex justify-center">
+            <div
+              className="pointer-events-none absolute left-1/2 top-[38%] h-[46%] w-[52%] max-w-[240px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-lime-400/25 shadow-[0_0_48px_rgba(57,255,20,0.12)]"
+              aria-hidden="true"
+            />
+
+            {/* Body silhouette — visible but still darker than the logo */}
+            <div className="absolute inset-x-[-6%] inset-y-0 sm:inset-x-0">
+              <Image
+                src="/onboarding/back-hero.png"
+                alt=""
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 480px"
+                className="scale-[1.12] object-contain object-[center_62%] opacity-[0.72] brightness-[0.68] contrast-[1.28] saturate-0"
+                aria-hidden="true"
+              />
+            </div>
+
+            {/* Soft blend fades — keep top open, dissolve lower body into the page */}
+            <div
+              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/25"
+              aria-hidden="true"
+            />
+            <div
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-black via-black/70 to-transparent"
+              aria-hidden="true"
+            />
+
+            {/* Logo anchored on the upper back — same size as before */}
+            <div className="absolute inset-x-0 top-[22%] flex justify-center sm:top-[24%] md:top-[25%]">
               <Image
                 src="/logo/logo.webp"
                 alt="Don't Over Train"
-                width={168}
-                height={168}
+                width={200}
+                height={200}
                 priority
-                className="drop-shadow-[0_8px_24px_rgba(0,0,0,0.65)]"
+                className="h-auto w-[148px] drop-shadow-[0_12px_32px_rgba(0,0,0,0.7)] sm:w-[168px] md:w-[188px] lg:w-[200px]"
               />
             </div>
           </div>
         </section>
 
-        {/* Primary CTA */}
-        <div className="w-full">
+        {/* Guest CTA */}
+        <div className="animate-onboarding-rise-delay-1 w-full">
           <button
             type="button"
             onClick={continueAsGuest}
-            className="btn-base flex h-14 w-full items-center justify-between gap-3 rounded-[22px] bg-lime-400 px-5 text-base font-semibold text-black hover:brightness-110"
+            className={`${btnPrimary} bg-lime-400 text-black hover:brightness-110 hover:shadow-[0_14px_36px_rgba(57,255,20,0.22)]`}
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-black/10">
-              <Zap size={16} className="text-black" aria-hidden="true" />
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/10">
+              <Zap size={17} className="text-black" aria-hidden="true" />
             </span>
             <span className="flex-1 text-center">Continue as Guest</span>
-            <ChevronRight size={18} className="text-black/70" aria-hidden="true" />
+            <ChevronRight size={18} className="text-black/65" aria-hidden="true" />
           </button>
-          <p className="mt-2.5 flex items-center justify-center gap-1.5 text-xs text-zinc-500">
-            <Check size={12} className="text-lime-400" aria-hidden="true" />
+          <p className="mt-3 flex items-center justify-center gap-1.5 text-[13px] text-zinc-500">
+            <Check size={13} className="text-lime-400" aria-hidden="true" />
             No account required
           </p>
         </div>
 
-        {/* Divider */}
-        <div className="my-7 flex w-full items-center gap-4">
+        {/* OR */}
+        <div className="animate-onboarding-rise-delay-2 mt-8 flex w-full items-center gap-4">
           <div className="h-px flex-1 bg-zinc-800" />
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+          <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-500">
             OR
           </span>
           <div className="h-px flex-1 bg-zinc-800" />
         </div>
 
-        {/* Google sign-in */}
-        <div className="w-full">
+        {/* Google */}
+        <div className="animate-onboarding-rise-delay-2 mt-8 w-full">
           <button
             type="button"
             onClick={signInWithGoogle}
-            className="btn-base flex h-14 w-full items-center justify-between gap-3 rounded-[22px] bg-white px-5 text-base font-semibold text-black hover:brightness-95"
+            className={`${btnPrimary} bg-white text-black hover:brightness-[0.97] hover:shadow-[0_14px_32px_rgba(255,255,255,0.12)]`}
           >
-            <FcGoogle size={22} aria-hidden="true" />
+            <FcGoogle size={24} aria-hidden="true" />
             <span className="flex-1 text-center">Continue with Google</span>
-            <ChevronRight size={18} className="text-black/50" aria-hidden="true" />
+            <ChevronRight size={18} className="text-black/45" aria-hidden="true" />
           </button>
-          <p className="mt-2.5 flex items-center justify-center gap-1.5 text-xs text-zinc-500">
-            <Cloud size={12} className="text-lime-400/80" aria-hidden="true" />
+          <p className="mt-3 flex items-center justify-center gap-1.5 text-[13px] text-zinc-500">
+            <Cloud size={13} className="text-lime-400/80" aria-hidden="true" />
             Sync workouts across all devices
           </p>
-          <InstallAppButton />
         </div>
 
-        {/* Why sign in */}
+        {/* Features */}
         <section
           aria-label="Why create an account"
-          className="mt-9 w-full overflow-hidden rounded-[22px] border border-zinc-800/90 bg-[#111] shadow-[0_10px_28px_rgba(0,0,0,0.35)]"
+          className="animate-onboarding-rise-delay-3 mt-10 w-full overflow-hidden rounded-[22px] border border-zinc-800/90 bg-[#111] shadow-[0_12px_32px_rgba(0,0,0,0.4)]"
         >
           <div className="grid grid-cols-3 divide-x divide-zinc-800/90">
             {FEATURES.map(({ title, description, Icon }) => (
               <div
                 key={title}
-                className="flex flex-col items-center px-2.5 py-5 text-center"
+                className="flex flex-col items-center px-3 py-6 text-center sm:px-4 sm:py-7"
               >
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-lime-400/10 text-lime-400">
-                  <Icon size={16} aria-hidden="true" />
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-lime-400/10 text-lime-400">
+                  <Icon size={18} aria-hidden="true" />
                 </span>
-                <p className="mt-3 text-[11px] font-semibold leading-tight text-white">
+                <p className="mt-3.5 text-[14px] font-semibold leading-tight tracking-tight text-white sm:text-[15px]">
                   {title}
                 </p>
-                <p className="mt-1.5 text-[10px] leading-snug text-zinc-500">
+                <p className="mt-2 text-[12px] leading-relaxed text-zinc-500">
                   {description}
                 </p>
               </div>
@@ -190,55 +215,69 @@ export default function OnboardingPage() {
           </div>
         </section>
 
-        {/* Guest mode card */}
+        {/* Guest Mode */}
         <section
           aria-labelledby="guest-mode-heading"
-          className="mt-5 flex w-full items-stretch gap-3 overflow-hidden rounded-[22px] border border-zinc-800/90 bg-gradient-to-br from-[#161616] to-[#0d0d0d] p-4 shadow-[0_10px_28px_rgba(0,0,0,0.3)]"
+          className="animate-onboarding-rise-delay-4 relative mt-7 w-full overflow-hidden rounded-[22px] border border-zinc-800/80 bg-gradient-to-br from-[#171717] via-[#111] to-[#0a0a0a] p-5 shadow-[0_12px_32px_rgba(0,0,0,0.38)] sm:p-6"
         >
-          <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-lime-400/10 text-lime-400">
-            <Info size={15} aria-hidden="true" />
-          </div>
+          <div
+            className="pointer-events-none absolute -right-8 top-1/2 h-40 w-40 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(57,255,20,0.1)_0%,transparent_70%)]"
+            aria-hidden="true"
+          />
 
-          <div className="min-w-0 flex-1 py-0.5">
-            <h2
-              id="guest-mode-heading"
-              className="text-sm font-semibold text-white"
-            >
-              Guest Mode
-            </h2>
-            <p className="mt-1.5 text-xs leading-5 text-zinc-400">
-              Your workout history stays on this device.
-            </p>
-            <div className="my-3 h-px w-full bg-zinc-800/90" />
-            <p className="text-xs leading-5 text-zinc-500">
-              Create a{" "}
-              <span className="font-medium text-lime-400">free account</span>{" "}
-              anytime to sync and back up your data.
-            </p>
-          </div>
+          <div className="relative flex items-stretch gap-4">
+            <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-lime-400/10 text-lime-400">
+              <Info size={16} aria-hidden="true" />
+            </div>
 
-          <div className="flex shrink-0 items-end self-stretch pb-0.5 pr-0.5">
-            <Dumbbell
-              size={44}
-              strokeWidth={1.25}
-              className="rotate-[-28deg] text-zinc-600"
-              aria-hidden="true"
-            />
+            <div className="min-w-0 flex-1">
+              <h2
+                id="guest-mode-heading"
+                className="text-[15px] font-semibold tracking-tight text-white"
+              >
+                Guest Mode
+              </h2>
+              <p className="mt-2 text-[13px] leading-relaxed text-zinc-400">
+                Your workout history stays on this device.
+              </p>
+              <div className="my-3.5 h-px w-full bg-zinc-800/90" />
+              <p className="text-[13px] leading-relaxed text-zinc-500">
+                Create a{" "}
+                <span className="font-medium text-lime-400">free account</span>{" "}
+                anytime to sync and back up your data.
+              </p>
+            </div>
+
+            <div className="relative flex w-[88px] shrink-0 items-center justify-center sm:w-[104px]">
+              <Image
+                src="/onboarding/dumbbell.png"
+                alt=""
+                width={120}
+                height={120}
+                className="h-auto w-[78px] rotate-[-18deg] drop-shadow-[0_12px_24px_rgba(0,0,0,0.55)] sm:w-[92px]"
+                aria-hidden="true"
+              />
+            </div>
           </div>
         </section>
 
+        {/* Install — below auth hierarchy */}
+        <div className="animate-onboarding-rise-delay-4 mt-6 w-full [&_button]:mt-0 [&_button]:h-12 [&_button]:rounded-[20px] [&_button]:bg-zinc-900 [&_button]:text-sm [&_button]:font-medium [&_button]:text-zinc-200 [&_button]:shadow-none [&_button]:ring-1 [&_button]:ring-zinc-800 [&_button]:hover:brightness-110">
+          <InstallAppButton />
+        </div>
+
         {/* Social */}
-        <div className="mt-10 w-full">
+        <div className="animate-onboarding-rise-delay-5 mt-9 w-full">
           <div className="mb-5 flex items-center gap-4">
-            <div className="h-px flex-1 bg-zinc-800" />
-            <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-zinc-600">
+            <div className="h-px flex-1 bg-zinc-800/80" />
+            <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-zinc-600">
               Follow us
             </span>
-            <div className="h-px flex-1 bg-zinc-800" />
+            <div className="h-px flex-1 bg-zinc-800/80" />
           </div>
 
           <nav
-            className="flex items-start justify-center gap-8"
+            className="flex items-center justify-center gap-7 opacity-70"
             aria-label="Social media"
           >
             {SOCIAL_LINKS.map(({ href, label, Icon }) => (
@@ -248,14 +287,9 @@ export default function OnboardingPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={label}
-                className="group flex flex-col items-center gap-2 text-zinc-500 transition-colors duration-200 hover:text-lime-400"
+                className="text-zinc-500 transition-colors duration-200 hover:text-lime-400"
               >
-                <span className="flex h-11 w-11 items-center justify-center rounded-full border border-zinc-800 transition-colors group-hover:border-lime-400/40">
-                  <Icon size={18} aria-hidden="true" />
-                </span>
-                <span className="text-[10px] text-zinc-600 group-hover:text-zinc-400">
-                  {label}
-                </span>
+                <Icon size={18} aria-hidden="true" />
               </a>
             ))}
           </nav>

@@ -164,6 +164,57 @@ body {
   }
 }
 
+/* Onboarding — tasteful entrance motion */
+@keyframes onboarding-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes onboarding-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-onboarding-fade {
+  animation: onboarding-fade-in 700ms ease-out both;
+}
+
+.animate-onboarding-rise {
+  animation: onboarding-rise 560ms ease-out both;
+}
+
+.animate-onboarding-rise-delay-1 {
+  animation: onboarding-rise 560ms ease-out 80ms both;
+}
+
+.animate-onboarding-rise-delay-2 {
+  animation: onboarding-rise 560ms ease-out 160ms both;
+}
+
+.animate-onboarding-rise-delay-3 {
+  animation: onboarding-rise 560ms ease-out 240ms both;
+}
+
+.animate-onboarding-rise-delay-4 {
+  animation: onboarding-rise 560ms ease-out 320ms both;
+}
+
+.animate-onboarding-rise-delay-5 {
+  animation: onboarding-rise 560ms ease-out 400ms both;
+}
+
 @media (prefers-reduced-motion: reduce) {
 
   ::view-transition-old(*),
@@ -182,6 +233,16 @@ body {
   }
 
   .animate-poor-stat-glow {
+    animation: none;
+  }
+
+  .animate-onboarding-fade,
+  .animate-onboarding-rise,
+  .animate-onboarding-rise-delay-1,
+  .animate-onboarding-rise-delay-2,
+  .animate-onboarding-rise-delay-3,
+  .animate-onboarding-rise-delay-4,
+  .animate-onboarding-rise-delay-5 {
     animation: none;
   }
 }
