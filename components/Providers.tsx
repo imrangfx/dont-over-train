@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import FloatingWorkoutTimer from "@/components/FloatingWorkoutTimer";
+import TawkChatLauncher from "@/components/TawkChatLauncher";
 import { ToastProvider } from "@/components/ui/Toast";
 
 export default function Providers({ children }: { children: ReactNode }) {
@@ -9,6 +10,7 @@ export default function Providers({ children }: { children: ReactNode }) {
     <ToastProvider>
       {children}
       <FloatingWorkoutTimer />
+      <TawkChatLauncher />
     </ToastProvider>
   );
 }

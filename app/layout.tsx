@@ -40,18 +40,14 @@ export default function RootLayout({
         <Script id="tawk-to" strategy="afterInteractive">
           {`
             var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-            Tawk_API.customStyle = {
-              visibility: {
-                desktop: {
-                  position: 'br',
-                  xOffset: 20,
-                  yOffset: 90
-                },
-                mobile: {
-                  position: 'br',
-                  xOffset: 20,
-                  yOffset: 90
-                }
+            Tawk_API.onLoad = function () {
+              if (typeof Tawk_API.hideWidget === 'function') {
+                Tawk_API.hideWidget();
+              }
+            };
+            Tawk_API.onChatMinimized = function () {
+              if (typeof Tawk_API.hideWidget === 'function') {
+                Tawk_API.hideWidget();
               }
             };
             (function(){
