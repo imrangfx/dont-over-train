@@ -193,48 +193,108 @@ export const EXERCISE_TUTORIALS: Readonly<
   },
 
   "half-kneeling-cable-row": {
-    youtubeId: "",
+    youtubeId: "afE9JabFqR4",
   },
 
   "meadows-row": {
-    youtubeId: "",
+    youtubeId: "w1d_wD0v3gc",
   },
 
   "one-arm-dumbbell-row": {
-    youtubeId: "",
+    youtubeId: "DMo3HJoawrU",
   },
 
   "v-bar-seated-row": {
-    youtubeId: "",
+    youtubeId: "m-UTSvcTpxM",
   },
 
   "single-arm-seated-row": {
-    youtubeId: "",
+    youtubeId: "h6A2acbBWp8",
   },
 
   "single-arm-cable-row": {
-    youtubeId: "",
+    youtubeId: "2bh_S_YXbeI",
   },
 
   "barbell-row": {
-    youtubeId: "",
+    youtubeId: "FWJR5Ve8bnQ",
   },
 
   "landmine-t-bar-row": {
-    youtubeId: "",
+    youtubeId: "ABosC7vpbg8",
   },
 
   "chest-supported-t-bar-row": {
-    youtubeId: "",
+    youtubeId: "0UBRfiO4zDs",
   },
 
   "chest-supported-dumbbell-row": {
-    youtubeId: "",
+    youtubeId: "DIS839guYUk",
   },
 
   "seated-cable-row": {
-    youtubeId: "",
+    youtubeId: "UCXxvVItLoM",
   },
+
+  // =========================
+// LATS
+// =========================
+
+"straight-arm-cable-pulldown": {
+  youtubeId: "G9uNaXGTJ4w",
+},
+
+"rope-straight-arm-pulldown": {
+  youtubeId: "jYIWugY50nk",
+},
+
+"pull-up": {
+  youtubeId: "",
+},
+
+"chin-up": {
+  youtubeId: "",
+},
+
+"lat-pulldown": {
+  youtubeId: "",
+},
+
+"wide-grip-lat-pulldown": {
+  youtubeId: "",
+},
+
+"close-grip-pulldown": {
+  youtubeId: "",
+},
+
+"single-arm-lat-pulldown": {
+  youtubeId: "",
+},
+
+// =========================
+// LOWER BACK
+// =========================
+
+"deadlift": {
+  youtubeId: "",
+},
+
+"romanian-deadlift": {
+  youtubeId: "",
+},
+
+"back-extension": {
+  youtubeId: "",
+},
+
+"good-morning": {
+  youtubeId: "",
+},
+
+"rack-pull": {
+  youtubeId: "",
+},
 
 };
 
