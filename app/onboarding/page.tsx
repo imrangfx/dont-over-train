@@ -82,11 +82,8 @@ export default function OnboardingPage() {
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-black text-white">
-      {/* Full-bleed cinematic artwork */}
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[100svh] w-full animate-onboarding-fade"
-        aria-hidden="true"
-      >
+      {/* Full-screen cinematic artwork */}
+      <div className="pointer-events-none fixed inset-0 z-0 animate-onboarding-fade">
         <Image
           src="/onboarding/back-hero.png"
           alt=""
@@ -95,10 +92,16 @@ export default function OnboardingPage() {
           sizes="100vw"
           className="object-cover object-top"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/15 to-black" />
       </div>
 
-      <div className="relative z-10 mx-auto flex w-full max-w-[480px] flex-col items-center px-5 pb-12 pt-[400px] sm:px-6">
+      {/* Soft readability overlay */}
+      <div
+        className="pointer-events-none fixed inset-0 z-0 bg-black/10"
+        aria-hidden="true"
+      />
+
+      {/* Foreground UI */}
+      <div className="relative z-10 mx-auto flex w-full max-w-[480px] flex-col items-center px-5 pb-12 pt-[320px] sm:px-6">
         {/* Guest CTA */}
         <div className="animate-onboarding-rise-delay-1 w-full">
           <button
@@ -110,9 +113,7 @@ export default function OnboardingPage() {
               <Zap size={17} className="text-black" />
             </span>
 
-            <span className="flex-1 text-center">
-              Continue as Guest
-            </span>
+            <span className="flex-1 text-center">Continue as Guest</span>
 
             <ChevronRight size={18} className="text-black/65" />
           </button>
@@ -152,7 +153,7 @@ export default function OnboardingPage() {
         {/* Features */}
         <section
           aria-label="Why create an account"
-          className="animate-onboarding-rise-delay-3 mt-7 w-full overflow-hidden rounded-[22px] border border-zinc-800/90 bg-[#111] shadow-[0_12px_32px_rgba(0,0,0,0.4)]"
+          className="animate-onboarding-rise-delay-3 mt-8 w-full overflow-hidden rounded-[22px] border border-zinc-800/90 bg-[#111] shadow-[0_12px_32px_rgba(0,0,0,0.4)]"
         >
           <div className="grid grid-cols-3 divide-x divide-zinc-800/90">
             {FEATURES.map(({ title, description, Icon }) => (
@@ -177,7 +178,7 @@ export default function OnboardingPage() {
         {/* Guest Mode */}
         <section
           aria-labelledby="guest-mode-heading"
-          className="animate-onboarding-rise-delay-4 relative mt-7 w-full overflow-hidden rounded-[22px] border border-zinc-800/80 bg-gradient-to-br from-[#171717] via-[#111] to-[#0a0a0a] p-5 shadow-[0_12px_32px_rgba(0,0,0,0.38)] sm:p-6"
+          className="animate-onboarding-rise-delay-4 relative mt-6 w-full overflow-hidden rounded-[22px] border border-zinc-800/80 bg-gradient-to-br from-[#171717] via-[#111] to-[#0a0a0a] p-5 shadow-[0_12px_32px_rgba(0,0,0,0.38)] sm:p-6"
         >
           <div
             className="pointer-events-none absolute -right-8 top-1/2 h-40 w-40 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(57,255,20,0.1)_0%,transparent_70%)]"
@@ -221,12 +222,12 @@ export default function OnboardingPage() {
         </section>
 
         {/* Install — below auth hierarchy */}
-        <div className="animate-onboarding-rise-delay-4 mt-4 w-full [&_button]:mt-0 [&_button]:h-12 [&_button]:rounded-[20px] [&_button]:bg-zinc-900 [&_button]:text-sm [&_button]:font-medium [&_button]:text-zinc-200 [&_button]:shadow-none [&_button]:ring-1 [&_button]:ring-zinc-800 [&_button]:hover:brightness-110">
+        <div className="animate-onboarding-rise-delay-4 mt-5 w-full [&_button]:mt-0 [&_button]:h-12 [&_button]:rounded-[20px] [&_button]:bg-zinc-900 [&_button]:text-sm [&_button]:font-medium [&_button]:text-zinc-200 [&_button]:shadow-none [&_button]:ring-1 [&_button]:ring-zinc-800 [&_button]:hover:brightness-110">
           <InstallAppButton />
         </div>
 
         {/* Social */}
-        <div className="animate-onboarding-rise-delay-5 mt-9 w-full">
+        <div className="animate-onboarding-rise-delay-5 mt-7 w-full">
           <div className="mb-5 flex items-center gap-4">
             <div className="h-px flex-1 bg-zinc-800/80" />
             <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-zinc-600">
