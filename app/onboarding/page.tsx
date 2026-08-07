@@ -17,6 +17,7 @@ import { FcGoogle } from "react-icons/fc";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/components/ui/Toast";
 import InstallAppButton from "@/components/InstallAppButton";
+import { MdBolt } from "react-icons/md";
 
 const FEATURES = [
   {
@@ -55,7 +56,7 @@ const SOCIAL_LINKS = [
 ] as const;
 
 const btnPrimary =
-  "btn-base flex h-[58px] w-full items-center justify-between gap-3 rounded-[22px] px-5 text-[17px] font-semibold shadow-[0_10px_28px_rgba(0,0,0,0.35)] transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99]";
+  "btn-base flex h-[58px] w-full items-center justify-between gap-3 rounded-[12px] px-5 text-[17px] font-semibold shadow-[0_10px_28px_rgba(0,0,0,0.35)] transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99]";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -100,8 +101,21 @@ export default function OnboardingPage() {
         aria-hidden="true"
       />
 
+      {/* Logo Overlay */}
+      <div className="absolute left-1/2 top-[160px] z-20 -translate-x-1/2">
+        <Image
+          src="/logo/logo.webp"
+          alt="Don't Over Train"
+          width={170}
+          height={170}
+          priority
+          className="drop-shadow-[0_12px_30px_rgba(0,0,0,0.75)]"
+        />
+      </div>
+
       {/* Foreground UI */}
       <div className="relative z-10 mx-auto flex w-full max-w-[480px] flex-col items-center px-5 pb-12 pt-[320px] sm:px-6">
+
         {/* Guest CTA */}
         <div className="animate-onboarding-rise-delay-1 w-full">
           <button
@@ -110,7 +124,7 @@ export default function OnboardingPage() {
             className={`${btnPrimary} bg-lime-400 text-black hover:brightness-110 hover:shadow-[0_0_30px_rgba(170,255,0,.18)]`}
           >
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/10">
-              <Zap size={17} className="text-black" />
+              <MdBolt size={18} className="text-black" />
             </span>
 
             <span className="flex-1 text-center">Continue as Guest</span>
@@ -125,7 +139,7 @@ export default function OnboardingPage() {
         </div>
 
         {/* OR */}
-        <div className="animate-onboarding-rise-delay-2 mt-8 flex w-full items-center gap-4">
+        <div className="animate-onboarding-rise-delay-2 mt-6 flex w-full items-center gap-4">
           <div className="h-px flex-1 bg-zinc-800" />
           <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-500">
             OR
@@ -153,7 +167,7 @@ export default function OnboardingPage() {
         {/* Features */}
         <section
           aria-label="Why create an account"
-          className="animate-onboarding-rise-delay-3 mt-8 w-full overflow-hidden rounded-[22px] border border-zinc-800/90 bg-[#111] shadow-[0_12px_32px_rgba(0,0,0,0.4)]"
+          className="animate-onboarding-rise-delay-3 mt-8 w-full overflow-hidden rounded-[18px] border border-zinc-800/90 bg-[#111] shadow-[0_12px_32px_rgba(0,0,0,0.4)]"
         >
           <div className="grid grid-cols-3 divide-x divide-zinc-800/90">
             {FEATURES.map(({ title, description, Icon }) => (
@@ -172,52 +186,6 @@ export default function OnboardingPage() {
                 </p>
               </div>
             ))}
-          </div>
-        </section>
-
-        {/* Guest Mode */}
-        <section
-          aria-labelledby="guest-mode-heading"
-          className="animate-onboarding-rise-delay-4 relative mt-6 w-full overflow-hidden rounded-[22px] border border-zinc-800/80 bg-gradient-to-br from-[#171717] via-[#111] to-[#0a0a0a] p-5 shadow-[0_12px_32px_rgba(0,0,0,0.38)] sm:p-6"
-        >
-          <div
-            className="pointer-events-none absolute -right-8 top-1/2 h-40 w-40 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(57,255,20,0.1)_0%,transparent_70%)]"
-            aria-hidden="true"
-          />
-
-          <div className="relative flex items-stretch gap-4">
-            <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-lime-400/10 text-lime-400">
-              <Info size={16} aria-hidden="true" />
-            </div>
-
-            <div className="min-w-0 flex-1">
-              <h2
-                id="guest-mode-heading"
-                className="text-[15px] font-semibold tracking-tight text-white"
-              >
-                Guest Mode
-              </h2>
-              <p className="mt-2 text-[13px] leading-relaxed text-zinc-400">
-                Your workout history stays on this device.
-              </p>
-              <div className="my-3.5 h-px w-full bg-zinc-800/90" />
-              <p className="text-[13px] leading-relaxed text-zinc-500">
-                Create a{" "}
-                <span className="font-medium text-lime-400">free account</span>{" "}
-                anytime to sync and back up your data.
-              </p>
-            </div>
-
-            <div className="relative flex w-[88px] shrink-0 items-center justify-center sm:w-[104px]">
-              <Image
-                src="/onboarding/dumbbell.png"
-                alt=""
-                width={120}
-                height={120}
-                className="h-auto w-[78px] rotate-[-18deg] drop-shadow-[0_12px_24px_rgba(0,0,0,0.55)] sm:w-[78px]"
-                aria-hidden="true"
-              />
-            </div>
           </div>
         </section>
 
