@@ -23,6 +23,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "DontOverTrain",
   description: "Train smart. Pick a muscle group and get started.",
+
+  verification: {
+    other: {
+      "p:domain_verify": "67197f65bb4bb12fff37eede2dfda60c",
+    },
+  },
 };
 
 export default function RootLayout({
