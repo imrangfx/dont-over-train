@@ -19,6 +19,10 @@ import { useMinimumLoadingDelay } from "@/lib/hooks/useMinimumLoadingDelay";
 import { loadWorkoutHistory, type WorkoutHistoryEntry } from "@/lib/workouts";
 import { countExercisePerformances } from "@/lib/exerciseAnalytics";
 import {
+  getLastSessionExerciseNamesForBodyPart,
+  wasInLastSession,
+} from "@/lib/historyFilter";
+import {
   buildLiveRecoveryView,
   findLatestRecoverySnapshot,
 } from "@/components/recovery/liveRecovery";
@@ -95,6 +99,11 @@ export default function SectionPage() {
     if (!snapshot) return null;
     return buildLiveRecoveryView(snapshot, Date.now());
   }, [history]);
+
+  const lastSessionNames = useMemo(
+    () => getLastSessionExerciseNamesForBodyPart(history, params.slug),
+    [history, params.slug],
+  );
 
   function handleSelectSort(option: SortOption) {
     setSortOption(option);
@@ -265,6 +274,10 @@ export default function SectionPage() {
                 liveRecovery,
                 exercise,
               );
+              const showLastSessionBadge = wasInLastSession(
+                exercise.name,
+                lastSessionNames,
+              );
 
               return (
                 <Link
@@ -329,13 +342,23 @@ export default function SectionPage() {
                       </div>
                     </div>
 
-                    <Image
-                      src={`/exercises/${exerciseSlug}.webp`}
-                      alt={exercise.name}
-                      width={90}
-                      height={90}
-                      className="h-20 w-20 rounded-xl object-cover"
-                    />
+                    <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl">
+                      <Image
+                        src={`/exercises/${exerciseSlug}.webp`}
+                        alt={exercise.name}
+                        width={90}
+                        height={90}
+                        className="h-20 w-20 rounded-xl object-cover"
+                      />
+                      {showLastSessionBadge ? (
+                        <span
+                          className="absolute left-1 top-1 z-10 max-w-[calc(100%-0.5rem)] truncate rounded-full bg-black/70 px-1.5 py-0.5 text-[8px] font-semibold uppercase tracking-wide text-lime-400 ring-1 ring-lime-400/50 backdrop-blur-sm"
+                          aria-label="Performed in last session"
+                        >
+                          ★ LAST SESSION
+                        </span>
+                      ) : null}
+                    </div>
                   </div>
                 </Link>
               );

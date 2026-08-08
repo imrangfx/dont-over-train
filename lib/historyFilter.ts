@@ -98,3 +98,42 @@ export function filterHistoryByBodyPart(
     .map((workout) => projectWorkoutForBodyPart(workout, target))
     .filter((workout): workout is WorkoutHistoryEntry => workout != null);
 }
+
+/**
+ * Exercise names from the most recent completed session that included this
+ * body part. History is assumed newest-first (as returned by loadWorkoutHistory).
+ * Matching is case-insensitive; returned names keep their stored casing.
+ */
+export function getLastSessionExerciseNamesForBodyPart(
+  history: readonly WorkoutHistoryEntry[],
+  bodyPartSlug: string,
+): ReadonlySet<string> {
+  const target = normalizeBodyPartKey(bodyPartSlug);
+  if (!target) return new Set();
+
+  for (const workout of history) {
+    const projected = projectWorkoutForBodyPart(workout, target);
+    if (!projected || projected.exerciseList.length === 0) continue;
+
+    return new Set(
+      projected.exerciseList
+        .map((exercise) => exercise.name.trim())
+        .filter(Boolean),
+    );
+  }
+
+  return new Set();
+}
+
+/** Case-insensitive membership check for last-session badge lookup. */
+export function wasInLastSession(
+  exerciseName: string,
+  lastSessionNames: ReadonlySet<string>,
+): boolean {
+  if (lastSessionNames.size === 0) return false;
+  const needle = exerciseName.trim().toLowerCase();
+  for (const name of lastSessionNames) {
+    if (name.toLowerCase() === needle) return true;
+  }
+  return false;
+}
