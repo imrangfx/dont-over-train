@@ -10,6 +10,7 @@ import {
   type BodyPartRecommendationBadge,
 } from "@/components/recovery/bodyPartRecommendationBadges";
 import { sanitizeRecoveryPercent } from "@/components/recovery/buildOverallSummary";
+import type { WorkoutHistoryEntry } from "@/lib/workouts";
 
 type BodyPartRef = {
   readonly name: string;
@@ -123,10 +124,11 @@ function buildReasons(
 export function selectTodaysRecommendation(
   live: LiveRecoveryView | null,
   bodyParts: readonly BodyPartRef[],
+  history: readonly WorkoutHistoryEntry[] = [],
 ): TodaysRecommendation | null {
   if (!live || bodyParts.length === 0) return null;
 
-  const badges = buildBodyPartRecommendationBadges(live, bodyParts);
+  const badges = buildBodyPartRecommendationBadges(live, bodyParts, history);
 
   type Candidate = {
     part: BodyPartRef;

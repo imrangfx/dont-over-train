@@ -820,8 +820,8 @@ export default function Home() {
   }, [history]);
 
   const bodyPartBadges = useMemo(
-    () => buildBodyPartRecommendationBadges(liveRecovery, BODY_PARTS),
-    [liveRecovery],
+    () => buildBodyPartRecommendationBadges(liveRecovery, BODY_PARTS, history),
+    [liveRecovery, history],
   );
 
   return (
