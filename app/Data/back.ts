@@ -51,100 +51,100 @@ export const back = {
   },
 
   "trap-3-raise": {
-  name: "Trap-3 Raise",
-  bodyPart: "Back",
-  section: "upper-back",
-  trackingType: "weight",
-  movement: "isolation",
+    name: "Trap-3 Raise",
+    bodyPart: "Back",
+    section: "upper-back",
+    trackingType: "weight",
+    movement: "isolation",
 
-  primaryMuscles: [
-    MUSCLES.LOWER_TRAPS,
-  ],
+    primaryMuscles: [
+      MUSCLES.LOWER_TRAPS,
+    ],
 
-  secondaryMuscles: [
-    MUSCLES.REAR_DELTS,
-    MUSCLES.RHOMBOIDS,
-  ],
+    secondaryMuscles: [
+      MUSCLES.REAR_DELTS,
+      MUSCLES.RHOMBOIDS,
+    ],
 
-  fatigue: {
-    [MUSCLES.LOWER_TRAPS]: 18,
-    [MUSCLES.REAR_DELTS]: 5,
-    [MUSCLES.RHOMBOIDS]: 4,
+    fatigue: {
+      [MUSCLES.LOWER_TRAPS]: 18,
+      [MUSCLES.REAR_DELTS]: 5,
+      [MUSCLES.RHOMBOIDS]: 4,
+    },
+
+    image: "/back/trap-3-raise.webp",
   },
 
-  image: "/back/trap-3-raise.webp",
-},
+  "straight-arm-cable-pulldown": {
+    name: "Straight Arm Cable Pulldown",
+    bodyPart: "Back",
+    section: "lats",
+    trackingType: "weight",
+    movement: "vertical-pull",
 
-"straight-arm-cable-pulldown": {
-  name: "Straight Arm Cable Pulldown",
-  bodyPart: "Back",
-  section: "lats",
-  trackingType: "weight",
-  movement: "vertical-pull",
+    primaryMuscles: [
+      MUSCLES.LATS,
+    ],
 
-  primaryMuscles: [
-    MUSCLES.LATS,
-  ],
+    secondaryMuscles: [
+      MUSCLES.LOWER_TRAPS,
+    ],
 
-  secondaryMuscles: [
-    MUSCLES.LOWER_TRAPS,
-  ],
+    fatigue: {
+      [MUSCLES.LATS]: 18,
+      [MUSCLES.LOWER_TRAPS]: 4,
+    },
 
-  fatigue: {
-    [MUSCLES.LATS]: 18,
-    [MUSCLES.LOWER_TRAPS]: 4,
+    image: "/back/straight-arm-cable-pulldown.webp",
   },
 
-  image: "/back/straight-arm-cable-pulldown.webp",
-},
+  "rope-straight-arm-pulldown": {
+    name: "Rope Straight Arm Pulldown",
+    bodyPart: "Back",
+    section: "lats",
+    trackingType: "weight",
+    movement: "vertical-pull",
 
-"rope-straight-arm-pulldown": {
-  name: "Rope Straight Arm Pulldown",
-  bodyPart: "Back",
-  section: "lats",
-  trackingType: "weight",
-  movement: "vertical-pull",
+    primaryMuscles: [
+      MUSCLES.LATS,
+    ],
 
-  primaryMuscles: [
-    MUSCLES.LATS,
-  ],
+    secondaryMuscles: [
+      MUSCLES.LOWER_TRAPS,
+    ],
 
-  secondaryMuscles: [
-    MUSCLES.LOWER_TRAPS,
-  ],
+    fatigue: {
+      [MUSCLES.LATS]: 16,
+      [MUSCLES.LOWER_TRAPS]: 6,
+    },
 
-  fatigue: {
-    [MUSCLES.LATS]: 16,
-    [MUSCLES.LOWER_TRAPS]: 6,
+    image: "/back/rope-straight-arm-pulldown.webp",
   },
 
-  image: "/back/rope-straight-arm-pulldown.webp",
-},
+  "scapular-pull-up": {
+    name: "Scapular Pull-Up",
+    bodyPart: "Back",
+    section: "upper-back",
+    trackingType: "bodyweight",
+    movement: "vertical-pull",
 
-"scapular-pull-up": {
-  name: "Scapular Pull-Up",
-  bodyPart: "Back",
-  section: "upper-back",
-  trackingType: "bodyweight",
-  movement: "vertical-pull",
+    primaryMuscles: [
+      MUSCLES.LOWER_TRAPS,
+    ],
 
-  primaryMuscles: [
-    MUSCLES.LOWER_TRAPS,
-  ],
+    secondaryMuscles: [
+      MUSCLES.LATS,
+      MUSCLES.RHOMBOIDS,
+    ],
 
-  secondaryMuscles: [
-    MUSCLES.LATS,
-    MUSCLES.RHOMBOIDS,
-  ],
+    fatigue: {
+      [MUSCLES.LOWER_TRAPS]: 15,
+      [MUSCLES.LATS]: 6,
+      [MUSCLES.RHOMBOIDS]: 4,
+    },
 
-  fatigue: {
-    [MUSCLES.LOWER_TRAPS]: 15,
-    [MUSCLES.LATS]: 6,
-    [MUSCLES.RHOMBOIDS]: 4,
+    image: "/back/scapular-pull-up.webp",
   },
-
-  image: "/back/scapular-pull-up.webp",
-},
 
   "dumbbell-shrug": {
     name: "Dumbbell Shrug",
@@ -607,6 +607,42 @@ export const back = {
     },
   },
 
+  "chest-supported-t-bar-row-close-grip": {
+    name: "Chest Supported T-Bar Row — Close Grip",
+    bodyPart: "Back",
+    section: "lats",
+    trackingType: "weight",
+    movement: "horizontal-pull",
+  
+    primaryMuscles: [
+      MUSCLES.LATS,
+      MUSCLES.RHOMBOIDS,
+    ],
+  
+    secondaryMuscles: [
+      MUSCLES.MIDDLE_TRAPS,
+      MUSCLES.LOWER_TRAPS,
+      MUSCLES.REAR_DELTS,
+      MUSCLES.LONG_HEAD_BICEPS,
+      MUSCLES.SHORT_HEAD_BICEPS,
+      MUSCLES.BRACHIALIS,
+    ],
+  
+    fatigue: {
+      [MUSCLES.LATS]: 12,
+      [MUSCLES.RHOMBOIDS]: 9,
+      [MUSCLES.MIDDLE_TRAPS]: 8,
+      [MUSCLES.LOWER_TRAPS]: 5,
+      [MUSCLES.REAR_DELTS]: 4,
+      [MUSCLES.LONG_HEAD_BICEPS]: 4,
+      [MUSCLES.SHORT_HEAD_BICEPS]: 3,
+      [MUSCLES.BRACHIALIS]: 3,
+    },
+  
+    image: "/back/chest-supported-t-bar-row-close-grip.webp",
+  },
+  
+
   "chin-up": {
     name: "Chin Up",
     bodyPart: "Back",
@@ -834,7 +870,7 @@ export const back = {
   },
 
   "chest-supported-t-bar-row": {
-    name: "Chest Supported T-Bar Row",
+    name: "Chest Supported T-Bar Row — Wide Grip",
     bodyPart: "Back",
     section: "upper-back",
     trackingType: "weight",
@@ -864,6 +900,7 @@ export const back = {
       [MUSCLES.SHORT_HEAD_BICEPS]: 3,
       [MUSCLES.BRACHIALIS]: 2,
     },
+
     image: "/back/chest-supported-t-bar-row.webp",
   },
 

@@ -249,27 +249,31 @@ export const EXERCISE_TUTORIALS: Readonly<
 },
 
 "pull-up": {
-  youtubeId: "",
+  youtubeId: "syS4M1G-rII",
+},
+
+"chest-supported-t-bar-row-close-grip": {
+  youtubeId: "TyLoy3n_a10",
 },
 
 "chin-up": {
-  youtubeId: "",
+  youtubeId: "mRy9m2Q9_1I",
 },
 
 "lat-pulldown": {
-  youtubeId: "",
+  youtubeId: "SALxEARiMkw",
 },
 
 "wide-grip-lat-pulldown": {
-  youtubeId: "",
+  youtubeId: "O-_EOo6IY3U",
 },
 
 "close-grip-pulldown": {
-  youtubeId: "",
+  youtubeId: "8hzVLzu-RJk",
 },
 
 "single-arm-lat-pulldown": {
-  youtubeId: "",
+  youtubeId: "Q9Ng4nxUbmY",
 },
 
 // =========================
@@ -277,25 +281,118 @@ export const EXERCISE_TUTORIALS: Readonly<
 // =========================
 
 "deadlift": {
-  youtubeId: "",
+  youtubeId: "r4MzxtBKyNE",
 },
 
 "romanian-deadlift": {
-  youtubeId: "",
+  youtubeId: "3VXmecChYYM",
 },
 
 "back-extension": {
-  youtubeId: "",
+  youtubeId: "ph3pddpKzzw",
 },
 
 "good-morning": {
-  youtubeId: "",
+  youtubeId: "nWyx81AfTos",
 },
 
 "rack-pull": {
-  youtubeId: "",
+  youtubeId: "9vYBWV5OeKg",
+},
+// =========================
+// FRONT DELTS
+// =========================
+
+"barbell-overhead-press": {
+  youtubeId: "cGnhixvC8uA",
 },
 
+"single-arm-landmine-press": {
+  youtubeId: "5Cs27w8WVz4",
+},
+
+"dumbbell-overhead-press": {
+  youtubeId: "Did01dFR3Lk",
+},
+
+"arnold-press": {
+  youtubeId: "Tux8PGVa9wQ",
+},
+
+"z-press": {
+  youtubeId: "wce-elEhBHw",
+},
+
+"machine-shoulder-press": {
+  youtubeId: "WvLMauqrnK8",
+},
+
+"smith-overhead-press": {
+  youtubeId: "OLqZDUUD2b0",
+},
+
+"landmine-shoulder-press": {
+  youtubeId: "6cSTRPhpubs",
+},
+
+"single-arm-dumbbell-shoulder-press": {
+  youtubeId: "lcaWpewC3Wg",
+},
+
+"seated-barbell-press": {
+  youtubeId: "IuzRCN6eG6Y",
+},
+
+"seated-dumbbell-press": {
+  youtubeId: "t-hqRPjpaw8",
+},
+
+"push-press": {
+  youtubeId: "iaBVSJm78ko",
+},
+// =========================
+// SIDE DELTS
+// =========================
+
+"dumbbell-lateral-raise": {
+  youtubeId: "PzsMitRdI_8",
+},
+
+"cable-lateral-raise": {
+  youtubeId: "Z5FA9aq3L6A",
+},
+
+"machine-lateral-raise": {
+  youtubeId: "xMEs3zEzS8s",
+},
+
+"leaning-cable-lateral-raise": {
+  youtubeId: "lq7eLC30b9w",
+},
+
+"single-arm-lateral-raise": {
+  youtubeId: "yjQdlUuu958",
+},
+
+"seated-lateral-raise": {
+  youtubeId: "P_k_h5AIJXw",
+},
+
+"incline-lateral-raise": {
+  youtubeId: "oneoO9B8xqs",
+},
+
+"behind-the-back-cable-lateral-raise": {
+  youtubeId: "ihG4lDlTJ-g",
+},
+
+"resistance-band-lateral-raise": {
+  youtubeId: "yfNg5sFndbw",
+},
+
+"partial-lateral-raise": {
+  youtubeId: "rYOee2A_dpE",
+},
 };
 
 function hasPlayableTutorial(
