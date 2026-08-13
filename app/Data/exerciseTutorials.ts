@@ -393,6 +393,122 @@ export const EXERCISE_TUTORIALS: Readonly<
 "partial-lateral-raise": {
   youtubeId: "rYOee2A_dpE",
 },
+// =========================
+// LONG HEAD BICEPS
+// =========================
+
+"barbell-curl": {
+  youtubeId: "dDI8ClxRS04",
+},
+
+"ez-bar-curl": {
+  youtubeId: "6LrOTcr595A",
+},
+
+"incline-dumbbell-curl": {
+  youtubeId: "4FbGrHJyG8o",
+},
+
+"bayesian-cable-curl": {
+  youtubeId: "m1wGr3O-nzo",
+},
+
+"close-grip-barbell-curl": {
+  youtubeId: "1bGHpNt0vhU",
+},
+
+"alternating-dumbbell-curl": {
+  youtubeId: "o2Tma5Cek48",
+},
+
+"single-arm-cable-curl": {
+  youtubeId: "njLoCel5lUI",
+},
+
+"ez-bar-close-grip-curl": {
+  youtubeId: "1bGHpNt0vhU",
+},
+
+// =========================
+// SHORT HEAD BICEPS
+// =========================
+
+"preacher-curl": {
+  youtubeId: "fIWP-FRFNU0",
+},
+
+"spider-curl": {
+  youtubeId: "nvufDW-MSQk",
+},
+
+"concentration-curl": {
+  youtubeId: "4tqc6FQSHn8",
+},
+
+"wide-grip-barbell-curl": {
+  youtubeId: "jnfveKq1i3E",
+},
+
+"machine-biceps-curl": {
+  youtubeId: "AR-oARBkYxI",
+},
+
+"cable-preacher-curl": {
+  youtubeId: "P33oQtDURjs",
+},
+
+"high-cable-curl": {
+  youtubeId: "xaMJYDzqTZg",
+},
+
+"dumbbell-preacher-curl": {
+  youtubeId: "7v7uldi1eLU",
+},
+
+// =========================
+// BRACHIALIS
+// =========================
+
+"hammer-curl": {
+  youtubeId: "OPqe0kCxmR8",
+},
+
+"cross-body-hammer-curl": {
+  youtubeId: "On2eca-C00E",
+},
+
+"rope-hammer-curl": {
+  youtubeId: "V8AR3SGzboU",
+},
+
+"reverse-ez-curl": {
+  youtubeId: "aIrvcBlNHBA",
+},
+
+"reverse-barbell-curl": {
+  youtubeId: "Zv0-vIhlDIk",
+},
+
+"reverse-cable-curl": {
+  youtubeId: "23-WiuDnsZ0",
+},
+
+"dumbbell-reverse-curl": {
+  youtubeId: "hUA-fIpM7nA",
+},
+
+"zottman-curl": {
+  youtubeId: "ZXbOOIOPOi8",
+},
+
+"neutral-grip-cable-curl": {
+  youtubeId: "Jpbzx39KnaQ",
+},
+
+"machine-hammer-curl": {
+  youtubeId: "P8MSd6UkVM",
+},
+
 };
 
 function hasPlayableTutorial(
